@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Credentials & Tokens
+token.json
+God_Blaze.txt
+*.txt
+!requirements.txt
+
+# Cache & Temporary Files
+*.pkl
+status_cache.pkl
+*.cache
+*.log
+*.tmp
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+desktop.ini
+
+# API Keys & Secrets
+*.key
+*.pem
+*.env
+.env
+
+# Compiled protobuf
+*_pb2.py
+!God_Blaze/*_pb2.py
+
+# JSON configs (except emotes.json)
+!emotes.json
