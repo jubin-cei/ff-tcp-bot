@@ -664,11 +664,11 @@ What happens:
             success_msg = f"""[B][C][00FF00]✅ BOT JOIN REQUEST SENT!
 
 🎯 Target: {xMsGFixinG(target_uid)}
-🤖 Bot Name: NAJMI_FF_EXPERIMENT
+🤖 Bot Name: God Blaze
 ✅ Status: Ready to join
 
 📱 Player will see:
-"NAJMI_FF_EXPERIMENT wants to join your team"
+"God Blaze wants to join your team"
 
 ✅ When player clicks ACCEPT:
 Bot will automatically join player's team!
@@ -1953,7 +1953,7 @@ async def banecipher(target_uid, key, iv):
     return bytes.fromhex(final_packet)
 
 async def black666(client_id, key, iv):
-    banner_text = "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]NAJMI_FF_EXPERIMENT GAMING [00FF00]___ NAJMI_FF_EXPERIMENT GAMING____ BOT ! \n[FFFF00]NEW VERSION NEW FUNCTION !\n[FF0000]TELEGRAM : @NAJMI_FF_EXPERIMENT\n\n"     
+    banner_text = "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]God Blaze [00FF00]___ God Blaze____ BOT ! \n[FFFF00]NEW VERSION NEW FUNCTION !\n[FF0000]CONTACT : God Blaze - Free Fire\n\n"     
     fields = {
         1: 5,
         2: {
@@ -2575,116 +2575,6 @@ async def lag_team_loop(team_code, key, iv, region):
             print(f"Error in lag loop: {e}")
             # Continue the loop even if there's an error
             await asyncio.sleep(0.1)
- 
-def send_tiktok_info(username):
-
-    try:
-        response = requests.get(
-            f"https://mg24-gamer-king.vercel.app/tt-info/tiktok?username={username}",
-            timeout=15
-        )
-
-        if response.status_code != 200:
-            return f"[B][C][FF0000]❌ TikTok API Error! Status Code: {response.status_code}"
-
-        user = response.json()
-
-        if user.get("credit") != "NAJMI_FF_EXPERIMENT":
-            return "[B][C][FF0000]❌ User Not Found Or Credit Invalid!"
-
-
-        # JSON structure থেকে nested dict access
-        identity = user.get("identity", {})
-        statistics = user.get("statistics", {})
-        status = user.get("status", {})
-
-        # Extract
-        full_name = identity.get("full_name", "Unknown")
-        username_ = identity.get("username", "")
-        user_id = identity.get("user_id", "Unknown")
-
-        followers = statistics.get("followers", 0)
-        following = statistics.get("following", 0)
-        likes = statistics.get("likes", 0)
-        videos = statistics.get("videos", 0)
-
-        private_status = status.get("private_account", False)
-        signature = user.get("bio", "")
-        avatar_hd = user.get("avatar_hd", "")
-
-        return f"""
-[B][C][FFD700]╭[FFFF00]─[FFFF00]╮[FFFFFF]
-[C][B][00bFFF]│[00bFFF]ꚠ[00bFFF] │[FFFFFF]║[00bFFF]TIKTOK INFO[FFFFFF]║
-[C][B][FF00FF]╰[FFFF00]─[FFFF00]╯[FFFFFF]
-[C][B][FF00FF]━━━━━━━━━━━
-[C][B][FFFFFF]Fullname   : [FFFF00]{full_name}
-[C][B][FFFFFF]Username   : [FFFF00]{username_}
-[C][B][FFFFFF]Signature  : [00BFFF]{signature}
-[C][B][FFFFFF]Followers  : [00BFFF]{followers}
-[C][B][FFFFFF]Following  : [00BFFF]{following}
-[C][B][FFFFFF]Likes      : [00BFFF]{likes}
-[C][B][FFFFFF]Videos     : [00BFFF]{videos}
-[C][B][FFFFFF]Private    : [FFFF00]{private_status}
-[C][B][00FFFF]━━━━━━━━━━━
-"""
-
-    except requests.exceptions.RequestException:
-        return "[B][C][FF0000]❌ TikTok API Connection Failed!"
-    except Exception as e:
-        return f"[B][C][FF0000]❌ Unexpected Error: {str(e)}"
-
-
-# -------------------------------------------------
-# Helper function: Fetch YouTube info JSON
-# -------------------------------------------------
-def get_youtube_info(channel_name):
-    try:
-        response_json = requests.get(
-            f"https://mg24-gamer-king.vercel.app/yt-info/yt?channel={channel_name.lstrip('@')}",
-            timeout=15
-        ).json()
-        return response_json
-    except Exception:
-        return {}
-
-# -------------------------------------------------
-# Helper function: Format and send YouTube info
-# -------------------------------------------------
-async def send_youtube_info(channel_name, chat_type, uid, chat_id, key, iv):
-    response_json = get_youtube_info(channel_name)
-
-    # Stats formatting
-    stats = response_json.get("statistics", {})
-    subscribers = xMsGFixinG(stats.get("subscribers", "0"))
-    views = xMsGFixinG(stats.get("views", "0"))
-    videos = xMsGFixinG(stats.get("videos", "0"))
-
-    # Description
-    description = response_json.get("description", "")
-
-    # Main info message
-    main_info = f"""
-[B][C][FF0000]╭[FF0000]─[FF0000]╮[FFFFFF]
-[C][B][FF0000]│[FFFFFF]▶[FF0000] │[FFFFFF]║[00BFFF]YOUTUBE INFO[FFFFFF]║
-[C][B][FF0000]╰[FF0000]─[FF0000]╯[FFFFFF]
-[C][B][FF00FF]━━━━━━━━━━━
-[C][B][FFFFFF]Channel Name : [FFFF00]{response_json.get('channel_title', 'Unknown')}
-[C][B][FFFFFF]Channel ID    : [FFFF00]{response_json.get('channel_id', 'Unknown')}
-[C][B][FFFFFF]Handle        : [00BFFF]{response_json.get('handle', 'Unknown')}
-[C][B][FFFFFF]Subscribers   : [00BFFF]{subscribers}
-[C][B][FFFFFF]Views         : [00BFFF]{views}
-[C][B][FFFFFF]Videos        : [00BFFF]{videos}
-[C][B][FFFFFF]Published At  : [00BFFF]{xMsGFixinG(response_json.get('published_at', ''))}
-[C][B][00FFFF]━━━━━━━━━━━
-[C][B][FFFFFF]Developer     : NAJMI_FF_EXPERIMENT
-"""
-    # Send main info
-    await safe_send_message(chat_type, main_info, uid, chat_id, key, iv)
-
-    # Send description separately after 0.2s
-    await asyncio.sleep(0.2)
-    if description:
-        await safe_send_message(chat_type, f"[B][C][00BFFF]Description: {description}", uid, chat_id, key, iv)
 
 import requests
 
@@ -3449,7 +3339,6 @@ Please check if the uid is correct.
 [FFFFFF]Likes Before : [00FF00]{xMsGFixinG(likes_before)}  
 [FFFFFF]Likes After : [00FF00]{xMsGFixinG(likes_after)}  
 [C][B][11EAFD]‎━━━━━━━━━━━━
-[C][B][FFB300]Subscribe: [FFFFFF]NAJMI_FF_EXPERIMENT [00FF00]!!
 """
         elif status == 2 or likes_before == likes_after:
             # 🚫 Already claimed / Maxed
@@ -3531,7 +3420,6 @@ Please check if the uid is correct.
 [FFFFFF]Likes Before : [00FF00]{xMsGFixinG(likes_before)}  
 [FFFFFF]Likes After : [00FF00]{xMsGFixinG(likes_after)}  
 [C][B][11EAFD]‎━━━━━━━━━━━━
-[C][B][FFB300]Subscribe: [FFFFFF]NAJMI_FF_EXPERIMENT [00FF00]!!
 """
         elif status == 2 or likes_before == likes_after:
             # 🚫 Already claimed / Maxed
@@ -4401,8 +4289,8 @@ async def RejectMSGtaxt(squad_owner,uid, key, iv):
 
 
 
-[00FF00]NAJMI_FF_EXPERIMENT TCP
-WELCOME TO NAJMI_FF_EXPERIMENT TCP BOT
+[00FF00]God Blaze TCP
+WELCOME TO God Blaze TCP BOT
 
 
 
@@ -4718,7 +4606,7 @@ async def send_all_titles_sequentially(uid, chat_id, key, iv, region, chat_type)
             # Send the actual title using your existing method
             # You'll need to use your existing title sending logic here
             # For example:
-            title_packet = await convert_kyro_to_your_system(uid, chat_id, key, iv, nickname="NAJMI_FF_EXPERIMENT", title_id=title_id)
+            title_packet = await convert_kyro_to_your_system(uid, chat_id, key, iv, nickname="God Blaze", title_id=title_id)
             
             if title_packet and whisper_writer:
                 whisper_writer.write(title_packet)
@@ -4794,7 +4682,7 @@ async def handle_all_titles_command(inPuTMsG, uid, chat_id, key, iv, region, cha
     await safe_send_message(chat_type, response_msg, uid, chat_id, key, iv)
 
 
-async def noob(target_uid, chat_id, key, iv, nickname="NAJMI_FF_EXPERIMENT", title_id=None):
+async def noob(target_uid, chat_id, key, iv, nickname="God Blaze", title_id=None):
     """EXACT conversion with customizable title ID"""
     try:
         # Use provided title_id or get random one
@@ -4870,7 +4758,7 @@ async def send_all_titles_sequentiallly(uid, chat_id, key, iv, region, chat_type
     total_titles = len(all_titles)
     
     # Send initial message
-    start_msg = f"""[B][C][00FF00] Noobde NAJMI_FF_EXPERIMENT GAMER ya meku agar tu noob bolra toh tu g a y hai
+    start_msg = f"""[B][C][00FF00] Noobde God Blaze ya meku agar tu noob bolra toh tu g a y hai
 
 
 """
@@ -4885,7 +4773,7 @@ async def send_all_titles_sequentiallly(uid, chat_id, key, iv, region, chat_type
             # Send the actual title using your existing method
             # You'll need to use your existing title sending logic here
             # For example:
-            title_packet = await noob(uid, chat_id, key, iv, nickname="NAJMI_FF_EXPERIMENT", title_id=title_id)
+            title_packet = await noob(uid, chat_id, key, iv, nickname="God Blaze", title_id=title_id)
             
             if title_packet and whisper_writer:
                 whisper_writer.write(title_packet)
@@ -6797,7 +6685,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 print(f"🚫 Bot is private! Ignoring invite from {squad_owner}")
                                  # Send quick reject message
                                 bot_uid = 13777711848
-                                message_text = f" Can't accept Your request Talk to NAJMI_FF_EXPERIMENT"
+                                message_text = f" Can't accept Your request Talk to God Blaze"
                                 private_msg_packet = await xSEndMsg(
                                     Msg=message_text,
                                     Tp=2,  # 2 = Private message
@@ -6898,11 +6786,11 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         def get_random_color(): return "_" 
-                        message = """[B][C][FF0000]█▓▒░░ WELCOME TO NAJMI_FF_EXPERIMENT BOT ░░▒▓█
+                        message = """[B][C][FF0000]█▓▒░░ WELCOME TO God Blaze BOT ░░▒▓█
 [00FF00]»»————-　★　————-««
-[FFFFFF]⚡ BOT POWERED BY:[FF0000] NAJMI_FF_EXPERIMENT GAMING
+[FFFFFF]⚡ BOT POWERED BY:[FF0000] God Blaze
 [FFFFFF]🎯 STATUS: [00FF00]ACTIVE 24/7
-[FFFFFF]📱 CONTACT: [FFFF00]@NAJMI_FF_EXPERIMENT
+[FFFFFF]📱 CONTACT: [FFFF00]God Blaze - Free Fire
 [00FF00]»»————-　★　————-««
 [FF0000]█▓▒░░ ENJOY THE BOT! ░░▒▓█"""
                         # In your auto-join (Old Handler) code, find this line:
@@ -6929,11 +6817,11 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                 if senthi == True:
                     
                     def get_random_color(): return "_" 
-                    message = """[B][C][FF0000]█▓▒░░ WELCOME TO NAJMI_FF_EXPERIMENT BOT ░░▒▓█
+                    message = """[B][C][FF0000]█▓▒░░ WELCOME TO God Blaze BOT ░░▒▓█
 [00FF00]»»————-　★　————-««
-[FFFFFF]⚡ BOT POWERED BY:[FF0000] NAJMI_FF_EXPERIMENT 
+[FFFFFF]⚡ BOT POWERED BY:[FF0000] God Blaze 
 [FFFFFF]🎯 STATUS: [00FF00]ACTIVE 24/7
-[FFFFFF]📱 CONTACT: [FFFF00]@NAJMI_FF_EXPERIMENT
+[FFFFFF]📱 CONTACT: [FFFF00]God Blaze - Free Fire
 [00FF00]»»————-　★　————-««
 [FF0000]█▓▒░░ ENJOY THE BOT! ░░▒▓█"""
                         # In your auto-join (Old Handler) code, find this line:
@@ -7358,9 +7246,9 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
 📝 Examples:
 /bio Hello World!
-/bio 🤖 Bot by NAJMI_FF_EXPERIMENT
+/bio 🤖 Bot by God Blaze
 /bio Level 70 | Pro Player
-/bio Add me: NAJMI_FF_EXPERIMENT
+/bio Add me: God Blaze
 
 ✨ Features:
 • Changes bot's profile bio instantly
@@ -7723,41 +7611,9 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
                                 await safe_send_message(response.Data.chat_type, final_visit, uid, chat_id, key, iv)
 
-                        #tt USERNAME TO INFO-/tt
-                        if inPuTMsG.strip().startswith('/tt'):
-                            print('Processing tiktok command in any chat type')
-
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: /tt <username>\nExample: /tt virat.kohli\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                            else:
-                                target_username = parts[1]
-                                initial_message = f"[B][C]{get_random_color()}\nFetching TikTok info for {target_username}...\n"
-                                await safe_send_message(response.Data.chat_type, initial_message, uid, chat_id, key, iv)
-        
-                                tiktok_result = send_tiktok_info(target_username)
-        
-                                await safe_send_message(response.Data.chat_type, tiktok_result, uid, chat_id, key, iv)
-
-# yt info command handler   
-                        if inPuTMsG.strip().startswith('/yt'):  
-                            print('Processing YouTube command in any chat type')  
-
-                            target_channel = inPuTMsG.strip()[4:].strip()  # /yt এর পরের সব text  
-                            if not target_channel:  
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: /yt <channel>\nExample: /yt NAJMI_FF_EXPERIMENT gaming\n"  
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)  
-                            else:  
-                                initial_message = f"[B][C]{get_random_color()}\nFetching YouTube info for {target_channel}...\n"  
-                                await safe_send_message(response.Data.chat_type, initial_message, uid, chat_id, key, iv)  
-
-                                # Call the async function  
-                                await send_youtube_info(target_channel, response.Data.chat_type, uid, chat_id, key, iv)
-
 # GUILD INFORMATION FF
                         if inPuTMsG.strip().startswith('/guild'):
-                            print('Processing tiktok command in any chat type')
+                            print('Processing guild command in any chat type')
 
                             parts = inPuTMsG.strip().split()
                             if len(parts) < 2:
@@ -8409,18 +8265,12 @@ Thinking about getting a server in your name with a panel?
 
 All of this is available, just contact me!
 
-[b][i][FFC0CB]youtube: NAJMI_FF_EXPERIMENT GAMING[/b]
-
-[b][c][FFC0CB]subcribe: my_channel[FFFFFF]
- 
-[b][i][FFA500]telegram: @NAJMI_FF_EXPERIMENT[/b]
-
-[b][c][FFA500]telegram contact: @NAJMI_FF_EXPERIMENT[A52A2A]
+[b][i][FFA500]Contact: God Blaze - Free Fire[/b]
  
 Enjoy the bot my friend.......
 
 [C][B][0000FF] Created by Black666FF
-Modified by - NAJMI_FF_EXPERIMENT
+Modified by - God Blaze
 """
                             await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
 
@@ -8762,7 +8612,7 @@ Modified by - NAJMI_FF_EXPERIMENT
                                 try:
                                     dd = chatdata['5']['data']['16']
                                     print('msg in private')
-                                    message = f"[B][C][FF00AA]\n\nGROUP LAG STARTED !![FF00FF]\n\n❄️DURATION 30 SECOND !!\n\n[00FFFF]BOT OWNER: NAJMI_FF_EXPERIMENT \n\n"
+                                    message = f"[B][C][FF00AA]\n\nGROUP LAG STARTED !![FF00FF]\n\n❄️DURATION 30 SECOND !!\n\n[00FFFF]BOT OWNER: God Blaze \n\n"
                                     P = await SEndMsG(response.Data.chat_type , message , uid , chat_id , key , iv , region)
                                     await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , P)
 
@@ -9402,7 +9252,7 @@ Modified by - NAJMI_FF_EXPERIMENT
 ║                                       
 ║ ────────────── 
 ║                                       
-║ ⚡ [FF00FF] NAJMI_FF_EXPERIMENT GAMER VIP BOT ⚡   
+║ ⚡ [FF00FF] God Blaze VIP BOT ⚡   
 ╚═════════════╝"""
                             await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
 
@@ -10001,7 +9851,7 @@ Modified by - NAJMI_FF_EXPERIMENT
                             # else: "User" ই থাকবে
 
                             # Header with player name
-                            header = f"[c][00FF00]Hey {player_name} [00FFFF]Welcome To NAJMI_FF_EXPERIMENT's BOT"
+                            header = f"[c][00FF00]Hey {player_name} [00FFFF]Welcome To God Blaze's BOT"
                             await safe_send_message(response.Data.chat_type, header, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)
 
@@ -10105,7 +9955,7 @@ Modified by - NAJMI_FF_EXPERIMENT
                             footer = """[00FFFA]╔═•══•════════════════•══•═╗
 [FF1493]║ ⚡ [B][FFFF00]BOT INFO[FFFF00][/B] ⚡
 [00FFFA]║
-[FFFF00]║ 👤 Developer    :: [FF1493]NAJMI_FF_EXPERIMENT
+[FFFF00]║ 👤 Developer    :: [FF1493]God Blaze
 [32CD32]║ 💻 Status       :: [32CD32]ONLINE
 [1E90FF]║ 🛠 Version      :: [1E90FF]ENHANCED V2
 [00FFFA]╚═•══•════════════════•══•═╝"""
@@ -10128,7 +9978,7 @@ async def MaiiiinE():
     
     if not credentials:
         print("❌ Failed to load credentials!")
-        print("💡 Please create NAJMI_FF_EXPERIMENT.txt with your UID and password")
+        print("💡 Please create credentials file with your UID and password")
         print("📝 Format: uid=YOUR_UID,password=YOUR_PASSWORD")
         return None
     
@@ -10202,7 +10052,7 @@ async def MaiiiinE():
     # Clear screen and show status
     os.system('clear')
     print("=" * 50)
-    print("🤖 NAJMI_FF_EXPERIMENT BOT - INITIALIZING")
+    print("🤖 God Blaze BOT - INITIALIZING")
     print("=" * 50)
     print("🔄 Starting TCP Connections...")
     print("📡 Connecting to Free Fire servers...")
@@ -10258,7 +10108,7 @@ async def MaiiiinE():
     
     # Show loading animation
     os.system('clear')
-    print("🤖 NAJMI_FF_EXPERIMENT BOT - STARTING")
+    print("🤖 God Blaze BOT - STARTING")
     print("=" * 50)
     
     for i in range(1, 4):
@@ -10267,7 +10117,7 @@ async def MaiiiinE():
         time.sleep(0.3)
     
     os.system('clear')
-    print("🤖 NAJMI_FF_EXPERIMENT BOT - CONNECTING")
+    print("🤖 God Blaze BOT - CONNECTING")
     print("=" * 50)
     print("┌────────────────────────────────────┐")
     print("│ ██████████████████████████████████ │")
@@ -10284,7 +10134,7 @@ async def MaiiiinE():
     # Final status display
     os.system('clear')
     print("=" * 50)
-    print("🤖 NAJMI_FF_EXPERIMENT BOT - ONLINE")
+    print("🤖 God Blaze BOT - ONLINE")
     print("=" * 50)
     print(f"🔹 UID: {TarGeT}")
     print(f"🔹 Name: {acc_name}")
