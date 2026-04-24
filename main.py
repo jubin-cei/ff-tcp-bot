@@ -67,16 +67,17 @@ START_SPAM_DELAY = 0.2
 region = 'IN'
 WHITELISTED_UIDS = {
     "MĢ24_GÀMER", # don't change this text
-    "14444444004"
+    "14444444004",
+    "537512413"
 }
 # ADMIN INFO FUNCTION FOR ADMIN COMMAND 
-ADMIN_UID = "14444444004"
+ADMIN_UID = "537512413"
 server2 = "BD"
 key2 = "mg24"
 BYPASS_TOKEN = "your_bypass_token_here"
 WHITELIST_ONLY = False
 bot_enabled = True
-BOT_OWNER_UID = 14444444004  
+BOT_OWNER_UID = 537512413  
 PLAYER_NAME_CACHE = {}
 PLAYER_NAME_CACHE = 'name_cache.json'
 # ========== NAME DISPLAY CONFIG ==========
@@ -9069,196 +9070,6 @@ Modified by - God Blaze
                                 await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
 
 
-# GLOBAL BLOCKED NAMES
-                        BLOCKED_NAMES = ["maruf", "mg24", "mg-king", "mg_king", "mgking", "mg king"]  # Protected names
-
-                        # GALi / JOKE MESSAGE
-                        if inPuTMsG.strip().startswith('/gali'):
-                            print('Processing /gali command')
-
-                            try:
-                                parts = inPuTMsG.strip().split(maxsplit=1)
-
-                                if len(parts) < 2:
-                                    error_msg = (
-                                        "[B][C][FF0000]❌ ERROR! Usage:\n"
-                                        "/gali <name>\n"
-                                        "Example: /gali hater"
-                                    )
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                    continue
-
-                                name = parts[1].strip()
-                                name_lower = name.lower()
-
-                                # BLOCK CHECK (substring, case-insensitive)
-                                blocked = False
-                                for blocked_name in BLOCKED_NAMES:
-                                    if blocked_name.lower() in name_lower:
-                                        blocked = True
-                                        break
-
-                                if blocked:
-                                    block_msg = "[B][C][FF0000]❌ This name is protected and cannot be targeted!"
-                                    await safe_send_message(response.Data.chat_type, block_msg, uid, chat_id, key, iv)
-                                    continue
-
-                                # Example safe/funny messages
-                                messages = [
-                                    "{Name} খান🤫কির ছেলে !!",
-                                    "{Name} মাদার চো🤫দ, তোর মা🤫কে চু🤫দি !!",
-                                    "{Name} মাদার চো🤫দ, তোর মা🤫কে 5G স্পিডে চু🤫দি !!",
-                                    "{Name} বোকাচো🤫দা, তোর মা🤫কে কন🤫ডম লাগিয়ে চু🤫দি !!",
-                                    "{Name} বোকাচো🤫দা, তোর মা🤫কে প্রতিদিন ১০,০০০ টাকার সার্ভিস দেই !!",
-                                    "F🤫U🤫C🤫K {Name} !!",
-                                    "{Name} মাদার চো🤫দ, পো🤫দ মে🤫রে দিবো !!",
-                                    "{Name} মাদার চো🤫দ !!",
-                                    "{Name} খান🤫কি, আমি তোর বা🤫প !!",
-                                    "{Name} তোর মা🤫কে আমি চু🤫ই🤫দা তোরে জন্মায় ছি !!",
-                                    "{Name} বোকাচো🤫দা, খান🤫কির ছেলে !!",
-                                    "{Name} মাদার চো🤫দ, তোর মা🤫কে ১৮০ কি.মি. স্পিডে চু🤫দি !!",
-                                    "{Name} খা🤫ন🤫কির ছেলে বট, নুব🤫রা প্লেয়ার !!",
-                                    "বাংলাদেশের NO-1 বট PLAYER {Name}",
-                                    "{Name} জুতা চোর !!",
-                                    "{Name} মাদারচো🤫দ, ফ্রি ফায়ার খেলা বাদ দিয়ে লুডু খেল যা !!",
-                                    "{Name} যাই করিস, আমি তোর অব্বা এইডা কখনো ভুলিস না !!"
-        ]
-
-                                for msg in messages:
-                                    colored_message = f"[B][C]{get_random_color()} {msg.replace('{Name}', name.title())}"
-                                    await safe_send_message(response.Data.chat_type, colored_message, uid, chat_id, key, iv)
-                                    await asyncio.sleep(0.5)
-
-                            except Exception as e:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Something went wrong:\n{str(e)}"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                
-
-# PRAISA COMMAND (17 POSITIVE MESSAGES)
-                        if inPuTMsG.strip().startswith('/praisa'):
-                            print('Processing /praisa command')
-
-                            try:
-                                parts = inPuTMsG.strip().split(maxsplit=1)
-
-                                if len(parts) < 2:
-                                    error_msg = (
-                                        "[B][C][FF0000]❌ ERROR! Usage:\n"
-                                        "/praisa <name>\n"
-                                        "Example: /praisa Maruf"
-                                    )
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                else:
-                                    name = parts[1].strip()
-
-                                    messages = [
-                                        "🌟 {Name} তুমি সত্যিই অসাধারণ একজন মানুষ!",
-                                        "🔥 {Name} তোমার পরিশ্রম একদিন বড় সফলতা এনে দেবে!",
-                                        "💎 {Name} তুমি ইউনিক, তোমার মতো আর কেউ নেই!",
-                                        "🚀 {Name} তোমার ভবিষ্যৎ অনেক উজ্জ্বল!",
-                                        "👑 {Name} তুমি একজন লিডার হওয়ার যোগ্য!",
-                                        "🌈 {Name} তোমার হাসি সবার দিন সুন্দর করে দেয়!",
-                                        "💖 {Name} সবসময় এমন পজিটিভ থাকো!",
-                                        "🏆 {Name} তুমি যা চাও তা অর্জন করার ক্ষমতা তোমার আছে!",
-                                        "✨ {Name} তুমি অনুপ্রেরণার উৎস!",
-                                        "🌟 {Name} নিজের উপর বিশ্বাস রাখো, তুমি পারবে!",
-                                        "🎯 {Name} তোমার ফোকাসই তোমার শক্তি!",
-                                        "📈 {Name} তুমি প্রতিদিন আরও ভালো হচ্ছো!",
-                                        "🧠 {Name} তোমার চিন্তাভাবনা সত্যিই প্রশংসনীয়!",
-                                        "💫 {Name} তুমি অনেক দূর যাবে ইনশা🤫আ🤫ল্লা🤫হ!",
-                                        "🌍 {Name} পৃথিবী তোমার ট্যালেন্ট দেখার অপেক্ষায়!",
-                                        "🛡️ {Name} তুমি শক্ত, আত্মবিশ্বাসী ও সাহসী!",
-                                        "🏅 {Name} তুমি সত্যিকারের চ্যাম্পিয়ন!"
-                                    ]
-
-                                    for msg in messages:
-                                        colored_message = f"[B][C]{get_random_color()} {msg.replace('{Name}', name.title())}"
-                                        await safe_send_message(response.Data.chat_type, colored_message, uid, chat_id, key, iv)
-                                        await asyncio.sleep(0.5)
-
-                            except Exception as e:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Something went wrong:\n{str(e)}"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-
-                        # Then in the /love command handler, add this check:
-                        if inPuTMsG.strip().startswith('/love '):
-                            print('Processing /love command')
-
-                            try:
-                                parts = inPuTMsG.strip().split(maxsplit=1)
-
-                                if len(parts) < 2:
-                                    error_msg = (
-                                        "[B][C][FF0000]❌ ERROR! Usage:\n"
-                                        "/love <name>\n"
-                                        "Example: /love hater"
-                                    )
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                else:
-                                    name = parts[1].strip()
-            
-                                    # ADD THIS CHECK - Prevent targeting yourself
-                                    if name.lower() in [n.lower() for n in BLOCKED_NAMES]:
-                                        error_msg = (
-                                            f"[B][C][FF0000]⚠️ WARNING!\n"
-                                            f"[FFFFFF]You cannot target '{name}'!\n"
-                                            f"[FF0000]Bot owner protected! ⛔\n"
-                                            f"[FFFFFF]Try another name."
-                                        )
-                                        await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                        continue
-            
-                                    # Rest of your code continues here...
-                                    messages = [
-                                        "{Name} আমি শুধু তোমাকেই ভালোবাসি ♡",
-    "{Name} তুমি আমার সবকিছু ♡",
-    "{Name} তোমার জন্য আমার হৃদয় সবসময় ধড়ফড় করে ♡",
-    "{Name} তুমি আমার জীবনের আলো ♡️",
-    "{Name} তুমি আমার জীবনের সবচেয়ে বড় সুখ ♡",
-    "{Name} তুমি আমার হৃদয়ের সবচেয়ে কাছের মানুষ ♡",
-    "{Name} তুমি আমার স্বপ্নের মানুষ ♡",
-    "{Name} তোমার মতো মানুষ খুব কমই দেখা যায়",
-    "{Name} তোমাকে ছাড়া আমার দিন কাটে না ♡",
-    "{Name} তুমি আমার স্বপ্নের মানুষ ♡",
-    "{Name} আমি সবসময় তোমার পাশে থাকতে চাই ♡",
-    "{Name} আমি তোমাকে ভালোবাসি ♡",
-    "{Name} তোমাকে ছাড়া আমার জীবন অসম্পূর্ণ ♡",
-    "{Name} তোমার হাসি আমার পৃথিবী আলোকিত করে ♡♡",
-    "{Name} I LOVE YOU ♡",
-    "{Name} তুমি আমার জান ♡",
-    "{Name} I LOVE YOU JAN ♡"
-                                            ]
-
-                                    # Send each message one by one with random color
-                                    for msg in messages:
-                                        colored_message = f"[B][C][00FFFF] {msg.replace('{Name}', name.upper())}"
-                                        await safe_send_message(response.Data.chat_type, colored_message, uid, chat_id, key, iv)
-                                        await asyncio.sleep(2)
-
-                            except Exception as e:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Something went wrong:\n{str(e)}"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-
-                        if inPuTMsG.strip() == "/luck":
-                            # Process /luck command in any chat type
-                            admin_message = """
-[C][B][00FFFF]╔══════════╗
-║  ╭─────────────────╮
-║  │ [FFFF00] ভাগ্য পরীক্ষা কেন্দ্র  
-║  ╰─────────────────╯
-║                         
-║ [FF0000] আজ তুমি এয়ারড্রপ লুট
-║  করতে গিয়ে AWM পাবে! 
-║                                       
-║ ────────────── 
-║                                       
-║ ⚡ [FF00FF] God Blaze VIP BOT ⚡   
-╚═════════════╝"""
-                            await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
-
-
-
-
                         # Add this with your other command handlers in the TcPChaT function
 
                         # EVO CYCLE START COMMAND - @evos
@@ -9910,10 +9721,9 @@ Modified by - God Blaze
 3🤫4🤫. Old V Badge Join [FFFF00]/s4 [uid]
 3🤫5🤫. Pro Badge Join [00AAFF]/s5 [uid]
 3🤫6🤫. All Badge Join [FF0000]/spam [uid]
-3🤫7🤫. Gali Friend [00CCFF]/gali [name]
-3🤫8🤫. Private Message [FFFF00]/dm [msg]
-3🤫9🤫. Equip Bundle [FF0000]/bundle [name]
-4🤫0🤫. Admin Mode On [00CCFF]/adon
+3🤫7🤫. Private Message [FFFF00]/dm [msg]
+3🤫8🤫. Equip Bundle [FF0000]/bundle [name]
+3🤫9🤫. Admin Mode On [00CCFF]/adon
     """
                             await safe_send_message(response.Data.chat_type, help_4, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)
@@ -10190,12 +10000,10 @@ async def MaiiiinE():
 
 
 if __name__ == '__main__':
-    # সব এপিআই সার্ভার ব্যাকগ্রাউন্ডে চালু করুন
     api_processes = start_api_servers()
     try:
         asyncio.run(StarTinG())
     finally:
-        # বট বন্ধ হলে এপিআই সার্ভারগুলোও বন্ধ করুন
         for proc in api_processes:
             proc.terminate()
     
