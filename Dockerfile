@@ -14,7 +14,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Debug: Verify API folder and files are copied
-RUN ls -la && echo "=== API folder contents ===" && ls -la API/
-
 CMD ["python", "-u", "main.py"]
