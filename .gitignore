@@ -17,12 +17,6 @@ env/
 ENV/
 .venv
 
-# Credentials & Tokens
-token.json
-God_Blaze.txt
-*.txt
-!requirements.txt
-
 # Cache & Temporary Files
 *.pkl
 status_cache.pkl
@@ -47,13 +41,3 @@ desktop.ini
 *.pem
 *.env
 .env
-
-# Protobuf files (keep in repo, needed for bot)
-# Do NOT exclude API/*_pb2.py
-
-# Compiled protobuf
-*_pb2.py
-!God_Blaze/*_pb2.py
-
-# JSON configs (except emotes.json)
-!emotes.json
