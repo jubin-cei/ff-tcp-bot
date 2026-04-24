@@ -2,95 +2,70 @@
 
 A Free Fire TCP bot for automated gameplay interactions.
 
-## Requirements
+## Features
 
-- Python 3.8 or higher
-- Windows/Linux/MacOS
+- 60+ in-game commands
+- Automated friend/squad interactions
+- Chat automation
+- Auto-reconnect on disconnect
+- Docker support with auto-updates
 
-## Installation
+## Quick Start
 
-### 1. Install Python Dependencies
+### Local Development
 
 ```bash
 pip install -r requirements.txt
+python main.py
 ```
 
-### 2. Configure Credentials
+### Docker
 
-Edit `God_Blaze.txt` with your Free Fire account details:
+```bash
+# Build and run locally
+docker-compose up -d
+
+# Use pre-built image from GitHub Container Registry
+# 1. Edit docker-compose.auto-update.yml and replace YOUR_GITHUB_USERNAME
+# 2. Run:
+docker-compose -f docker-compose.auto-update.yml up -d
+```
+
+## Configuration
+
+Edit `God_Blaze.txt` with your credentials:
 
 ```
 uid=YOUR_UID_HERE
 password=YOUR_ENCRYPTED_PASSWORD_HERE
 ```
 
-**Note:** The password should be AES-encrypted. Use the existing format as reference.
+## GitHub Actions Setup
 
-## Running the Bot
+1. Push code to GitHub
+2. Workflow builds Docker image automatically
+3. Image pushed to GitHub Container Registry (ghcr.io)
+4. Watchtower auto-updates your deployment
 
-### Option 1: Direct Run
+**Make package public:**
 
-```bash
-python main.py
+- Go to GitHub profile → Packages → god-blaze-bot
+- Package settings → Change visibility → Public
+
+## Deploy to Claw Cloud
+
+```yaml
+services:
+  god-blaze-bot:
+    image: ghcr.io/YOUR_USERNAME/god-blaze-bot:latest
+    restart: unless-stopped
+    volumes:
+      - ./God_Blaze.txt:/app/God_Blaze.txt:ro
+      - ./token.json:/app/token.json
 ```
-
-### Option 2: Using Virtual Environment (Recommended)
-
-**Windows:**
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-python main.py
-```
-
-**Linux/MacOS:**
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python main.py
-```
-
-## Features
-
-The bot supports various commands for Free Fire interactions:
-
-- Message automation
-- Squad chat features
-- Room management
-- Badge customization
-- Title management
-- Guild information retrieval
-- Player statistics
-- And more...
-
-## Commands
-
-Once the bot is running and connected, you can use various commands in the Free Fire chat. Admin commands are restricted to whitelisted UIDs.
-
-## Important Notes
-
-- Keep your credentials secure (God_Blaze.txt is excluded from git)
-- Token refresh happens automatically every 5 hours
-- The bot connects to Free Fire servers based on your region
-- Ensure stable internet connection for best performance
 
 ## Troubleshooting
 
-**Import Errors:**
-
-- Make sure all dependencies are installed: `pip install -r requirements.txt`
-
-**Connection Issues:**
-
-- Check your internet connection
-- Verify credentials in God_Blaze.txt
-- Ensure Free Fire servers are accessible
-
-**Module Not Found:**
-
-- Activate virtual environment if using one
-- Reinstall dependencies: `pip install -r requirements.txt --force-reinstall`
+- **Import Errors:** `pip install -r requirements.txt`
+- **Connection Issues:** Check credentials in God_Blaze.txt
+- **Module Not Found:** Reinstall dependencies

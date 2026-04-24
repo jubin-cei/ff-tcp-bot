@@ -48,6 +48,9 @@ desktop.ini
 *.env
 .env
 
+# Protobuf files (keep in repo, needed for bot)
+# Do NOT exclude API/*_pb2.py
+
 # Compiled protobuf
 *_pb2.py
 !God_Blaze/*_pb2.py
