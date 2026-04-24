@@ -147,7 +147,7 @@ async def send_room_chat_enhanced(Msg, room_id, key, iv, region):
             5: int(datetime.now().timestamp()),  # Current timestamp
             7: 2,
             9: {
-                1: "God Blaze",  # Your bot name
+                1: "RIJEXX",  # Your bot name
                 2: int(await xBunnEr()),  # Avatar from your system
                 4: 228,  # Rank/level from leaked packet
                 7: 1,    # Unknown
@@ -164,7 +164,7 @@ async def send_room_chat_enhanced(Msg, room_id, key, iv, region):
     return await GeneRaTePk(packet, '1215', key, iv)
 
 async def xSEndMsg(Msg , Tp , Tp2 , id , K , V):
-    feilds = {1: id , 2: Tp2 , 3: Tp, 4: Msg, 5: 1735129800, 7: 2, 9: {1: "[FFFFFF]God Blaze", 2: int(await xBunnEr()), 3: 901048020, 4: 330, 5: 1001000001, 8: "God Blaze", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 12484827014, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}, 12: 0}, 10: "en", 13: {3: 1}}    
+    feilds = {1: id , 2: Tp2 , 3: Tp, 4: Msg, 5: 1735129800, 7: 2, 9: {1: "[FFFFFF]BLACK", 2: int(await xBunnEr()), 3: 901048020, 4: 330, 5: 1001000001, 8: "xBesTo - C4", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 12484827014, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}, 12: 0}, 10: "en", 13: {3: 1}}    
     Pk = (await CrEaTe_ProTo(feilds)).hex()
     Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
     return await GeneRaTePk(Pk, '1201', K, V)
@@ -183,7 +183,7 @@ async def xSEndMsgsQ(Msg , id , K , V, region="BD"):
         7: 2, 
         8: 904990072, 
         9: {
-            1: "[FFFFFF]God Blaze",
+            1: "[FFFFFF]BLACK",
             2: avatar, 
             3: 2,
             4: 329, 
@@ -582,7 +582,7 @@ async def ArohiRefuse(owner,uid, K,V):
         1: int(owner),
         2: 1,
         3: int(uid),
-        4: "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]God Blaze [00FF00]BOT ! \n[FFFF00]NEW VERSION NEW FEATURES !\n[FF0000]ENJOY THE GAME!\n\n"
+        4: "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]REDZED [00FF00] AROHI BOT ! \n[FFFF00]NEW VERSION NEW FUNCTION !\n[FF0000]TELEGRAM : @classic_arohi\n\n"
     }
     }
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , '0515' , K , V)
@@ -737,7 +737,7 @@ async def send_room_chat_enhanced(Msg, room_id, key, iv, region):
             5: int(datetime.now().timestamp()),  # Current timestamp
             7: 2,
             9: {
-                1: "God Blaze",  # Your bot name
+                1: "RIJEXX",  # Your bot name
                 2: int(await xBunnEr()),  # Avatar from your system
                 4: 228,  # Rank/level from leaked packet
                 7: 1,    # Unknown
@@ -754,7 +754,7 @@ async def send_room_chat_enhanced(Msg, room_id, key, iv, region):
     return await GeneRaTePk(packet, '1215', key, iv)
 
 async def xSEndMsg(Msg , Tp , Tp2 , id , K , V):
-    feilds = {1: id , 2: Tp2 , 3: Tp, 4: Msg, 5: 1735129800, 7: 2, 9: {1: "[FFFFFF]God Blaze", 2: int(await xBunnEr()), 3: 901048020, 4: 330, 5: 1001000001, 8: "God Blaze", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 12484827014, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}, 12: 0}, 10: "en", 13: {3: 1}}    
+    feilds = {1: id , 2: Tp2 , 3: Tp, 4: Msg, 5: 1735129800, 7: 2, 9: {1: "[FFFFFF]BLACK", 2: int(await xBunnEr()), 3: 901048020, 4: 330, 5: 1001000001, 8: "xBesTo - C4", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 12484827014, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0013\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}, 12: 0}, 10: "en", 13: {3: 1}}    
     Pk = (await CrEaTe_ProTo(feilds)).hex()
     Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
     return await GeneRaTePk(Pk, '1201', K, V)
@@ -773,7 +773,7 @@ async def xSEndMsgsQ(Msg , id , K , V, region="BD"):
         7: 2, 
         8: 904990072, 
         9: {
-            1: "[FFFFFF]God Blaze",
+            1: "[FFFFFF]BLACK",
             2: avatar, 
             3: 2,
             4: 329, 
@@ -1172,7 +1172,7 @@ async def ArohiRefuse(owner,uid, K,V):
         1: int(owner),
         2: 1,
         3: int(uid),
-        4: "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]God Blaze [00FF00]BOT ! \n[FFFF00]NEW VERSION NEW FEATURES !\n[FF0000]ENJOY THE GAME!\n\n"
+        4: "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]REDZED [00FF00] AROHI BOT ! \n[FFFF00]NEW VERSION NEW FUNCTION !\n[FF0000]TELEGRAM : @classic_arohi\n\n"
     }
     }
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , '0515' , K , V)
