@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  ff-tcp-bot:
+    build: .
+    container_name: ff-tcp-bot
+    restart: unless-stopped
+    volumes:
+      - ./token.json:/app/token.json:ro
+    working_dir: /app
+    command: ["python", "-u", "main.py"]
