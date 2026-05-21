@@ -1,4 +1,4 @@
-﻿# ======================== IMPORTS =======================
+# ======================== IMPORTS =======================
 import requests , os , psutil , jwt , pickle , json , binascii , time , urllib3 , base64 , datetime , re , socket , threading , ssl , pytz , aiohttp , traceback , signal , multiprocessing , asyncio
 import DEcwHisPErMsG_pb2 , MajoRLoGinrEs_pb2 , PorTs_pb2 , MajoRLoGinrEq_pb2 , sQ_pb2 , Team_msg_pb2, RemoveFriend_Req_pb2, GetFriend_Res_pb2, spam_request_pb2, devxt_count_pb2, dev_generator_pb2, kyro_title_pb2, room_join_pb2
 from protobuf_decoder.protobuf_decoder import Parser
@@ -65,10 +65,12 @@ WAIT_AFTER_MATCH_SECONDS = 20
 START_SPAM_DELAY = 0.2       
 region = 'IN'
 WHITELISTED_UIDS = {
-    "537512413"
+    "537512413",
+    "1136824736"
 }
 # ADMIN INFO FUNCTION FOR ADMIN COMMAND 
 ADMIN_UID = "537512413"
+ADMIN_UID_2 = "1136824736"
 server2 = "BD"
 key2 = "mg24"
 BYPASS_TOKEN = "your_bypass_token_here"
@@ -141,7 +143,7 @@ BADGE_VALUES = {
 
 # Admin Functions
 def is_admin(uid):
-    return str(uid) == ADMIN_UID
+    return str(uid) == ADMIN_UID or str(uid) == ADMIN_UID_2
 
 # Mute Functions 
 def is_off():
@@ -337,16 +339,16 @@ import requests
 import json
 
 def load_jwt_token():
-    """Load token from token.json"""
+    """Load token from /tmp/token.json"""
     try:
-        with open("token.json", "r") as f:
+        with open("/tmp/token.json", "r") as f:
             data = json.load(f)
         token = data.get("token")
         if token:
             print(f"✅ Loaded token: {token[:20]}...")
             return token
         else:
-            print("❌ No token found in token.json")
+            print("❌ No token found in /tmp/token.json")
             return None
     except Exception as e:
         print(f"❌ Error loading token: {e}")
@@ -5954,7 +5956,7 @@ async def send_friend_request_async(target_uid: str, count: int = 1) -> dict:
     """
     try:
         if count == 1:
-            # Single request using token.json
+            # Single request using /tmp/token.json
             token = load_jwt_token()
             if not token:
                 return {"success": 0, "failed": 1, "error": "No token found"}
@@ -6219,12 +6221,12 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         def get_random_color(): return "_" 
-                        message = """[B][C][FF0000]█▓▒░░ WELCOME TO God Blaze BOT ░░▒▓█
-[00FF00]»»————-　★　————-««
-[FFFFFF]⚡ BOT POWERED BY:[FF0000] God Blaze 
-[FFFFFF]🎯 STATUS: [00FF00]ACTIVE 24/7
-[00FF00]»»————-　★　————-««
-[FF0000]█▓▒░░ ENJOY THE BOT! ░░▒▓█"""
+                        message = """[B][C][00FFFF]✦ GOD BLAZE BOT ✦
+[FFFFFF]━━━━━━━━━━━━━━━━━━
+[00FF00]⚡ Status: Online 24/7
+[FFD700]👑 Developer: God Blaze
+[FFFFFF]━━━━━━━━━━━━━━━━━━
+[FF00FF]Type /help for commands!"""
                         # In your auto-join (Old Handler) code, find this line:
 
                         P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
@@ -6249,12 +6251,12 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                 if senthi == True:
                     
                     def get_random_color(): return "_" 
-                    message = """[B][C][FF0000]█▓▒░░ WELCOME TO God Blaze BOT ░░▒▓█
-[00FF00]»»————-　★　————-««
-[FFFFFF]⚡ BOT POWERED BY:[FF0000] God Blaze
-[FFFFFF]🎯 STATUS: [00FF00]ACTIVE 24/7
-[00FF00]»»————-　★　————-««
-[FF0000]█▓▒░░ ENJOY THE BOT! ░░▒▓█"""
+                    message = """[B][C][00FFFF]✦ GOD BLAZE BOT ✦
+[FFFFFF]━━━━━━━━━━━━━━━━━━
+[00FF00]⚡ Status: Online 24/7
+[FFD700]👑 Developer: God Blaze
+[FFFFFF]━━━━━━━━━━━━━━━━━━
+[FF00FF]Type /help for commands!"""
                         # In your auto-join (Old Handler) code, find this line:
 
                     P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
@@ -9093,10 +9095,10 @@ async def MaiiiinE():
             "source": "main.py_bot_login"
         }
         
-        with open("token.json", "w") as f:
+        with open("/tmp/token.json", "w") as f:
             json.dump(token_data, f, indent=2)
         
-        print("✅ Token saved to token.json")
+        print("✅ Token saved to /tmp/token.json")
         print(f"📝 Token info: Region={region}, UID={Uid}")
         
     except Exception as e:
@@ -9219,17 +9221,17 @@ async def MaiiiinE():
         print(f"⚠️ Cache file write test: {e}")
     
     # Check token.json exists
-    if os.path.exists("token.json"):
-        print("✅ token.json file exists")
+    if os.path.exists("/tmp/token.json"):
+        print("✅ /tmp/token.json file exists")
         try:
-            with open("token.json", "r") as f:
+            with open("/tmp/token.json", "r") as f:
                 token_info = json.load(f)
             age = time.time() - token_info.get('saved_at', 0)
             print(f"✅ Token age: {age:.1f} seconds")
         except:
-            print("⚠️ Could not read token.json")
+            print("⚠️ Could not read /tmp/token.json")
     else:
-        print("❌ token.json not found!")
+        print("❌ /tmp/token.json not found!")
     
     print("\n🎯 Bot is now running...")
     print("📡 Listening for commands and invitations")
