@@ -1,8 +1,9 @@
 version: '3.8'
 services:
-  ff-tcp-bot:
+  ff-bot:
     build: .
-    container_name: ff-tcp-bot
+    image: ff-bot
+    container_name: ff-bot
     restart: unless-stopped
     volumes:
       - ./token.json:/app/token.json:ro
