@@ -2551,7 +2551,7 @@ async def Create_xr_room_packet_fixed__(room_id, key, iv):
             5: int(time.time()),  # Current timestamp, not hardcoded
             7: 2,
             9: {
-                1: "XR SUPER ",
+                1: "God Blaze",
                 2: bunner_(),   
                 4: 228,
                 7: 1,
