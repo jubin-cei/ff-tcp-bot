@@ -1005,7 +1005,7 @@ async def create_detailed_start_packet(key, iv, region="IND"):
     print(f"✅ Detailed start match packet created")
     return final_packet
         
-async def generate_guest_accounts(count=1, name="BlackApis", password_prefix="FF"):
+async def generate_guest_accounts(count=1, name="GodBlaze", password_prefix="FF"):
     """Generate guest accounts using the API"""
     api_url = f"https://gen-by-black-api.vercel.app/generate?name={name}&password_prefix={password_prefix}"
     
@@ -1105,7 +1105,7 @@ def save_guest_accounts(accounts, filename="guest_accounts.json"):
         print(f"❌ Error saving accounts: {e}")
         return False
 
-async def generate_and_save_accounts(count, name="BlackApis", password_prefix="FF"):
+async def generate_and_save_accounts(count, name="GodBlaze", password_prefix="FF"):
     """Generate and save accounts with progress updates"""
     start_time = time.time()
     
@@ -2532,7 +2532,7 @@ def get_random_avatar():
 	return  random_avatar
 
 async def xSEndMsgsQQ(Msg , id , K , V):
-    fields = {1: id , 2: id , 4: Msg , 5: 1756580149, 7: 2, 8: 904990072, 9: {1: "xBe4!sTo - C4", 2: int(get_random_avatar()), 4: 330, 5: 1001000001, 8: "xBe4!sTo - C4", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 1158053040, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0015\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}}, 10: "en", 13: {2: 2, 3: 1}}
+    fields = {1: id , 2: id , 4: Msg , 5: 1756580149, 7: 2, 8: 904990072, 9: {1: "God Blaze", 2: int(get_random_avatar()), 4: 330, 5: 1001000001, 8: "God Blaze", 10: 1, 11: 1, 13: {1: 2}, 14: {1: 1158053040, 2: 8, 3: "\u0010\u0015\b\n\u000b\u0015\f\u000f\u0011\u0004\u0007\u0002\u0003\r\u000e\u0012\u0001\u0005\u0006"}}, 10: "en", 13: {2: 2, 3: 1}}
     Pk = (await CrEaTe_ProTo(fields)).hex()
     Pk = "080112" + await EnC_Uid(len(Pk) // 2, Tp='Uid') + Pk
     return await GeneRaTePk(Pk, '1201', K, V)     
@@ -2741,7 +2741,7 @@ async def send_msg_in_room_async(Msg, room_id, key, iv):
             7: 2,
             8: f'{{"StickerStr" : "{sticker_value}", "type":"Sticker"}}',
             9: {
-                1: "byte bot",
+                1: "God Blaze",
                 2: int(await xBunnEr()),  # Changed to your function
                 4: 329,
                 7: 1,
@@ -6973,7 +6973,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     await safe_send_message(response.Data.chat_type, room_msg, uid, chat_id, key, iv)
             
                                     # Create spam packet
-                                    spam_packet = await Room_Spam(target_uid, room_id, "BLACK_APIS", key, iv)
+                                    spam_packet = await Room_Spam(target_uid, room_id, "God Blaze", key, iv)
             
                                     # Send 2000 spam packets rapidly (like your other TCP)
                                     spam_count = 3000
