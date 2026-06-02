@@ -442,7 +442,7 @@ def titles():
     
 def create_credentials_template():
     """Create a template credentials file"""
-    template = """# NoTmeowL Free Fire Bot Credentials
+    template = """# God Blaze Free Fire Bot Credentials
 # Fill in your Free Fire account credentials below
 
 # Format 1: Comma-separated (RECOMMENDED)
@@ -455,7 +455,7 @@ uid=YOUR_UID,password=YOUR_PASSWORD
 # Save this file and restart the bot
 """
     
-    filename = "jishan.txt"
+    filename = "God_Blaze.txt"
     if not os.path.exists(filename):
         with open(filename, 'w', encoding='utf-8') as f:
             f.write(template)
@@ -740,7 +740,7 @@ def start_autooo(self):
     except exception as e:
         print(e)
 
-def load_credentials_from_file(filename="jishan.txt"):
+def load_credentials_from_file(filename="God_Blaze.txt"):
     """
     Load UID and password from _Apis.txt file
     """
@@ -7065,7 +7065,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                 await safe_send_message(response.Data.chat_type, initial_msg, uid, chat_id, key, iv)
         
                                 # FIXED: Handle credentials properly
-                                credentials = load_credentials_from_file("jishan.txt")
+                                credentials = load_credentials_from_file("God_Blaze.txt")
                                 if not credentials:
                                     error_msg = f"[B][C][FF0000]❌ Failed to load credentials from file!\n"
                                     await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
@@ -10599,7 +10599,7 @@ LOVE CITY ON FIRE GUILD
 
 async def MaiiiinE():
     # Load credentials from file
-    credentials = load_credentials_from_file("jishan.txt")
+    credentials = load_credentials_from_file("God_Blaze.txt")
     
     if not credentials:
         print("📝 Format: uid=YOUR_UID,password=YOUR_PASSWORD")
