@@ -104,10 +104,13 @@ WAIT_AFTER_MATCH_SECONDS = 20
 START_SPAM_DELAY = 0.2       
 region = 'BD'
 WHITELISTED_UIDS = {
-    "2270928791"  
+    "537512413",
+    "1136824736"
 }
 WHITELIST_ONLY = True  
-BOT_OWNER_UID = 11686472351  
+ADMIN_UID = "537512413"
+ADMIN_UID_2 = "1136824736"
+BOT_OWNER_UID = 537512413  
 PLAYER_NAME_CACHE = {}  
 freeze_running = False
 freeze_task = None
@@ -4589,7 +4592,7 @@ def remove_from_whitelist(uid_to_remove):
     uid_str = str(uid_to_remove)
     
     # Don't allow removing owner
-    if uid_str == "2270928791":  # Your UID
+    if uid_str in ("537512413", "1136824736"):  # Your UID
         return False, "Cannot remove bot owner from whitelist!"
     
     if uid_str not in WHITELISTED_UIDS:
@@ -7450,7 +7453,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             target_uid = parts[1]
     
                             # Check owner
-                            if str(response.Data.uid) != "2270928791":
+                            if str(response.Data.uid) not in ("537512413", "1136824736"):
                                 error_msg = f"[B][C][FF0000]❌ Only bot owner can remove from whitelist!\n"
                                 await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
                                 return
@@ -7521,7 +7524,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                 note = ' '.join(parts[2:])
     
                             # Check if sender is owner
-                            if str(response.Data.uid) != "8995959620":  # Replace with your actual UID
+                            if str(response.Data.uid) not in ("537512413", "1136824736"):  # Replace with your actual UID
                                 error_msg = f"[B][C][FF0000]❌ Only bot owner can add to whitelist!\n"
                                 await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
                                 return
@@ -7565,7 +7568,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             print('Processing whitelist view command')
     
                             # Check if owner
-                            if str(response.Data.uid) != "8995959620":  # Your UID
+                            if str(response.Data.uid) not in ("537512413", "1136824736"):  # Your UID
                                 error_msg = f"[B][C][FF0000]❌ Only bot owner can view whitelist!\n"
                                 await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
                                 return
@@ -7579,14 +7582,15 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 🔓 Whitelist enabled: {'YES' if WHITELIST_ONLY else 'NO'}
 
 👑 Owner (always allowed):
-• 8995959620
+• 537512413
+• 1136824736
 
 👥 Whitelisted UIDs:"""
     
                             # Add first 20 UIDs (to avoid message too long)
                             count = 0
                             for uid in WHITELISTED_UIDS:
-                                if uid != "8995959620":  # Skip owner since already shown
+                                if uid not in ("537512413", "1136824736"):  # Skip owner since already shown
                                     whitelist_msg += f"\n• {uid}"
                                     count += 1
                                     if count >= 20:
@@ -8094,7 +8098,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 [FFFFFF]           AND THANKS FOR YOUR SUPPORT❤️ 
 [FF0000]╠═════════════╣
 [FFD700] ⚡ OWNER REAL NAME : [FFFFFF]DEV YT
-[FFD700]   OWNER ID UID 6066370545
+[FFD700]   OWNER ID UID 537512413 / 1136824736
 
 
 [FFD700] ✨ কেউ GUILD BOT [FF0000]কিনতে চাইলে message করবেন, [00FFFF] Telegram: @dev_yt_44
