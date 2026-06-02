@@ -4182,7 +4182,7 @@ def get_random_sticker():
 
     return f"[1={pack_id}-{sticker_no}]"
         
-async def send_sticker(target_uid, chat_id, key, iv, nickname="BLACK"):
+async def send_sticker(target_uid, chat_id, key, iv, nickname="God Blaze"):
     """Send Random Sticker using /sticker command"""
     try:
         sticker_value = get_random_sticker()
