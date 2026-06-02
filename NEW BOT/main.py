@@ -909,11 +909,11 @@ What happens:
             success_msg = f"""[B][C][FFFF00]✅ BOT JOIN REQUEST SENT!
 
 🎯 Target: {target_uid}
-🤖 Bot Name: NoTmeowL
+🤖 Bot Name: God Blaze
 ✅ Status: Ready to join
 
 📱 Player will see:
-"NoTmeowL wants to join your team"
+"God Blaze wants to join your team"
 
 ✅ When player clicks ACCEPT:
 Bot will automatically join player's team!
@@ -1935,7 +1935,7 @@ async def Room_Spam(Uid, Rm, Nm, K, V):
         1: 78,
         2: {
             1: int(Rm),  
-            2: "iG:[C][B][FF0000]NoTmeowL",  
+            2: "iG:[C][B][FF0000]God Blaze",  
             3: {
                 2: 1,
                 3: 1
@@ -3992,7 +3992,7 @@ async def evo_custom_emote_spam(uids, number, times, key, iv, region):
     return True, f"Completed custom evolution emote spam {count} times"
 
 async def RejectMSGtaxt(squad_owner,uid, key, iv):
-    random_banner = f"""[C][B][00FF00]WELCOME_TO_DEV_YT_BOT"""
+    random_banner = f"""[C][B][00FF00]WELCOME_TO_GOD_BLAZE_BOT"""
     fields = {
     1: 5,
     2: {
@@ -4060,7 +4060,7 @@ async def new_lag(key , iv):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex() , '0515' , key , iv)
 
 
-async def convert_kyro_to_your_system(target_uid, chat_id, key, iv, nickname="NoTmeowL", title_id=None):
+async def convert_kyro_to_your_system(target_uid, chat_id, key, iv, nickname="God Blaze", title_id=None):
     """EXACT conversion with customizable title ID"""
     try:
         # Use provided title_id or get random one
@@ -4240,7 +4240,7 @@ async def send_sticker(target_uid, chat_id, key, iv, nickname="BLACK"):
         return None
 
 # Alternative: DIRECT port of your friend's function but with your UID
-async def send_kyro_title_adapted(chat_id, key, iv, target_uid, nickname="NoTmeowL"):
+async def send_kyro_title_adapted(chat_id, key, iv, target_uid, nickname="God Blaze"):
     """Direct adaptation of your friend's working function"""
     try:
         # Import your proto file (make sure it's in the same directory)
@@ -4301,7 +4301,7 @@ async def send_kyro_title_adapted(chat_id, key, iv, target_uid, nickname="NoTmeo
         import traceback
         traceback.print_exc()
         return None
-async def noob(target_uid, chat_id, key, iv, nickname="NoTmeowL", title_id=None):
+async def noob(target_uid, chat_id, key, iv, nickname="God Blaze", title_id=None):
     """EXACT conversion with customizable title ID"""
     try:
         # Use provided title_id or get random one
@@ -4412,7 +4412,7 @@ async def send_all_titles_sequentiallly(uid, chat_id, key, iv, region, chat_type
             # Send the actual title using your existing method
             # You'll need to use your existing title sending logic here
             # For example:
-            title_packet = await noob(uid, chat_id, key, iv, nickname="NoTmeowL", title_id=title_id)
+            title_packet = await noob(uid, chat_id, key, iv, nickname="God Blaze", title_id=title_id)
             
             if title_packet and whisper_writer:
                 whisper_writer.write(title_packet)
@@ -5584,7 +5584,7 @@ async def RedZed_SendInv(bot_uid, uid, key, iv):
                 2: "IND", 
                 3: 1, 
                 4: 1, 
-                6: "RedZedKing!!", 
+                6: "God Blaze", 
                 7: 330, 
                 8: 1000, 
                 9: 100, 
@@ -6436,7 +6436,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 print(f"🚫 Bot is private! Ignoring invite from {squad_owner}")
                                  # Send quick reject message
                                 bot_uid = 15494771540
-                                message_text = f" Can't accept Your request Talk to BLACK666"
+                                message_text = f" Can't accept Your request Talk to God Blaze"
                                 private_msg_packet = await xSEndMsg(
                                     Msg=message_text,
                                     Tp=2,  # 2 = Private message
@@ -6537,7 +6537,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         def get_random_color(): return "_" 
-                        message = """WELCOME DEV YT"""
+                        message = """WELCOME God Blaze"""
                         # In your auto-join (Old Handler) code, find this line:
 
                         P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
@@ -6562,7 +6562,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                 if senthi == True:
                     
                     def get_random_color(): return "_" 
-                    message = """WELCOME DEV BOT """
+                    message = """WELCOME God Blaze """
                         # In your auto-join (Old Handler) code, find this line:
 
                     P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
