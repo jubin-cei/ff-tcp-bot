@@ -1714,7 +1714,7 @@ async def request_join_with_badge(target_uid, badge_value, key, iv, region):
             3: 1,
             4: 1,
             5: bytes([1, 7, 9, 10, 11, 18, 25, 26, 32]),
-            6: "iG:[C][B][FF0000] MAHIR",
+            6: "iG:[C][B][FF0000] God Blaze",
             7: 330,
             8: 1000,
             10: region.upper(),
