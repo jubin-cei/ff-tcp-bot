@@ -8093,15 +8093,15 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             # Process /admin command in any chat type
                             admin_message = """
 [C][B][FF0000]╔═════════════╗
-[FFFFFF] ✨ TG= @dev_yt_44  
+[FFFFFF] ✨ God Blaze  
 [FFFFFF]      THANKS FOR USE MY BOT❤️   
 [FFFFFF]           AND THANKS FOR YOUR SUPPORT❤️ 
 [FF0000]╠═════════════╣
-[FFD700] ⚡ OWNER REAL NAME : [FFFFFF]DEV YT
+[FFD700] ⚡ OWNER REAL NAME : [FFFFFF]God Blaze
 [FFD700]   OWNER ID UID 537512413 / 1136824736
 
 
-[FFD700] ✨ কেউ GUILD BOT [FF0000]কিনতে চাইলে message করবেন, [00FFFF] Telegram: @dev_yt_44
+[FFD700] ✨ কেউ GUILD BOT [FF0000]কিনতে চাইলে message করবেন
 [FF0000]╠═════════════╣
 [FFD700] ✨ Developer —͟͞͞ dev yt
 [FFD700]╚═════════════╝"""
