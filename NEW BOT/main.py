@@ -1866,7 +1866,7 @@ async def auto_rings_emote_dual(uid, key, iv, region):
         rings_emote_id = 909049012
         
         # Get bot's UID
-        bot_uid = 13601801571
+        bot_uid = 15494771540
         
         # Send emote to SENDER (person who invited)
         emote_to_sender = await Emote_k(int(uid), rings_emote_id, key, iv, region)
@@ -5434,7 +5434,7 @@ async def auto_reply_with_emote(emote_info, key, iv):
     
     try:
         # Get bot's UID (you need to set this)
-        bot_uid = 14010319252  # Replace with your bot's actual UID
+        bot_uid = 15494771540  # Replace with your bot's actual UID
         
         sender_uid = emote_info['sender_uid']
         emote_id = emote_info['emote_id']
@@ -6158,7 +6158,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
     global online_writer, last_status_packet, status_response_cache, senthi
     global insquad, joining_team, whisper_writer, region
  
-    bot_uid = 14010319252
+    bot_uid = 15494771540
  
     if insquad is not None:
         insquad = None
@@ -6297,7 +6297,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
   
 
                         emote_id = 909049012
-                        bot_uid = 14009897329
+                        bot_uid = 15494771540
     
                         # 🎯 FIX: Check SQUAD_OWNER (person who clicked "invite")
                         if True:
@@ -6435,7 +6435,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             try:
                                 print(f"🚫 Bot is private! Ignoring invite from {squad_owner}")
                                  # Send quick reject message
-                                bot_uid = 14010319252
+                                bot_uid = 15494771540
                                 message_text = f" Can't accept Your request Talk to BLACK666"
                                 private_msg_packet = await xSEndMsg(
                                     Msg=message_text,
@@ -7461,7 +7461,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             success, message = remove_from_whitelist(target_uid)
     
                             if success:
-                                bot_uid = 14010319252
+                                bot_uid = 15494771540
         
                                 # Create the private message packet
                                 # Tp = 2 (Private message)
@@ -7534,7 +7534,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
     
                             # Send result
                             if success:
-                                bot_uid = 14010319252
+                                bot_uid = 15494771540
         
                                 # Create the private message packet
                                 # Tp = 2 (Private message)
@@ -7782,7 +7782,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
     
                             try:
                                 # Get bot's UID from login data
-                                bot_uid = 14010319252
+                                bot_uid = 15494771540
         
                                 # Create the private message packet
                                 # Tp = 2 (Private message)
