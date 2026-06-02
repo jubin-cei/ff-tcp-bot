@@ -14,7 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Ensure /tmp is writable for token.json
 RUN chmod 777 /tmp
 
 CMD ["python", "-u", "main.py"]

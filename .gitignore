@@ -41,3 +41,4 @@ desktop.ini
 *.pem
 *.env
 .env
+token.json
