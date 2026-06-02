@@ -1,6 +1,6 @@
 import requests , os , psutil , sys , jwt , pickle , json , binascii , time , urllib3 , base64 , datetime , re ,socket , threading
 from protobuf_decoder.protobuf_decoder import Parser
-from God_BlazexC4 import *
+from xC4 import *
 from datetime import datetime
 from google.protobuf.timestamp_pb2 import Timestamp
 from concurrent.futures import ThreadPoolExecutor
@@ -37,7 +37,7 @@ def equie_emote(JWT,url):
         "Content-Type": "application/x-www-form-urlencoded",
         "Expect": "100-continue",
         #"Host": "clientbp.ggblueshark.com",
-        "ReleaseVersion": "OB53",
+        "ReleaseVersion": "OB51",
         "User-Agent": "Dalvik/2.1.0 (Linux; U; Android 9; G011A Build/PI)",
         "X-GA": "v1 1",
         "X-Unity-Version": "2018.4.11f1",
@@ -74,7 +74,7 @@ def GeT_Name(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB53',
+        'ReleaseVersion': 'OB51',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -99,7 +99,7 @@ def GeT_PLayer_InFo(uid , Token):
     url = "https://clientbp.common.ggbluefox.com/GetPlayerPersonalShow"
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB53',
+        'ReleaseVersion': 'OB51',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {GeTToK()}',
@@ -146,7 +146,7 @@ def GeT_PLayer_InFo(uid , Token):
  Creating : {account_date}
  LasT LoGin : {last_login}
  
-  [90EE90]Dev : BLACK_APIs\n'''            
+  [90EE90]Dev : God Blaze\n'''            
             	a = a.replace('[i]','')
             	return a
             	  	            	            
@@ -174,7 +174,7 @@ def GeT_PLayer_InFo(uid , Token):
  Leader s'Uid : {xMsGFixinG(clan_leader)}
  Leader s'Name : {clan_leader_name}
 
-  [90EE90]Dev : BLACK_APIs\n'''	
+  [90EE90]Dev : God Blaze\n'''	
             	a = a.replace('[i]','')    
             	return a
                                        
@@ -188,7 +188,7 @@ def DeLet_Uid(id , Tok):
     url = 'https://clientbp.common.ggbluefox.com/RemoveFriend'
     headers = {
         'X-Unity-Version': '2018.4.11f1',
-        'ReleaseVersion': 'OB53',
+        'ReleaseVersion': 'OB51',
         'Content-Type': 'application/x-www-form-urlencoded',
         'X-GA': 'v1 1',
         'Authorization': f'Bearer {Tok}',
