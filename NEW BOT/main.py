@@ -8103,7 +8103,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
 [FFD700] ✨ কেউ GUILD BOT [FF0000]কিনতে চাইলে message করবেন
 [FF0000]╠═════════════╣
-[FFD700] ✨ Developer —͟͞͞ dev yt
+[FFD700] ✨ Developer: God Blaze —͟͞͞
 [FFD700]╚═════════════╝"""
                             await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
 
