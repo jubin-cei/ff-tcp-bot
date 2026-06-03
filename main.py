@@ -5952,23 +5952,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
                         Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
                         
-                        code_8 = CHaT_CoDe
-                        code_31 = packet_json.get("5", {}).get("data", {}).get("31", {}).get("data", "")
-                        if not code_31: code_31 = packet_json.get("31", {}).get("data", "")
-                        code_33 = packet_json.get("5", {}).get("data", {}).get("33", {}).get("data", "")
-                        if not code_33: code_33 = packet_json.get("33", {}).get("data", "")
-                        print(f"\033[93m[BRUTE FORCE]\033[0m Attempting combinations with Code 8, 31, 33...")
-                        for test_t in [0, 1, 3, 4]:
-                            for test_uid, uid_name in [(Bot_UiD, "Bot_UiD"), (OwNer_UiD, "OwNer_UiD")]:
-                                for test_code, code_name in [(code_8, "Code_8"), (code_31, "Code_31"), (code_33, "Code_33"), (Squad_ID, "Squad_ID")]:
-                                    if test_code:
-                                        print(f"\033[93m[BRUTE FORCE]\033[0m T={test_t}, UID={uid_name}, Code={code_name}")
-                                        p = await AutH_Chat(test_t, test_uid, test_code, key, iv)
-                                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
-                                        await asyncio.sleep(0.3)
-                        
-                        
-                        
+                        print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Room: {CHaT_CoDe}...")
+                        p = await AutH_Chat(4, Bot_UiD, CHaT_CoDe, key, iv)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
                         await asyncio.sleep(0.3)
                         msg1 = f"Welcome {Inviter_Name}!"
                         P1 = await SEndMsG(0, msg1, OwNer_UiD, OwNer_UiD, key, iv, region)
