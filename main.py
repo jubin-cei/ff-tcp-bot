@@ -93,7 +93,7 @@ last_status_packet = None
 insquad = None 
 joining_team = False 
 online_writer = None 
-subscribed_rooms = set()
+subscribed_rooms = []
 whisper_writer = None 
 last_bot_status_check = 0
 senthi = False
@@ -5595,7 +5595,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                             c = k_data.get("data", "")
                                             if c and c not in subscribed_rooms:
                                                 new_codes.append(c)
-                                                subscribed_rooms.add(c)
+                                                subscribed_rooms.append(c)
                                         
                                 if new_codes and OwNer_UiD:
                                     print(f"\033[92m[SUCCESS]\033[0m Universal Tracker discovered NEW Chat Rooms: {new_codes}. Subscribing with Owner UID: {OwNer_UiD}...")
@@ -6025,23 +6025,20 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         # This allows the Universal Tracker to actually receive the new room codes
                         # while we wait.
                         async def send_welcome():
-                            await asyncio.sleep(2.5)
+                            await asyncio.sleep(2.0)
                             
-                            target_rooms = [r for r in subscribed_rooms if isinstance(r, str) and "_" in r]
-                            if not target_rooms:
-                                target_rooms = [codes_to_join[0]] if codes_to_join else [CHaT_CoDe]
-                            
-                            target_chat_code = target_rooms[-1] if target_rooms else CHaT_CoDe
-                            
-                            print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name} on {target_chat_code}...")
-                            P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, target_chat_code, key, iv, region)
+                            # Using OwNer_UiD as the chat_id is the foolproof method from old_main.py.
+                            # The server routes it to the correct squad chat based on the owner's ID, 
+                            # bypassing the need to track dynamic string chat codes entirely!
+                            print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name} using UID {OwNer_UiD}...")
+                            P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
                             if whisper_writer:
                                 await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
                                 
                             await asyncio.sleep(0.5)
                             
-                            print(f"\033[94m[INFO]\033[0m Sending Admin Menu on {target_chat_code}...")
-                            P2 = await SEndMsG(0, admin_message, OwNer_UiD, target_chat_code, key, iv, region)
+                            print(f"\033[94m[INFO]\033[0m Sending Admin Menu using UID {OwNer_UiD}...")
+                            P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
                             if whisper_writer:
                                 await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
 
