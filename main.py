@@ -5559,6 +5559,10 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     break
                     
                 data_hex = data2.hex()
+                
+                # Log non-ping packets briefly to catch squad chat!
+                if not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
+                    print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
       
                 # Your existing code...
   
