@@ -5576,7 +5576,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             try:
                                 pkt_json = json.loads(decoded_packet)
                                 data_block = pkt_json.get("5", {}).get("data", {})
-                                Bot_UiD = pkt_json.get("1", {}).get("data")
+                                OwNer_UiD = data_block.get("2", {}).get("data", {}).get("4", {}).get("data")
+                                if not OwNer_UiD:
+                                    OwNer_UiD = pkt_json.get("5", {}).get("data", {}).get("1", {}).get("data")
                                 
                                 new_codes = []
                                 for k in ["8", "17", "18", "31", "33"]:
@@ -5585,14 +5587,13 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                         new_codes.append(c)
                                         subscribed_rooms.add(c)
                                         
-                                if new_codes and Bot_UiD:
-                                    print(f"\033[92m[SUCCESS]\033[0m Universal Tracker discovered NEW Chat Rooms: {new_codes}. Subscribing...")
+                                if new_codes and OwNer_UiD:
+                                    print(f"\033[92m[SUCCESS]\033[0m Universal Tracker discovered NEW Chat Rooms: {new_codes}. Subscribing with Owner UID: {OwNer_UiD}...")
                                     for code in new_codes:
-                                        for T_val in [0, 1, 3, 4]:
-                                            p = await AutH_Chat(T_val, Bot_UiD, code, key, iv)
-                                            if whisper_writer:
-                                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
-                                            await asyncio.sleep(0.3)
+                                        p = await AutH_Chat(3, OwNer_UiD, code, key, iv)
+                                        if whisper_writer:
+                                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                                        await asyncio.sleep(0.3)
                             except Exception as e:
                                 print(f"Error universally subscribing: {e}")
                 except Exception as e:
@@ -5983,10 +5984,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Rooms: {codes_to_join}...")
                         
                         for code in codes_to_join:
-                            for T_val in [0, 1, 3, 4]:
-                                p = await AutH_Chat(T_val, Bot_UiD, code, key, iv)
-                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
-                                await asyncio.sleep(0.3)
+                            p = await AutH_Chat(3, OwNer_UiD, code, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                            await asyncio.sleep(0.3)
                         senthi = False
 
                         insquad = None
