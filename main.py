@@ -6035,7 +6035,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             if whisper_writer:
                                 await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
                                 
-                            await asyncio.sleep(0.5)
+                            # FreeFire server has a strict chat rate limit (anti-spam).
+                            # We must wait at least 2.0 seconds before sending the second message!
+                            await asyncio.sleep(2.0)
                             
                             print(f"\033[94m[INFO]\033[0m Sending Admin Menu using UID {OwNer_UiD}...")
                             P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
