@@ -5952,33 +5952,12 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
                         Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
                         
-                        print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Room: {CHaT_CoDe}...")
-                        p = await AutH_Chat(4, Bot_UiD, CHaT_CoDe, key, iv)
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                        print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Room sequence: {CHaT_CoDe}...")
+                        for T_val in [0, 1, 3, 4]:
+                            p = await AutH_Chat(T_val, Bot_UiD, CHaT_CoDe, key, iv)
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                            await asyncio.sleep(0.3)
                         await asyncio.sleep(0.3)
-                        msg1 = f"Welcome {Inviter_Name}!"
-                        P1 = await SEndMsG(0, msg1, OwNer_UiD, OwNer_UiD, key, iv, region)
-                        
-                        
-                        await asyncio.sleep(0.5)
-                        
-                        msg2 = "Use /menu to list all features"
-                        P2 = await SEndMsG(0, msg2, OwNer_UiD, OwNer_UiD, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
-                        
-                        
-                        
-                        
-                        admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ✨ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
-[FF0000]╠══════════════════════╣
-[FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze —͟͞͞
-[FFFFFF] 💡 Use /menu to list all features
-[FFD700]╚══════════════════════╝"""
-                        P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
                         senthi = False
 
                         insquad = None
