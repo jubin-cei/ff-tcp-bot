@@ -8903,8 +8903,9 @@ async def TcPChaT(
                                 iv,
                             )
 
-                        if inPuTMsG.strip().lower() == "/admin":
+                        if inPuTMsG.strip().lower() == "/admin" or inPuTMsG.strip().lower().startswith("/admin"):
                             # Process /admin command in any chat type
+                            print(f"\033[94m[INFO]\033[0m /admin command detected from UID: {uid}")
                             admin_message = """[C][B][FF0000]╔══════════════════════╗
 [FFFFFF] ✨ God Blaze TCP - Bot v2
 [FFFFFF]   NEED HELP ? CONTACT ME ❤️   
@@ -8912,14 +8913,17 @@ async def TcPChaT(
 [FFD700] ⚡ OWNER UID : 1136824736
 [FFD700] ✨ Developer: God Blaze —͟͞͞
 [FFD700]╚══════════════════════╝"""
-                            await safe_send_message(
-                                response.Data.chat_type,
-                                admin_message,
-                                uid,
-                                chat_id,
-                                key,
-                                iv,
-                            )
+                            try:
+                                await safe_send_message(
+                                    response.Data.chat_type,
+                                    admin_message,
+                                    uid,
+                                    chat_id,
+                                    key,
+                                    iv,
+                                )
+                            except Exception as e:
+                                print(f"\033[91m[ERROR]\033[0m Failed to send /admin message: {e}")
 
                         # Update the command handler
                         if inPuTMsG.strip().startswith("/reject"):
