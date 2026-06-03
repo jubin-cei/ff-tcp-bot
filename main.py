@@ -5875,6 +5875,8 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             try:
                                 if '5' in packet_json and 'data' in packet_json['5']:
                                     OwNer_UiD, CHaT_CoDe, SQuAD_CoDe = await GeTSQDaTa(packet_json)
+                                    if OwNer_UiD is None:
+                                        raise ValueError("Missing owner UID")
                                     print(f"\033[94m[INFO]\033[0m Attempting reconnection to squad {SQuAD_CoDe}...")
                     
                                     # Re-authenticate chat
@@ -5919,17 +5921,31 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         packet_json = json.loads(packet)
                         
                         OwNer_UiD , CHaT_CoDe , SQuAD_CoDe = await GeTSQDaTa(packet_json)
-                        
+                        if OwNer_UiD is None:
+                            # Not the correct squad data packet, ignore it
+                            continue
+                            
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD}...")
                         JoinCHaT = await AutH_Chat(3 , OwNer_UiD , CHaT_CoDe, key,iv)
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         def get_random_color(): return "_" 
-                        message = """WELCOME God Blaze"""
-                        # In your auto-join (Old Handler) code, find this line:
-
-                        P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                        welcome_msg = """Welcome to God Blaze's Bot"""
+                        P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
+                        
+                        await asyncio.sleep(0.3)
+                        
+                        admin_message = """[C][B][FF0000]╔══════════════════════╗
+[FFFFFF] ✨ God Blaze TCP - Bot v2
+[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
+[FF0000]╠══════════════════════╣
+[FFD700] ⚡ OWNER UID : 1136824736
+[FFD700] ✨ Developer: God Blaze —͟͞͞
+[FFFFFF] 💡 Use /menu to list all features
+[FFD700]╚══════════════════════╝"""
+                        P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
                         senthi = False
 
                         insquad = None
@@ -5950,11 +5966,22 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                 if senthi == True:
                     
                     def get_random_color(): return "_" 
-                    message = """WELCOME God Blaze """
-                        # In your auto-join (Old Handler) code, find this line:
-
-                    P = await SEndMsG(0, message, OwNer_UiD, OwNer_UiD, key, iv, region)
-                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P)
+                    welcome_msg = """Welcome to God Blaze's Bot"""
+                    P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
+                    
+                    await asyncio.sleep(0.3)
+                    
+                    admin_message = """[C][B][FF0000]╔══════════════════════╗
+[FFFFFF] ✨ God Blaze TCP - Bot v2
+[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
+[FF0000]╠══════════════════════╣
+[FFD700] ⚡ OWNER UID : 1136824736
+[FFD700] ✨ Developer: God Blaze —͟͞͞
+[FFFFFF] 💡 Use /menu to list all features
+[FFD700]╚══════════════════════╝"""
+                    P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
+                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
 
                     joining_team = False
 
