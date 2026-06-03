@@ -5566,13 +5566,8 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     if data_hex[6:10] != "0000": # Basic check for valid protobuf
                         decoded_packet = await DeCode_PackEt(data_hex[10:])
                         decoded_str = str(decoded_packet)
-                        if "help" in decoded_str.lower() or "68656c70" in data_hex:
-                            print(f"\033[92m[SQUAD CHAT DETECTED ON TcPOnLine!]\033[0m {data_hex}")
-                            print(f"\033[92m[DECODED]\033[0m {decoded_str}")
-                            
-                        # If it's a 0500 packet, let's decode it fully and log the JSON
+                        # If it's a 0500 packet, let's process it for chat codes
                         if data_hex.startswith("0500") and len(data_hex) > 200:
-                            print(f"\033[95m[SQUAD PACKET DUMP]\033[0m {decoded_packet}")
                             try:
                                 pkt_json = json.loads(decoded_packet)
                                 data_block = pkt_json.get("5", {})
@@ -5615,7 +5610,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     pass
                 
                 if not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
-                    print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
+                    pass
       
                 # Your existing code...
   
@@ -5704,7 +5699,6 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         packet_json = json.loads(packet)
                         
                         # Log the decoded 0500 packet to inspect squad chat!
-                        print(f"\033[90m[DEBUG SQUAD]\033[0m 0500 Decoded: {json.dumps(packet_json)}")
                         
                         if packet_json.get('1') in [6, 7]: 
                              insquad = None
@@ -5985,7 +5979,6 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             # Not the correct squad data packet, ignore it
                             continue
                             
-                        print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
                         Bot_UiD = packet_json.get("1", {}).get("data") or OwNer_UiD
                         Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
@@ -6018,26 +6011,47 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     #logging.info(parsed_data)
 
                     senthi = True
-
                 if senthi == True:
-                    
-                    def get_random_color(): return "_" 
-                    welcome_msg = """Welcome to God Blaze's Bot"""
-                    P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
-                    
-                    
-                    
-                    
+                    OwNer_Name = "Player"
+                    try:
+                        d5 = packet_json.get("5", {})
+                        if isinstance(d5, dict):
+                            d5_data = d5.get("data", {})
+                            if isinstance(d5_data, dict):
+                                d2 = d5_data.get("2", {})
+                                if isinstance(d2, dict):
+                                    d2_data = d2.get("data", {})
+                                    if isinstance(d2_data, dict):
+                                        OwNer_Name = d2_data.get("2", {}).get("data", "Player")
+                    except Exception:
+                        pass
+                        
+                    welcome_msg = f"[B][C][FFD700]✨ Welcome {OwNer_Name}! ✨\n[FFFFFF]God Blaze's Bot is now active in your squad!"
                     admin_message = """[C][B][FF0000]╔══════════════════════╗
 [FFFFFF] ✨ God Blaze TCP - Bot v2
 [FFFFFF]   NEED HELP ? CONTACT ME ❤️   
 [FF0000]╠══════════════════════╣
 [FFD700] ⚡ OWNER UID : 1136824736
 [FFD700] ✨ Developer: God Blaze —͟͞͞
-[FFFFFF] 💡 Use /menu to list all features
+[FFFFFF] 💡 Use /help to list all features
 [FFD700]╚══════════════════════╝"""
-                    P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
-                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
+
+                    target_chat_code = codes_to_join[0] if codes_to_join else CHaT_CoDe
+                    
+                    # Add a small delay to ensure chat server has fully processed our join
+                    await asyncio.sleep(1.0)
+                    
+                    print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name}...")
+                    P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, target_chat_code, key, iv, region)
+                    if whisper_writer:
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
+                        
+                    await asyncio.sleep(0.5)
+                    
+                    print(f"\033[94m[INFO]\033[0m Sending Admin Menu...")
+                    P2 = await SEndMsG(0, admin_message, OwNer_UiD, target_chat_code, key, iv, region)
+                    if whisper_writer:
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
 
                     joining_team = False
 
@@ -6202,9 +6216,6 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
             while True:
                 data = await reader.read(9999)
                 if not data: break
-                
-                print(f"\033[90m[DEBUG]\033[0m CHAT RECV: {data.hex()[:200]}")
-                
                 if data.hex().startswith("120000") or data.hex().startswith("121400") or data.hex().startswith("121500"):
 
                     msg = await DeCode_PackEt(data.hex()[10:])
@@ -6260,7 +6271,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
                             if "[1=" in msg or len(msg) <= 0:
 
-                               print(f"\033[94m[INFO]\033[0m Emoji/Stiker detected. Raw chatdata: {chatdata}")
+                               print(f"\033[94m[INFO]\033[0m Emoji/Stiker detected.")
 
                                emote_id = random.choice(list(GENERAL_EMOTES_MAP.values()))
 
