@@ -6012,14 +6012,6 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             pass
                             
                         welcome_msg = f"[B][C][FFD700]✨ Welcome {OwNer_Name}! ✨\n[FFFFFF]God Blaze's Bot is now active in your squad!"
-                        admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ✨ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
-[FF0000]╠══════════════════════╣
-[FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze —͟͞͞
-[FFFFFF] 💡 Use /help to list all features
-[FFD700]╚══════════════════════╝"""
 
                         # Wrap in an async task so we don't block the TcPOnLine reader loop!
                         # This allows the Universal Tracker to actually receive the new room codes
@@ -6034,15 +6026,6 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
                             if whisper_writer:
                                 await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
-                                
-                            # FreeFire server has a strict chat rate limit (anti-spam).
-                            # We must wait at least 2.0 seconds before sending the second message!
-                            await asyncio.sleep(2.0)
-                            
-                            print(f"\033[94m[INFO]\033[0m Sending Admin Menu using UID {OwNer_UiD}...")
-                            P2 = await SEndMsG(0, admin_message, OwNer_UiD, OwNer_UiD, key, iv, region)
-                            if whisper_writer:
-                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
 
                         asyncio.create_task(send_welcome())
 
@@ -8906,26 +8889,41 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                         # IMPROVED HELP MENU SYSTEM - AUTOMATIC MULTI-PART
                         # IMPROVED HELP MENU SYSTEM - TREE STYLE FORMAT
                         
-                        if inPuTMsG.strip().lower() in ("help", "/help", "bal", "dhon", "commands"):
+                        if inPuTMsG.strip().lower() in ("help", "/help", "commands"):
                             print(f"\033[94m[INFO]\033[0m Help command detected from UID: {uid} in chat type: {XX}")
     
+                            admin_message = """[C][B][FF0000]╔══════════════════════╗
+[FFFFFF] ✨ God Blaze TCP - Bot v2
+[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
+[FF0000]╠══════════════════════╣
+[FFD700] ⚡ OWNER UID : 1136824736
+[FFD700] ✨ Developer: God Blaze —͟͞͞
+[FFFFFF] 💡 Use /help to list all features
+[FFD700]╚══════════════════════╝"""
 
-    
+                            await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
+                            await asyncio.sleep(0.2)
+
                             basic = """
-             [B][C][FF0000] 🛠️ BASIC COMMANDS
+             [B][C][FF0000] ❀️ BASIC COMMANDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
-║═[B][C][00FFFF]/start[B][C] 
-╚═[FFFFFF]Start match
-║═[B][C][00FFFF]/exit     
-╚═[B][C][FFFFFF]Leave squad
-║═[B][C][00FFFF]/3      
-╚═[B][C][FFFFFF]Send 3-player invite
-║═[B][C][00FFFF]/5     
-╚═[B][C][FFFFFF]Send 5-player invite
-║═[B][C][00FFFF]/6      
-╚═[B][C][FFFFFF]Send 6-player invite
-║═[B][C][00FFFF]! (team code)  
-╚═[FFFFFF]Join squad
+[00FFFF]❖ [FFFFFF]/start
+❀️ [FFD700]START MATCH
+
+[00FFFF]❖ [FFFFFF]/exit
+❀️ [FFD700]LEAVE SQUAD
+
+[00FFFF]❖ [FFFFFF]/3
+❀️ [FFD700]SEND 3-PLAYER INVITE
+
+[00FFFF]❖ [FFFFFF]/5
+❀️ [FFD700]SEND 5-PLAYER INVITE
+
+[00FFFF]❖ [FFFFFF]/6
+❀️ [FFD700]SEND 6-PLAYER INVITE
+
+[00FFFF]❖ [FFFFFF]! [team code]
+❀️ [FFD700]JOIN SQUAD
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(response.Data.chat_type, basic, uid, chat_id, key, iv)
@@ -8933,99 +8931,123 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
         
 
                             emotes = """
-            [B][C][FF0000] 🎭 EMOTE COMMANDS
+            [B][C][FF0000] ❀️ EMOTE COMMANDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
-║═[B][C][00FFFF]Send emote to self 
-╚═[B][C][FFFFFF]Send emote to yourself
-║═[B][C][00FFFF]/menu[number]     
-╚═[B][C][FFFFFF]Show all emotes
-║═[B][C][00FFFF]Send random emote/sticker
-║═[B][C][00FFFF]/hjk     
-╚═[B][C][FFFFFF]Hijack emote stream
+[00FFFF]❖ [FFFFFF]/e [number/name]
+❀️ [FFD700]SEND EMOTE TO YOURSELF
+
+[00FFFF]❖ [FFFFFF]/e [uid] [number]
+❀️ [FFD700]SEND EMOTE TO PLAYER
+
+[00FFFF]❖ [FFFFFF]/e random
+❀️ [FFD700]SEND RANDOM EMOTE/STICKER
+
+[00FFFF]❖ [FFFFFF]/hjk
+❀️ [FFD700]HIJACK EMOTE STREAM
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(response.Data.chat_type, emotes, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)            
 
                             evo = """
-              [B][C][FF0000] 🌟 EVOLUTION COMMANDS
+              [B][C][FF0000] ❀️ EVOLUTION COMMANDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━
-║═[B][C][00FF00]max      
-╚═[FFFFFF]Send Evo Emote to Self
-║═[B][C][00FFFF]/s      
-╚═[B][C][FFFFFF]Stop Evo Emote Cycle
-║═[B][C][00FF00]@max      
-╚═[FFFFFF]Send Evo Emote (You + Bot)
-║═[B][C][00FFFF]/o      
-╚═[B][C][FFFFFF]Stop Evo Emote (You + Bot)
-║═[B][C][00FF00]new      
-╚═[FFFFFF]Send Random Emote to Self
-║═[B][C][00FFFF]/sm      
-╚═[B][C][FFFFFF]Stop Evo Emote Cycle
-║═[B][C][00FF00]@new      
-╚═[FFFFFF]Send Random Emote (You + Bot)
-║═[B][C][00FF00]@bot      
-╚═[FFFFFF]Send Random Emote (Bot Only)
-║═[B][C][00FFFF]@bt     
-╚═[B][C][FFFFFF]Stop Evo Emote Cycle
+[00FF00]❖ [FFFFFF]max
+❀️ [FFD700]SEND EVO EMOTE TO SELF
+
+[00FFFF]❖ [FFFFFF]/s
+❀️ [FFD700]STOP EVO EMOTE CYCLE
+
+[00FF00]❖ [FFFFFF]@max
+❀️ [FFD700]SEND EVO EMOTE (YOU + BOT)
+
+[00FFFF]❖ [FFFFFF]/o
+❀️ [FFD700]STOP EVO EMOTE (YOU + BOT)
+
+[00FF00]❖ [FFFFFF]new
+❀️ [FFD700]SEND RANDOM EMOTE TO SELF
+
+[00FFFF]❖ [FFFFFF]/sm
+❀️ [FFD700]STOP EVO EMOTE CYCLE
+
+[00FF00]❖ [FFFFFF]@new
+❀️ [FFD700]SEND RANDOM EMOTE (YOU + BOT)
+
+[00FF00]❖ [FFFFFF]@bot
+❀️ [FFD700]SEND RANDOM EMOTE (BOT ONLY)
+
+[00FFFF]❖ [FFFFFF]@bt
+❀️ [FFD700]STOP EVO EMOTE CYCLE
 """
                             await safe_send_message(response.Data.chat_type, evo, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)            
                                             
 
                             spam_cmnd = """
-           [B][C][FF0000] ⚡ SPAM COMMANDS
+           [B][C][FF0000] ❀️ SPAM COMMANDS
 [FF0000]━[00FF00]━[0000FF]━[FFFF00]━[FF00FF]━[00FFFF]━[FFA500]━[FF1493]━[00FF7F]━[FFD700]━[00CED1]━[9400D3]━[FF6347]━
-║═[B][C][00FFFF]/fast [uid] [emote ]
-╚═[B][C][FFFFFF]Fast Emote Spam
-║═[B][C][00FFFF]/p [uid] [emote] [num] 
-╚═[B][C][FFFFFF]Custom Emote Spam
-║═[B][C][00FFFF]/reject [uid]     
-╚═[B][C][FFFFFF]Match Reject Spam
-║═[B][C][00FFFF]/reject_stop      
-╚═[B][C][FFFFFF]Stop Match Reject Spam
-║═[B][C][00FFFF]/msg [text] [times] 
-╚═[B][C][FFFFFF]Chat Message Spam
-║═[B][C][00FFFF]/stop msg     
-╚═[B][C][FFFFFF]Stop Chat Message Spam
-║═[B][C][00FFFF]/mg [text] [repeats]  
-╚═[B][C][FFFFFF]Wave Chat Message Spam
+[00FFFF]❖ [FFFFFF]/fast [uid] [emote]
+❀️ [FFD700]FAST EMOTE SPAM
+
+[00FFFF]❖ [FFFFFF]/p [uid] [emote] [num]
+❀️ [FFD700]CUSTOM EMOTE SPAM
+
+[00FFFF]❖ [FFFFFF]/reject [uid]
+❀️ [FFD700]MATCH REJECT SPAM
+
+[00FFFF]❖ [FFFFFF]/reject_stop
+❀️ [FFD700]STOP MATCH REJECT SPAM
+
+[00FFFF]❖ [FFFFFF]/msg [text] [times]
+❀️ [FFD700]CHAT MESSAGE SPAM
+
+[00FFFF]❖ [FFFFFF]/stop msg
+❀️ [FFD700]STOP CHAT MESSAGE SPAM
+
+[00FFFF]❖ [FFFFFF]/mg [text] [repeats]
+❀️ [FFD700]WAVE CHAT MESSAGE SPAM
+
+[00FFFF]❖ [FFFFFF]/room uid room id
+❀️ [FFD700]ATTACK SPECIFIC ROOM
+
+[00FFFF]❖ [FFFFFF]/stop lag
+❀️ [FFD700]STOP LAG ATTACK
 [FF0000]━[00FF00]━[0000FF]━[FFFF00]━[FF00FF]━[00FFFF]━[FFA500]━[FF1493]━[00FF7F]━[FFD700]━[00CED1]━[9400D3]━[FF6347]━"""
 
                             await safe_send_message(response.Data.chat_type, spam_cmnd, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)
 
 
-                            
-                            ad_cmnd = """
-              [C][B][FFD700]═════════════════
- GOD BLAZE BOT TCP HELP 2
-═════════════════
-[FF0000]6 [FFFFFF]/INV [UID]
+                            utility = """
+             [B][C][FF0000] ❀️ UTILITY COMMANDS
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
+[00FFFF]❖ [FFFFFF]/inv [uid]
 ❀️ [FFD700]SEND GROUP INVITE
 
-[00FF00]7 [FFFFFF]/JOINROOM [ID] [PASS]
+[00FFFF]❖ [FFFFFF]/joinroom [id] [pass]
 ❀️ [FFD700]JOIN CUSTOM ROOM
 
-[FFFF00]8 [FFFFFF]/STOP LAG
-❀️ [FFD700]STOP LAG ATTACK"""
+[00FFFF]❖ [FFFFFF]/info [uid]
+❀️ [FFD700]PLAYER INFORMATION
 
-                            await safe_send_message(response.Data.chat_type, ad_cmnd, uid, chat_id, key, iv)
+[00FFFF]❖ [FFFFFF]/status [uid]
+❀️ [FFD700]CHECK PLAYER STATUS
+
+[00FFFF]❖ [FFFFFF]/bundle
+❀️ [FFD700]VIEW AVAILABLE BUNDLES
+
+[00FFFF]❖ [FFFFFF]/b [number]
+❀️ [FFD700]EQUIP BUNDLE BOT
+
+[00FFFF]❖ [FFFFFF]/help
+❀️ [FFD700]SHOW THIS HELP MENU
+
+[00FFFF]❖ [FFFFFF]/admin
+❀️ [FFD700]OWNER/CONTACT INFORMATION
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
+
+                            await safe_send_message(response.Data.chat_type, utility, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)
-
-                            info_cmnd = """
-            [C][B][00FF00]═════════════════
-GOD BLAZE BOT TCP HELP 3
-═════════════════
-[FF0000]9 [FFFFFF]/INFO [UID]
-❀️ [00FF00]PLAYER INFORMATION
-
-[00FF00]10  [FFFFFF]/STATUS [UID]
-❀️ [00FF00]CHECK PLAYER STATUS"""
-
-                            await safe_send_message(response.Data.chat_type, info_cmnd, uid, chat_id, key, iv)
-                            await asyncio.sleep(0.2)
-                            
                             
                             evo_name = """
            [B][C][FF0000] EVOLUTION EMOTES
@@ -9055,35 +9077,6 @@ GOD BLAZE BOT TCP HELP 3
 [B][C][00FF00] Usage: /e 123456789 ak"""
 
                             await safe_send_message(response.Data.chat_type, evo_name, uid, chat_id, key, iv)
-                            await asyncio.sleep(0.2)
-                            
-                            about = """
-        [C][B][FF00FF]═════════════════
-GOD BLAZE BOT TCP HELP 4
-═════════════════
-[FF4500]15 [FFFFFF]/HELP
-❀️ [FF00FF]SHOW THIS HELP MENU
-
-[FF0000]16 [FFFFFF]/ADMIN
-❀️ [FF00FF]OWNER/CONTACT INFORMATION"""
-
-                            await safe_send_message(response.Data.chat_type, about, uid, chat_id, key, iv)
-                            await asyncio.sleep(0.2)
-
-                            adns = """
-            [C][B][00FFFF]═════════════════
- GOD BLAZE BOT TCP HELP 5
-═════════════════
-[FF0000]17 [FFFFFF]/ROOM UID ROOM ID
-❀️ [00FFFF]Attack specific room
-
-[00FF00]18 [FFFFFF]/BUNDLE
-❀️ [00FFFF]View available bundles
-
-[FFFF00]19 [FFFFFF]/B [NUMBER]
-❀️ [00FFFF]EQUIP BUNDLE BOT"""
-
-                            await safe_send_message(response.Data.chat_type, adns, uid, chat_id, key, iv)
                             await asyncio.sleep(0.2)
 
                         response = None
