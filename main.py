@@ -8911,12 +8911,39 @@ async def TcPChaT(
 [FFFFFF]   NEED HELP ? CONTACT ME ❤️   
 [FF0000]╠══════════════════════╣
 [FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze —͟͞͞
+[FFD700] ✨ Developer: God Blaze
 [FFD700]╚══════════════════════╝"""
+                            admin_cmds = """
+            [B][C][FF0000] ❀️ ADMIN CMDS
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
+[00FFFF]❖ [FFFFFF]/wladd [uid]
+❀️ [FFD700]ADD TO WHITELIST
+
+[00FFFF]❖ [FFFFFF]/wlremove [uid]
+❀️ [FFD700]REMOVE FROM WHITELIST
+
+[00FFFF]❖ [FFFFFF]/wlenable
+❀️ [FFD700]ENABLE WHITELIST ONLY
+
+[00FFFF]❖ [FFFFFF]/wldisable
+❀️ [FFD700]DISABLE WHITELIST ONLY
+
+[00FFFF]❖ [FFFFFF]/wllist
+❀️ [FFD700]VIEW WHITELIST
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
                             try:
                                 await safe_send_message(
                                     response.Data.chat_type,
                                     admin_message,
+                                    uid,
+                                    chat_id,
+                                    key,
+                                    iv,
+                                )
+                                await asyncio.sleep(0.2)
+                                await safe_send_message(
+                                    response.Data.chat_type,
+                                    admin_cmds,
                                     uid,
                                     chat_id,
                                     key,
@@ -11669,7 +11696,7 @@ async def TcPChaT(
 [FFFFFF]   NEED HELP ? CONTACT ME ❤️   
 [FF0000]╠══════════════════════╣
 [FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze —͟͞͞
+[FFD700] ✨ Developer: God Blaze
 [FFFFFF] 💡 Use /help to list all features
 [FFD700]╚══════════════════════╝"""
 
@@ -11837,6 +11864,30 @@ async def TcPChaT(
 
                             await safe_send_message(
                                 response.Data.chat_type, utility, uid, chat_id, key, iv
+                            )
+                            await asyncio.sleep(0.2)
+
+                            admin_cmds = """
+            [B][C][FF0000] ❀️ ADMIN CMDS
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
+[00FFFF]❖ [FFFFFF]/wladd [uid]
+❀️ [FFD700]ADD TO WHITELIST
+
+[00FFFF]❖ [FFFFFF]/wlremove [uid]
+❀️ [FFD700]REMOVE FROM WHITELIST
+
+[00FFFF]❖ [FFFFFF]/wlenable
+❀️ [FFD700]ENABLE WHITELIST ONLY
+
+[00FFFF]❖ [FFFFFF]/wldisable
+❀️ [FFD700]DISABLE WHITELIST ONLY
+
+[00FFFF]❖ [FFFFFF]/wllist
+❀️ [FFD700]VIEW WHITELIST
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
+                            
+                            await safe_send_message(
+                                response.Data.chat_type, admin_cmds, uid, chat_id, key, iv
                             )
                             await asyncio.sleep(0.2)
 
