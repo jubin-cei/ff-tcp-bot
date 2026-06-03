@@ -6147,6 +6147,8 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                 data = await reader.read(9999)
                 if not data: break
                 
+                print(f"\033[90m[DEBUG]\033[0m CHAT RECV: {data.hex()[:200]}")
+                
                 if data.hex().startswith("120000"):
 
                     msg = await DeCode_PackEt(data.hex()[10:])
