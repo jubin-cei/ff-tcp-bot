@@ -1327,7 +1327,9 @@ async def StarTinG():
             elif "Cannot connect to host" in error_str:
                 print("\033[91m[ERROR]\033[0m Failed to reach Garena servers. Check your internet connection. Retrying...")
             else:
+                import traceback
                 print(f"\033[91m[ERROR]\033[0m TCP Connection lost ({error_str[:60]}...). Retrying...")
+                print(traceback.format_exc())
             await asyncio.sleep(5)
 
 import pickle
