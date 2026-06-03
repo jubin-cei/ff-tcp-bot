@@ -5887,7 +5887,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                     print(f"\033[94m[INFO]\033[0m Attempting reconnection to squad {SQuAD_CoDe}...")
                     
                                     # Re-authenticate chat
-                                    JoinCHaT = await AutH_Chat(3, OwNer_UiD, CHaT_CoDe, key, iv)
+                                    JoinCHaT = await AutH_Chat(1, OwNer_UiD, CHaT_CoDe, key, iv)
                                     await SEndPacKeT(whisper_writer, online_writer, 'ChaT', JoinCHaT)
                     
                                     print(f"\033[92m[SUCCESS]\033[0m Chat re-authenticated for reconnection")
@@ -5905,7 +5905,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 if insquad is None:
                                     print(f"\033[94m[INFO]\033[0m Received squad data while not in squad. Attempting chat auth...")
                                     
-                                    JoinCHaT = await AutH_Chat(3, OwNer_UiD, CHaT_CoDe, key, iv)
+                                    JoinCHaT = await AutH_Chat(1, OwNer_UiD, CHaT_CoDe, key, iv)
                                     await SEndPacKeT(whisper_writer, online_writer, 'ChaT', JoinCHaT)
                     
                                     # Optional welcome back message
@@ -5934,7 +5934,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             
                         print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
-                        JoinCHaT = await AutH_Chat(3 , OwNer_UiD , CHaT_CoDe, key,iv)
+                        JoinCHaT = await AutH_Chat(1 , OwNer_UiD , CHaT_CoDe, key,iv)
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         def get_random_color(): return "_" 
@@ -6168,6 +6168,20 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                         XX = response.Data.chat_type
                         inPuTMsG = response.Data.msg.lower()
                         MsG = response.Data.msg.lower()
+                    except Exception as e:
+                        try:
+                            packet = bytes.fromhex(data.hex()[10:])
+                            proto = Team_msg_pb2.GenTeamWhisper()
+                            proto.ParseFromString(packet)
+                            uid = proto.data.uid
+                            chat_id = proto.data.chat_id
+                            inPuTMsG = proto.data.msg.lower()
+                            MsG = proto.data.msg.lower()
+                            XX = proto.data.chat_type
+                        except Exception as e2:
+                            print(f'[91m[ERROR][0m Failed to decode chat message: {e} | {e2}')
+                            continue
+                    try:
 
                     # --- AUTO FOR EVERYONE ---
                         msg2 = inPuTMsG.strip().lower()
