@@ -3722,7 +3722,7 @@ async def check_for_sticker_and_emote(response, key, iv, online_writer):
         # Detect Sticker or emoji
         if "[1=" in msg or (msg and len(msg) <= 0):
 
-            print("\033[94m[INFO]\033[0m Emoji/Stiker detected")
+
 
             emote_list = [
                 912038002,
@@ -5598,7 +5598,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                                 subscribed_rooms.append(c)
                                         
                                 if new_codes and OwNer_UiD:
-                                    print(f"\033[92m[SUCCESS]\033[0m Universal Tracker discovered NEW Chat Rooms: {new_codes}. Subscribing with Owner UID: {OwNer_UiD}...")
+
                                     for code in new_codes:
                                         p = await AutH_Chat(3, OwNer_UiD, code, key, iv)
                                         if whisper_writer:
@@ -6266,7 +6266,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
                             if "[1=" in msg or len(msg) <= 0:
 
-                               print(f"\033[94m[INFO]\033[0m Emoji/Stiker detected.")
+
 
                                emote_id = random.choice(list(GENERAL_EMOTES_MAP.values()))
 
