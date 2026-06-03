@@ -1340,12 +1340,13 @@ import datetime
 _original_print = builtins.print
 
 def custom_logger(*args, **kwargs):
+    import datetime as dt_module
     # Skip formatting if we are printing just an empty line
     if not args or (len(args) == 1 and args[0] == ""):
         _original_print(*args, **kwargs)
         return
         
-    timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+    timestamp = dt_module.datetime.now().strftime("%H:%M:%S")
     text = " ".join(str(a) for a in args)
     
     # Define our colored tags
@@ -9039,8 +9040,10 @@ async def MaiiiinE():
     LoGinDaTaUncRypTinG = await DecRypTLoGinDaTa(LoGinDaTa)
     OnLinePorTs = LoGinDaTaUncRypTinG.Online_IP_Port
     ChaTPorTs = LoGinDaTaUncRypTinG.AccountIP_Port
-    OnLineiP, OnLineporT = OnLinePorTs.split(":")
-    ChaTiP, ChaTporT = ChaTPorTs.split(":")
+    online_parts = OnLinePorTs.split(":")
+    OnLineiP, OnLineporT = online_parts[0], online_parts[1]
+    chat_parts = ChaTPorTs.split(":")
+    ChaTiP, ChaTporT = chat_parts[0], chat_parts[1]
     acc_name = LoGinDaTaUncRypTinG.AccountName
     AutHToKen = await xAuThSTarTuP(int(TarGeT), ToKen, int(timestamp), key, iv)
     ready_event = asyncio.Event()    
