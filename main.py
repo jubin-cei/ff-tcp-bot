@@ -5650,6 +5650,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         packet = await DeCode_PackEt(data_hex[10:])
                         packet_json = json.loads(packet)
                         
+                        # Log the decoded 0500 packet to inspect squad chat!
+                        print(f"\033[90m[DEBUG SQUAD]\033[0m 0500 Decoded: {json.dumps(packet_json)}")
+                        
                         if packet_json.get('1') in [6, 7]: 
                              insquad = None
                              joining_team = False
