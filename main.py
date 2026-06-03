@@ -6174,9 +6174,9 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                         if level is not None and 0 <= level <= 408:
                             inPuTMsG = f"/c {uid} {level}"
                         
-                    except:
+                    except Exception as e:
+                        print(f"Error decoding whisper: {e}")
                         response = None
-
 
                     if response:
 
@@ -6188,7 +6188,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
                             if "[1=" in msg or len(msg) <= 0:
 
-                               print("\033[94m[INFO]\033[0m Emoji/Stiker detected")
+                               print(f"\033[94m[INFO]\033[0m Emoji/Stiker detected. Raw chatdata: {chatdata}")
 
                                emote_id = random.choice(list(GENERAL_EMOTES_MAP.values()))
 
