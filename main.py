@@ -8645,133 +8645,51 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             await handle_join_req_command(inPuTMsG, uid, chat_id, key, iv, region, response.Data.chat_type, LoGinDaTaUncRypTinG)
 
 
-                        if inPuTMsG.strip().startswith('/e'):
+                        if inPuTMsG.strip().startswith('/e '):
                             print(f'Processing emote command in chat type: {response.Data.chat_type}')
-    
+
                             parts = inPuTMsG.strip().split()
-    
-                            # Check if user wants to list emotes or show help
-                            if len(parts) == 1 or (len(parts) == 2 and parts[1].lower() == 'list'):
-                                # Show available emotes
-                                emote_list_msg = f"[B][C][FFFF00]🎭 EMOTE SYSTEM\n"
-                                emote_list_msg += f"[FFFFFF]────────────────\n"
-                                emote_list_msg += f"[FFFF00]📊 STATS:\n"
-                                emote_list_msg += f"[FFFFFF]• Number emotes: 1-{len(NUMBER_EMOTES)}\n"
-                                emote_list_msg += f"[FFFFFF]• Named emotes: {len(NAME_EMOTES)} names\n"
-                                emote_list_msg += f"[FFFFFF]────────────────\n"
-                                emote_list_msg += f"[FFFF00]🎯 USAGE:\n"
-                                emote_list_msg += f"[FFFFFF]/e [number/name] → Send to yourself\n"
-                                emote_list_msg += f"[FFFFFF]/e [uid] [number/name] → Send to UID\n"
-                                emote_list_msg += f"[FFFFFF]────────────────\n"
-                                emote_list_msg += f"[FFFF00]🔥 POPULAR NAMES:\n"
-        
-                                # Show popular named emotes
-                                popular_names = ["ak", "m60", "p90", "scar", "famas", "heart", "love", "dance", "hello", "money"]
-                                line = ""
-                                for name in popular_names:
-                                    if name.lower() in NAME_EMOTES:
-                                        line += f"[FFFF00]{name}[FFFFFF], "
-                                if line:
-                                    emote_list_msg += line.rstrip(", ") + "\n"
-        
-                                emote_list_msg += f"[FFFFFF]────────────────\n"
-                                emote_list_msg += f"[FFFF00]📖 EXAMPLES:\n"
-                                emote_list_msg += f"[FFFFFF]/e ak → Send AK emote to yourself\n"
-                                emote_list_msg += f"[FFFFFF]/e 123456789 heart → Send ❤️ to UID\n"
-                                emote_list_msg += f"[FFFFFF]/e 123456789 1 → Send emote #1 to UID\n"
-                                emote_list_msg += f"[FFFFFF]/e ring → Send ring emote to yourself\n"
-                                emote_list_msg += f"[FFFFFF]/e list names → Show all named emotes\n"
-        
-                                # Check if user wants detailed name list
-                                if len(parts) == 2 and parts[1].lower() == 'names':
-                                    emote_list_msg += f"[FFFFFF]────────────────\n"
-                                    emote_list_msg += f"[FFFF00]📝 ALL NAMED EMOTES:\n"
-            
-                                    # Show all named emotes in groups
-                                    all_names = sorted(NAME_EMOTES.keys())
-                                    for i in range(0, min(len(all_names), 30), 5):  # Show first 30 names
-                                        group = all_names[i:i+5]
-                                        emote_list_msg += f"[FFFFFF]{' | '.join(group)}\n"
-            
-                                    if len(all_names) > 30:
-                                        emote_list_msg += f"[FFFFFF]... and {len(all_names) - 30} more\n"
-        
-                                await safe_send_message(response.Data.chat_type, emote_list_msg, uid, chat_id, key, iv)
-                                continue
-    
-                            # Parse command
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: e [emote_name_or_number]\n"
-                                error_msg += f"[FFFFFF]Examples:\n"
-                                error_msg += f"[FFFF00]e ak[FFFFFF] → AK emote to yourself\n"
-                                error_msg += f"[FFFF00]e 123456789 heart[FFFFFF] → ❤️ to UID\n"
-                                error_msg += f"[FFFF00]e 123456789 1[FFFFFF] → Emote #1 to UID\n"
-                                error_msg += f"[FFFF00]e ring[FFFFFF] → Send ring emote to yourself\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                continue
-                            
-                            target_uids = []
-                            emote_key = None
-    
+
                             try:
-                                # Determine if last part is emote key (could be number or name)
-                                last_part = parts[-1].lower()
-        
-                                # Check if last part is an emote (number or name)
-                                # Note: Your numbers go up to 417, so check for 3-digit numbers too
-                                is_number = last_part.isdigit() and last_part in NUMBER_EMOTES
-                                is_name = last_part in NAME_EMOTES
-        
-                                if is_number or is_name:
-                                    # Case 1: e ak or e 1 (only emote - send to sender)
-                                    if len(parts) == 2:
-                                        emote_key = last_part
-                                        target_uids.append(int(response.Data.uid))
-            
-                                    # Case 2: e 123456789 heart (UID + emote)
-                                    elif len(parts) == 3:
-                                        target_uids.append(int(parts[1]))
-                                        emote_key = last_part
-            
-                                    # Case 3: e 111 222 333 ak (multiple UIDs + emote)
-                                    else:
-                                        for i in range(1, len(parts) - 1):
-                                            target_uids.append(int(parts[i]))
-                                        emote_key = last_part
-                                else:
-                                    # Last part is not a valid emote
-                                    error_msg = f"[B][C][FF0000]❌ Invalid emote: '{last_part}'\n"
-                                    error_msg += f"[FFFFFF]Use numbers (1-{len(NUMBER_EMOTES)}) or names like 'ak', 'heart', 'dance', 'ring'\n"
-                                    error_msg += f"[FFFFFF]Use /e list names to see all available names\n"
+                                if len(parts) < 2:
+                                    error_msg = f"[B][C][FF0000]❌ ERROR! Usage: /e [emote] OR /e [uid] [emote]\n"
+                                    error_msg += f"[FFFFFF]Examples:\n"
+                                    error_msg += f"[FFFF00]/e ak[FFFFFF] → emote to yourself\n"
+                                    error_msg += f"[FFFF00]/e 909000001[FFFFFF] → emote id to yourself\n"
+                                    error_msg += f"[FFFF00]/e 123456789 ak[FFFFFF] → emote to a UID\n"
                                     await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
                                     continue
-        
-                                # Get emote ID from either number or name dictionary
-                                emote_id = False
-                                emote_name_display = None
-                                
-                                if is_number:
-                                    # Number-based emote
-                                    emote_id = NUMBER_EMOTES.get(emote_key)
-                                    emote_name_display = f"#{emote_key}"
+
+                                # Last argument is always the emote token; everything before are target UIDs.
+                                emote_token = parts[-1].lower()
+
+                                target_uids = []
+                                if len(parts) == 2:
+                                    # /e <emote> -> send to the sender (self)
+                                    target_uids.append(int(response.Data.uid))
                                 else:
-                                    # Name-based emote
-                                    emote_id = NAME_EMOTES.get(emote_key)
-                                    emote_name_display = emote_key
-        
-                                if not emote_id:
-                                    error_msg = f"[B][C][FF0000]❌ Emote '{emote_name_display}' not found!\n"
-                                    if emote_key.isdigit():
-                                        error_msg += f"[FFFFFF]Available numbers: 1-{len(NUMBER_EMOTES)}\n"
-                                    else:
-                                        error_msg += f"[FFFFFF]Use /e list names to see all available names\n"
+                                    # /e <uid> [uid2 ...] <emote>
+                                    for p in parts[1:-1]:
+                                        if p.isdigit():
+                                            target_uids.append(int(p))
+
+                                # Resolve the emote id: GENERAL_EMOTES_MAP -> amr_bal -> raw numeric id
+                                emote_id = None
+                                if emote_token in GENERAL_EMOTES_MAP:
+                                    emote_id = GENERAL_EMOTES_MAP[emote_token]
+                                elif emote_token in amr_bal and str(amr_bal[emote_token]) in GENERAL_EMOTES_MAP:
+                                    emote_id = GENERAL_EMOTES_MAP[str(amr_bal[emote_token])]
+                                elif emote_token.isdigit():
+                                    emote_id = int(emote_token)
+
+                                if not emote_id or not target_uids:
+                                    error_msg = f"[B][C][FF0000]❌ Invalid emote or target!\n"
+                                    error_msg += f"[FFFFFF]Use a numeric emote id, a name from emotes.json, or a weapon name.\n"
                                     await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
                                     continue
-        
-                                # Send emotes
+
                                 success_count = 0
                                 failed_uids = []
-        
                                 for target_uid in target_uids:
                                     try:
                                         H = await Emote_k(target_uid, int(emote_id), key, iv, region)
@@ -8781,39 +8699,25 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     except Exception as e:
                                         print(f"Error sending emote to {target_uid}: {e}")
                                         failed_uids.append(str(target_uid))
-        
-                                # Success message
+
                                 if success_count > 0:
-                                    if target_uids[0] == int(response.Data.uid):
+                                    if target_uids[0] == int(response.Data.uid) and len(target_uids) == 1:
                                         target_list = "Yourself"
                                     elif len(target_uids) == 1:
                                         target_list = str(target_uids[0])
                                     else:
                                         target_list = f"{len(target_uids)} players"
-            
-                                    success_msg = f"[B][C][FFFF00]✅ EMOTE SENT!\n"
-                                    success_msg += f"[FFFFFF]────────────────\n"
-                                    success_msg += f"[FFFF00]🎭 Emote: {emote_name_display}\n"
+                                    success_msg = f"[B][C][00FF00]✅ EMOTE SENT!\n"
+                                    success_msg += f"[FFFF00]🎭 Emote: {emote_token}\n"
                                     success_msg += f"[FFFF00]🆔 ID: {emote_id}\n"
                                     success_msg += f"[FFFF00]👤 Target: {target_list}\n"
-                                    success_msg += f"[FFFF00]📊 Status: {success_count}/{len(target_uids)} successful\n"
-            
                                     if failed_uids:
                                         success_msg += f"[FF0000]❌ Failed: {', '.join(failed_uids)}\n"
-            
-                                    success_msg += f"[FFFFFF]────────────────\n"
-            
                                     await safe_send_message(response.Data.chat_type, success_msg, uid, chat_id, key, iv)
                                 else:
                                     error_msg = f"[B][C][FF0000]❌ Failed to send emote to any target!\n"
                                     await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                    
-                            except ValueError as ve:
-                                print("ValueError:", ve)
-                                error_msg = f"[B][C][FF0000]❌ Invalid format!\n"
-                                error_msg += f"[FFFFFF]UIDs must be numbers (like 123456789)\n"
-                                error_msg += f"[FFFFFF]Examples: e ak, e 123456789 heart, e 1, e ring\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
+
                             except Exception as e:
                                 print(f"Error processing e command: {e}")
                                 error_msg = f"[B][C][FF0000]❌ Error: {str(e)[:50]}\n"
