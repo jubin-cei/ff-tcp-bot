@@ -9986,8 +9986,6 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 ╚═[B][C][FFFFFF]Send 6-player invite
 ║═[B][C][00FFFF]! (team code)  
 ╚═[FFFFFF]Join squad
-║═[00FFFF]/ghost (team code) 
-╚═[FFFFFF]Ghost join squad
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(response.Data.chat_type, basic, uid, chat_id, key, iv)
