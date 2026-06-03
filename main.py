@@ -8512,12 +8512,15 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                         if p.isdigit():
                                             target_uids.append(int(p))
 
-                                # Resolve the emote id: GENERAL_EMOTES_MAP -> amr_bal -> raw numeric id
+                                # Resolve the emote id:
+                                #  - weapon/emote name in amr_bal -> evo_emotes (evo gun emote ids)
+                                #  - name/number key in GENERAL_EMOTES_MAP (from emotes.json)
+                                #  - raw numeric emote id
                                 emote_id = None
-                                if emote_token in GENERAL_EMOTES_MAP:
+                                if emote_token in amr_bal and str(amr_bal[emote_token]) in evo_emotes:
+                                    emote_id = evo_emotes[str(amr_bal[emote_token])]
+                                elif emote_token in GENERAL_EMOTES_MAP:
                                     emote_id = GENERAL_EMOTES_MAP[emote_token]
-                                elif emote_token in amr_bal and str(amr_bal[emote_token]) in GENERAL_EMOTES_MAP:
-                                    emote_id = GENERAL_EMOTES_MAP[str(amr_bal[emote_token])]
                                 elif emote_token.isdigit():
                                     emote_id = int(emote_token)
 
