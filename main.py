@@ -7859,25 +7859,6 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                         if inPuTMsG.startswith('noob'):
                             await handle_alll_titles_command(inPuTMsG, uid, chat_id, key, iv, region, response.Data.chat_type)
 
-                        if inPuTMsG.strip().startswith('/room_msg'):
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: /kick (uid)\nExample: /kick 123456789\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                            else:
-                                room_id = parts[1]
-
-                                initial_message = f"[B][C]{get_random_color()}\nkicking {uid}...\n"
-                                await safe_send_message(response.Data.chat_type, initial_message, uid, chat_id, key, iv)
-                                
-                                try:
-                                    # Fast squad creation and invite for 5 players
-                                    PAc = await Create_xr_room_packet_fixed__(room_id, key, iv)
-                                    await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
-                                    await asyncio.sleep(0.3)
-                                except Exception as e:
-                                    print(e)
-
                         # Replace the existing title handler with this
                         # Use the FINAL version
                         if inPuTMsG.strip().startswith('/kick'):
