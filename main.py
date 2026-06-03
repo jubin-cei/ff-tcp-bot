@@ -7375,67 +7375,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     except ValueError:
                                         error_msg = f"[B][C][FF0000]❌ ERROR! Invalid number format! Use 1-{len(GENERAL_EMOTES_MAP)} only.\n"
                                         await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                        if inPuTMsG.startswith('/title'):
-                            await handle_all_titles_command(inPuTMsG, uid, chat_id, key, iv, region, response.Data.chat_type)
-                            
-   
-                        
-                                                                     # Emote command - works in all chat types
-                        if inPuTMsG.strip().startswith('/e'):
-                            print(f'Processing emote command in chat type: {response.Data.chat_type}')
-                            
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 3:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: e (uid) (emote_id)\nExample: e 123456789 909000001\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                continue
-                                
-                            initial_message = f'[B][C]{get_random_color()}\nSending emote to target...\n'
-                            await safe_send_message(response.Data.chat_type, initial_message, uid, chat_id, key, iv)
-
-                            uid2 = uid3 = uid4 = uid5 = None
-                            s = False
-                            target_uids = []
-
-                            try:
-                                target_uid = int(parts[1])
-                                target_uids.append(target_uid)
-                                uid2 = int(parts[2]) if len(parts) > 2 else None
-                                if uid2: target_uids.append(uid2)
-                                uid3 = int(parts[3]) if len(parts) > 3 else None
-                                if uid3: target_uids.append(uid3)
-                                uid4 = int(parts[4]) if len(parts) > 4 else None
-                                if uid4: target_uids.append(uid4)
-                                uid5 = int(parts[5]) if len(parts) > 5 else None
-                                if uid5: target_uids.append(uid5)
-                                idT = int(parts[-1])  # Last part is emote ID
-
-                            except ValueError as ve:
-                                print("ValueError:", ve)
-                                s = True
-                            except Exception as e:
-                                print(f"Error parsing emote command: {e}")
-                                s = True
-
-                            if not s:
-                                try:
-                                    for target in target_uids:
-                                        H = await Emote_k(target, idT, key, iv, region)
-                                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
-                                        await asyncio.sleep(0.1)
-                                    
-                                    # SUCCESS MESSAGE
-                                    success_msg = f"[B][C][00FF00]✅ SUCCESS! Emote {idT} sent to {len(target_uids)} player(s)!\nTargets: {', '.join(map(str, target_uids))}\n"
-                                    await safe_send_message(response.Data.chat_type, success_msg, uid, chat_id, key, iv)
-
-                                except Exception as e:
-                                    error_msg = f"[B][C][FF0000]❌ ERROR sending emote: {str(e)}\n"
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                            else:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Invalid UID format. Usage: e (uid) (emote_id)\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                
-                                                                          # NEW COMMAND-/sticker
+                        # NEW COMMAND-/sticker
                         if inPuTMsG.strip().startswith('/sticker'):
                             packet = await send_sticker(uid, chat_id, key, iv)                   
                             await SEndPacKeT(whisper_writer, online_writer, 'ChaT', packet)
