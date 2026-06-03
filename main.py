@@ -5941,7 +5941,8 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         
                         
                         
-                        await asyncio.sleep(0.3)`n                        msg1 = f"Welcome {Inviter_Name}!"
+                        await asyncio.sleep(0.3)
+                        msg1 = f"Welcome {Inviter_Name}!"
                         P1 = await SEndMsG(0, msg1, OwNer_UiD, OwNer_UiD, key, iv, region)
                         
                         
