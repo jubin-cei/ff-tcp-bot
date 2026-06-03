@@ -2078,43 +2078,6 @@ async def auto_rings_emote_dual(uid, key, iv, region):
         print(f"\033[94m[INFO]\033[0m Error sending dual rings emote: {e}")
 
 
-async def magic_bundle_sequence(team_code, chat_type, chat_id, uid, key, iv, region):
-    try:
-        for i in range(1, 12):
-            # 🔴 Leave squad
-            leave_packet = await ExiT(None, key, iv)
-            await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
-            await asyncio.sleep(1.2)
-
-            # 🟢 Join squad (IMPORTANT FIX)
-            join_packet = await GenJoinSquadsPacket(team_code, key, iv)
-            await SEndPacKeT(whisper_writer, online_writer, "OnLine", join_packet)
-            await asyncio.sleep(0.25)
-
-            # 📦 Send bundle command
-            bundle_cmd = f"/bundle {i}"
-            await safe_send_message(chat_type, bundle_cmd, uid, chat_id, key, iv)
-
-            print(f"\033[92m[SUCCESS]\033[0m Magic bundle sent: {bundle_cmd}")
-            await asyncio.sleep(4.75)
-
-        # 🟢 FINAL JOIN (stay in team, no leave)
-        final_join = await GenJoinSquadsPacket(team_code, key, iv)
-        await SEndPacKeT(whisper_writer, online_writer, "OnLine", final_join)
-
-        await safe_send_message(
-            chat_type,
-            "[B][C][00FF00]✨ Magic completed! Bot is now staying in team.",
-            uid,
-            chat_id,
-            key,
-            iv,
-        )
-
-    except Exception as e:
-        print("\033[91m[ERROR]\033[0m Magic bundle error:", e)
-
-
 async def Room_Spam(Uid, Rm, Nm, K, V):
     fields = {
         1: 78,
@@ -7039,6 +7002,7 @@ async def TcPChaT(
     print(f"\033[94m[INFO]\033[0m Initializing TCP Chat for region: {region}")
 
     global \
+        WHITELIST_ONLY, \
         whisper_writer, \
         spammer_uid, \
         spam_chat_id, \
@@ -8662,40 +8626,6 @@ async def TcPChaT(
                                 except Exception as e:
                                     print(e)
 
-                        if inPuTMsG.strip().startswith("/tester"):
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ ERROR: Invalid syntax. Usage: /kick (uid)\nExample: /kick 123456789\n"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    error_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-                            else:
-                                target_uid = parts[1]
-                                initial_message = f"[B][C]{get_random_color()}\nkicking {target_uid}...\n"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    initial_message,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-
-                                try:
-                                    # Fast squad creation and invite for 5 players
-                                    PAc = await SwitchLoneWolfDule(target_uid, key, iv)
-                                    await SEndPacKeT(
-                                        whisper_writer, online_writer, "OnLine", PAc
-                                    )
-
-                                except Exception as e:
-                                    print(e)
-
                         if inPuTMsG.strip().startswith("/kkick"):
                             print(
                                 "\033[94m[INFO]\033[0m Processing FINAL title command (friend method)"
@@ -8911,18 +8841,6 @@ async def TcPChaT(
                             print(
                                 f"\033[94m[INFO]\033[0m /admin command detected from UID: {uid}"
                             )
-                            admin_message = """
-            [B][C][FF0000] ❀️ GOD BLAZE V2
-[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
-[00FFFF]❖ [FFFFFF]CREATOR
-❀️ [FFD700]God Blaze
-
-[00FFFF]❖ [FFFFFF]DEVELOPER ID
-❀️ [FFD700]1136824736
-
-[00FFFF]❖ [FFFFFF]STATUS
-❀️ [FFD700]SYSTEM ONLINE
-[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
                             admin_cmds = """
             [B][C][FF0000] ❀️ ADMIN CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
@@ -8942,15 +8860,6 @@ async def TcPChaT(
 ❀️ [FFD700]VIEW WHITELIST
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
                             try:
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    admin_message,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-                                await asyncio.sleep(0.2)
                                 await safe_send_message(
                                     response.Data.chat_type,
                                     admin_cmds,
@@ -11703,37 +11612,23 @@ async def TcPChaT(
                                 f"\033[94m[INFO]\033[0m Help command detected from UID: {uid} in chat type: {XX}"
                             )
 
-                            admin_message = """
-            [B][C][FF0000] ❀️ GOD BLAZE V2
-[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
-[00FFFF]❖ [FFFFFF]CREATOR
-❀️ [FFD700]God Blaze
-
-[00FFFF]❖ [FFFFFF]DEVELOPER ID
-❀️ [FFD700]1136824736
-
-[00FFFF]❖ [FFFFFF]STATUS
-❀️ [FFD700]SYSTEM ONLINE
-[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
-
-                            await safe_send_message(
-                                response.Data.chat_type,
-                                admin_message,
-                                uid,
-                                chat_id,
-                                key,
-                                iv,
-                            )
-                            await asyncio.sleep(0.2)
-
                             basic = """
              [B][C][FF0000] ❀️ BASIC CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
 [00FFFF]❖ [FFFFFF]/start
 ❀️ [FFD700]START MATCH
 
+[00FFFF]❖ [FFFFFF]/train
+❀️ [FFD700]START TRAINING MATCH
+
 [00FFFF]❖ [FFFFFF]/exit
 ❀️ [FFD700]LEAVE SQUAD
+
+[00FFFF]❖ [FFFFFF]/kick [uid]
+❀️ [FFD700]KICK PLAYER FROM SQUAD
+
+[00FFFF]❖ [FFFFFF]/kkick [uid]
+❀️ [FFD700]FAST KICK PLAYER
 
 [00FFFF]❖ [FFFFFF]/3
 ❀️ [FFD700]SEND 3-PLAYER INVITE
@@ -11765,8 +11660,17 @@ async def TcPChaT(
 [00FFFF]❖ [FFFFFF]/e random
 ❀️ [FFD700]SEND RANDOM EMOTE/STICKER
 
+[00FFFF]❖ [FFFFFF]/sticker
+❀️ [FFD700]SEND STICKER
+
+[00FFFF]❖ [FFFFFF]/animation
+❀️ [FFD700]SEND ANIMATION
+
 [00FFFF]❖ [FFFFFF]/hjk
 ❀️ [FFD700]HIJACK EMOTE STREAM
+
+[00FFFF]❖ [FFFFFF]/hjf
+❀️ [FFD700]HIJACK FAST EMOTE STREAM
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(
@@ -11803,6 +11707,9 @@ async def TcPChaT(
 
 [00FFFF]❖ [FFFFFF]@bt
 ❀️ [FFD700]STOP EVO EMOTE CYCLE
+
+[00FFFF]❖ [FFFFFF]/evo_c
+❀️ [FFD700]CUSTOM EVO EMOTE CYCLE
 """
                             await safe_send_message(
                                 response.Data.chat_type, evo, uid, chat_id, key, iv
@@ -11836,8 +11743,14 @@ async def TcPChaT(
 [00FFFF]❖ [FFFFFF]/room uid room id
 ❀️ [FFD700]ATTACK SPECIFIC ROOM
 
+[00FFFF]❖ [FFFFFF]/lag [uid] [amount]
+❀️ [FFD700]LAG ATTACK
+
 [00FFFF]❖ [FFFFFF]/stop lag
 ❀️ [FFD700]STOP LAG ATTACK
+
+[00FFFF]❖ [FFFFFF]/ice
+❀️ [FFD700]ICE BUNDLE EXPLOIT
 [FF0000]━[00FF00]━[0000FF]━[FFFF00]━[FF00FF]━[00FFFF]━[FFA500]━[FF1493]━[00FF7F]━[FFD700]━[00CED1]━[9400D3]━[FF6347]━"""
 
                             await safe_send_message(
@@ -11870,6 +11783,18 @@ async def TcPChaT(
 
 [00FFFF]❖ [FFFFFF]/b [number]
 ❀️ [FFD700]EQUIP BUNDLE BOT
+
+[00FFFF]❖ [FFFFFF]/bio [text]
+❀️ [FFD700]CHANGE BOT BIO
+
+[00FFFF]❖ [FFFFFF]/friend [uid]
+❀️ [FFD700]SEND FRIEND REQUEST
+
+[00FFFF]❖ [FFFFFF]/roommsg
+❀️ [FFD700]SPAM MESSAGE IN ROOM
+
+[00FFFF]❖ [FFFFFF]/xjoin
+❀️ [FFD700]JOIN LAST CREATED ROOM
 
 [00FFFF]❖ [FFFFFF]/help
 ❀️ [FFD700]SHOW THIS HELP MENU
