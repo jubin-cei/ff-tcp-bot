@@ -6021,19 +6021,26 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 [FFFFFF] 💡 Use /help to list all features
 [FFD700]╚══════════════════════╝"""
 
-                        target_chat_code = codes_to_join[0] if codes_to_join else CHaT_CoDe
+                        # Add a delay to ensure chat server has fully processed our join and the Universal Tracker
+                        # has discovered all the new dynamic squad chat codes.
+                        await asyncio.sleep(2.5)
                         
-                        # Add a small delay to ensure chat server has fully processed our join
-                        await asyncio.sleep(1.0)
+                        target_rooms = [r for r in subscribed_rooms if isinstance(r, str) and "_" in r]
+                        if not target_rooms:
+                            # Fallback if no rooms were found
+                            target_rooms = [codes_to_join[0]] if codes_to_join else [CHaT_CoDe]
                         
-                        print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name}...")
+                        # We send to the most recent chat room code
+                        target_chat_code = target_rooms[-1] if target_rooms else CHaT_CoDe
+                        
+                        print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name} on {target_chat_code}...")
                         P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, target_chat_code, key, iv, region)
                         if whisper_writer:
                             await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
                             
                         await asyncio.sleep(0.5)
                         
-                        print(f"\033[94m[INFO]\033[0m Sending Admin Menu...")
+                        print(f"\033[94m[INFO]\033[0m Sending Admin Menu on {target_chat_code}...")
                         P2 = await SEndMsG(0, admin_message, OwNer_UiD, target_chat_code, key, iv, region)
                         if whisper_writer:
                             await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
