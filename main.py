@@ -3211,33 +3211,6 @@ async def bundle_packet_async(bundle_id, key, iv, region="bd"):
     final_packet_hex = final_header + header_length_hex + encrypted
     return bytes.fromhex(final_packet_hex)
 
-async def team_chat_startup(player_uid, team_session, key, iv):
-    proto = Team_Chat_Startup_pb2.team_chat_startup()
-    proto.field1 = 3
-    proto.details.uid = player_uid
-    proto.details.language = "en"
-    proto.details.team_packet = str(team_session)
-
-    packet = proto.SerializeToString().hex()
-    encrypted_packet = await encrypt_packet(packet, key, iv)
-    packet_length = len(encrypted_packet) // 2
-    packet_length_hex = await base_to_hex(packet_length)
-
-    if len(packet_length_hex) == 2:
-        final_packet = "1201000000" + packet_length_hex + encrypted_packet
-    elif len(packet_length_hex) == 3:
-        final_packet = "120100000" + packet_length_hex + encrypted_packet
-    elif len(packet_length_hex) == 4:
-        final_packet = "12010000" + packet_length_hex + encrypted_packet
-    elif len(packet_length_hex) == 5:
-        final_packet = "1201000" + packet_length_hex + encrypted_packet
-    else:
-        print("something went wrong, please check clan startup function.")
-    if whisper_writer:  # <--- FIX: Check if writer is available
-        whisper_writer.write(bytes.fromhex(final_packet))
-        await whisper_writer.drain()
-
-	
 #ADDING-100-LIKES-IN-24H
 def send_likes(uid):
     try:
