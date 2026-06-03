@@ -5560,14 +5560,22 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     
                 data_hex = data2.hex()
                 
-                # If it's a 0500 packet, let's decode it fully and log the JSON
-                if data_hex.startswith("0500") and len(data_hex) > 200:
-                    try:
-                        decoded_0500 = await DeCode_PackEt(data_hex[10:])
-                        print(f"\033[95m[SQUAD PACKET DUMP]\033[0m {decoded_0500}")
-                    except Exception as e:
-                        pass
-                elif not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
+                # Check ALL packets on TcPOnLine for the chat message!
+                try:
+                    if data_hex[6:10] != "0000": # Basic check for valid protobuf
+                        decoded_packet = await DeCode_PackEt(data_hex[10:])
+                        decoded_str = str(decoded_packet)
+                        if "help" in decoded_str.lower() or "68656c70" in data_hex:
+                            print(f"\033[92m[SQUAD CHAT DETECTED ON TcPOnLine!]\033[0m {data_hex}")
+                            print(f"\033[92m[DECODED]\033[0m {decoded_str}")
+                            
+                        # If it's a 0500 packet, let's decode it fully and log the JSON
+                        if data_hex.startswith("0500") and len(data_hex) > 200:
+                            print(f"\033[95m[SQUAD PACKET DUMP]\033[0m {decoded_packet}")
+                except Exception as e:
+                    pass
+                
+                if not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
                     print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
       
                 # Your existing code...
