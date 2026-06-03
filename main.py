@@ -5575,17 +5575,32 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             print(f"\033[95m[SQUAD PACKET DUMP]\033[0m {decoded_packet}")
                             try:
                                 pkt_json = json.loads(decoded_packet)
-                                data_block = pkt_json.get("5", {}).get("data", {})
-                                OwNer_UiD = data_block.get("2", {}).get("data", {}).get("4", {}).get("data")
-                                if not OwNer_UiD:
-                                    OwNer_UiD = pkt_json.get("5", {}).get("data", {}).get("1", {}).get("data")
+                                data_block = pkt_json.get("5", {})
+                                if isinstance(data_block, dict):
+                                    data_block = data_block.get("data", {})
+                                else:
+                                    data_block = {}
+                                
+                                OwNer_UiD = None
+                                if isinstance(data_block, dict):
+                                    OwNer_UiD = data_block.get("1", {}).get("data")
+                                    if not OwNer_UiD:
+                                        # fallback
+                                        field_2 = data_block.get("2", {})
+                                        if isinstance(field_2, dict):
+                                            field_2_data = field_2.get("data", {})
+                                            if isinstance(field_2_data, dict):
+                                                OwNer_UiD = field_2_data.get("4", {}).get("data")
                                 
                                 new_codes = []
                                 for k in ["8", "17", "18", "31", "33"]:
-                                    c = data_block.get(k, {}).get("data", "")
-                                    if c and c not in subscribed_rooms:
-                                        new_codes.append(c)
-                                        subscribed_rooms.add(c)
+                                    if isinstance(data_block, dict):
+                                        k_data = data_block.get(k, {})
+                                        if isinstance(k_data, dict):
+                                            c = k_data.get("data", "")
+                                            if c and c not in subscribed_rooms:
+                                                new_codes.append(c)
+                                                subscribed_rooms.add(c)
                                         
                                 if new_codes and OwNer_UiD:
                                     print(f"\033[92m[SUCCESS]\033[0m Universal Tracker discovered NEW Chat Rooms: {new_codes}. Subscribing with Owner UID: {OwNer_UiD}...")
