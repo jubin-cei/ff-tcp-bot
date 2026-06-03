@@ -5940,10 +5940,15 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             
                         print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
-                        Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
+                        # We must use the Bot's UID to authenticate to the Chat Server!
+                        Bot_UiD = packet_json.get("1", {}).get("data")
+                        if not Bot_UiD:
+                            Bot_UiD = OwNer_UiD # fallback
+                            
                         Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
                         
-                        JoinCHaT = await AutH_Chat(0, Squad_ID, CHaT_CoDe, key, iv)
+                        # Use T=1 and Bot_UiD for Squad Chat Auth
+                        JoinCHaT = await AutH_Chat(1, Bot_UiD, CHaT_CoDe, key, iv)
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
                         
