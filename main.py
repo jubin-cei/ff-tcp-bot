@@ -6157,7 +6157,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                 
                 print(f"\033[90m[DEBUG]\033[0m CHAT RECV: {data.hex()[:200]}")
                 
-                if data.hex().startswith("120000"):
+                if data.hex().startswith("120000") or data.hex().startswith("121400") or data.hex().startswith("121500"):
 
                     msg = await DeCode_PackEt(data.hex()[10:])
                     chatdata = json.loads(msg)

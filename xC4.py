@@ -404,8 +404,8 @@ async def GeTSQDaTa(D):
     try:
         data_block = D.get('5', {}).get('data', {})
         uid = data_block.get('1', {}).get('data')
-        chat_code = data_block.get('17', {}).get('data') or data_block.get('18', {}).get('data') or ""
-        squad_code = data_block.get('31', {}).get('data') or ""
+        chat_code = data_block.get('8', {}).get('data') or data_block.get('17', {}).get('data') or data_block.get('18', {}).get('data') or ""
+        squad_code = data_block.get('8', {}).get('data') or data_block.get('31', {}).get('data') or ""
         return uid, chat_code, squad_code
     except Exception:
         return None, None, None
