@@ -5560,8 +5560,15 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     
                 data_hex = data2.hex()
                 
-                # Log ALL packets to find squad chat! (Truncated to 150 chars)
-                print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
+                # If it's a 0500 packet, let's decode it fully and log the JSON
+                if data_hex.startswith("0500") and len(data_hex) > 200:
+                    try:
+                        decoded_0500 = await DeCode_PackEt(data_hex[10:])
+                        print(f"\033[95m[SQUAD PACKET DUMP]\033[0m {decoded_0500}")
+                    except Exception as e:
+                        pass
+                elif not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
+                    print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
       
                 # Your existing code...
   
