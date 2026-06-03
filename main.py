@@ -8107,51 +8107,6 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 [FFD700]╚═════════════╝"""
                             await safe_send_message(response.Data.chat_type, admin_message, uid, chat_id, key, iv)
 
-                        # MULTIJOIN command handlers in the TcPChaT function
-                        if inPuTMsG.strip().startswith('/multijoin'):
-                            print('Processing multi-account join request')
-    
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ Usage: /multijoin (target_uid)\nExample: /multijoin 123456789\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                            else:
-                                target_uid = parts[1]
-        
-                                if not target_uid.isdigit():
-                                    error_msg = f"[B][C][FF0000]❌ Please write a valid player ID!\n"
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                    return
-        
-                                initial_msg = f"[B][C][FFFF00]🚀 Starting multi-join attack on {target_uid}...\n"
-                                await safe_send_message(response.Data.chat_type, initial_msg, uid, chat_id, key, iv)
-        
-                                try:
-                                    # Try the fake multi-account method (more reliable)
-                                    success_count, total_attempts = await real_multi_account_join(target_uid, key, iv, region)
-            
-                                    if success_count > 0:
-                                        result_msg = f"""
-[B][C][FFFF00]✅ MULTI-JOIN ATTACK COMPLETED!
-
-🎯 Target: {target_uid}
-✅ Successful Requests: {success_count}
-📊 Total Attempts: {total_attempts}
-⚡ Different squad variations sent!
-
-💡 Check your game for join requests!
-"""
-                                    else:
-                                        result_msg = f"[B][C][FF0000]❌ All join requests failed! Check bot connection.\n"
-            
-                                    await safe_send_message(response.Data.chat_type, result_msg, uid, chat_id, key, iv)
-            
-                                except Exception as e:
-                                    error_msg = f"[B][C][FF0000]❌ Multi-join error: {str(e)}\n"
-                                    await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-
-
-
                         # Update the command handler
                         if inPuTMsG.strip().startswith('/reject'):
                             print('Processing reject spam command in any chat type')
