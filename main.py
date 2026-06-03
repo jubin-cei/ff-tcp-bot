@@ -5940,16 +5940,22 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             
                         print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
-                        # We must use the Bot's UID to authenticate to the Chat Server!
+                        # Let's brute-force the Squad Chat Auth!
                         Bot_UiD = packet_json.get("1", {}).get("data")
                         if not Bot_UiD:
-                            Bot_UiD = OwNer_UiD # fallback
-                            
+                            Bot_UiD = OwNer_UiD
+                        Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
+                        
                         Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
                         
-                        # Use T=1 and Bot_UiD for Squad Chat Auth
-                        JoinCHaT = await AutH_Chat(1, Bot_UiD, CHaT_CoDe, key, iv)
-                        await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
+                        print(f"\033[93m[BRUTE FORCE]\033[0m Attempting multiple AutH_Chat combinations...")
+                        # Try T=1, 4, 5, 6 with Bot_UiD, Squad_ID, and OwNer_UiD
+                        for test_t in [1, 4, 5, 6]:
+                            for test_uid, uid_name in [(Bot_UiD, "Bot_UiD"), (Squad_ID, "Squad_ID"), (OwNer_UiD, "OwNer_UiD")]:
+                                print(f"\033[93m[BRUTE FORCE]\033[0m Sending T={test_t}, UID={uid_name} ({test_uid})")
+                                p = await AutH_Chat(test_t, test_uid, CHaT_CoDe, key, iv)
+                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                                await asyncio.sleep(0.5) # Wait a bit to see the response in logs
                         
                         
                         
