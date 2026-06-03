@@ -1,0 +1,20 @@
+services:
+  ff-tcp-bot:
+    build: .
+    image: ff-tcp-bot
+    container_name: ff-tcp-bot
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 400M
+        reservations:
+          memory: 100M
+    network_mode: host
+    environment:
+      - TZ=UTC
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
