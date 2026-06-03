@@ -748,6 +748,17 @@ def load_credentials_from_file(filename="God_Blaze.txt"):
         uid = None
         password = None
         
+        try:
+            import json
+            jdata = json.loads(content)
+            if "guest_account_info" in jdata:
+                uid = jdata["guest_account_info"].get("com.garena.msdk.guest_uid")
+                password = jdata["guest_account_info"].get("com.garena.msdk.guest_password")
+                if uid and password:
+                    return uid, password
+        except Exception:
+            pass
+        
         # Try to find uid and password using regex
         import re
         
@@ -1314,7 +1325,9 @@ async def StarTinG():
     
     while True:
         try:
-            await asyncio.wait_for(MaiiiinE(), timeout = 7 * 60 * 60)
+            result = await asyncio.wait_for(MaiiiinE(), timeout = 7 * 60 * 60)
+            if result is None:
+                await asyncio.sleep(5)
         except KeyboardInterrupt:
             consumer_task.cancel()
             break
@@ -1336,7 +1349,6 @@ import pickle
 import os
 
 import builtins
-import datetime
 
 _original_print = builtins.print
 
