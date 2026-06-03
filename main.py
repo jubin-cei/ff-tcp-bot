@@ -5952,12 +5952,18 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
                         Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
                         
-                        print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Room sequence: {CHaT_CoDe}...")
-                        for T_val in [0, 1, 3, 4]:
-                            p = await AutH_Chat(T_val, Bot_UiD, CHaT_CoDe, key, iv)
-                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
-                            await asyncio.sleep(0.3)
-                        await asyncio.sleep(0.3)
+                        code_8 = CHaT_CoDe
+                        code_31 = packet_json.get("5", {}).get("data", {}).get("31", {}).get("data", "")
+                        code_33 = packet_json.get("5", {}).get("data", {}).get("33", {}).get("data", "")
+                        
+                        codes_to_join = [c for c in [code_8, code_31, code_33] if c]
+                        print(f"\033[92m[SUCCESS]\033[0m Joining Squad Chat Rooms: {codes_to_join}...")
+                        
+                        for code in codes_to_join:
+                            for T_val in [0, 1, 3, 4]:
+                                p = await AutH_Chat(T_val, Bot_UiD, code, key, iv)
+                                await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
+                                await asyncio.sleep(0.3)
                         senthi = False
 
                         insquad = None
