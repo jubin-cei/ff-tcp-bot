@@ -8296,63 +8296,8 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     await safe_send_message(response.Data.chat_type, success_message, uid, chat_id, key, iv)
             
                                 except Exception as e:
-                                    print(f"Regular join failed, trying ghost join: {e}")
-                                    # If regular join fails, try ghost join
-                                    try:
-                                        # Get bot's UID from global context or login data
-                                        bot_uid = LoGinDaTaUncRypTinG.AccountUID if hasattr(LoGinDaTaUncRypTinG, 'AccountUID') else TarGeT
-                
-                                        ghost_packet = await ghost_join_packet(bot_uid, CodE, key, iv)
-                                        if ghost_packet:
-                                            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', ghost_packet)
-                    
-                                            # Wait a bit for ghost join to complete
-                                            await asyncio.sleep(2)
-                    
-                                            # DUAL RINGS EMOTE - BOTH SENDER AND BOT
-                                            try:
-                                                await auto_rings_emote_dual(uid, key, iv, region)
-                                            except Exception as emote_error:
-                                                print(f"Dual emote failed but ghost join succeeded: {emote_error}")
-                    
-                                            success_message = f"[B][C][FFFF00]✅ SUCCESS! Ghost joined squad: {CodE}!\n💍 Dual Rings emote activated!\n🤖 Bot + You = 💕\n"
-                                            await safe_send_message(response.Data.chat_type, success_message, uid, chat_id, key, iv)
-                                        else:
-                                            error_msg = f"[B][C][FF0000]❌ ERROR! Failed to create ghost join packet.\n"
-                                            await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                    
-                                    except Exception as ghost_error:
-                                        print(f"Ghost join also failed: {ghost_error}")
-                                        error_msg = f"[B][C][FF0000]❌ ERROR! Failed to join squad: {str(ghost_error)}\n"
-                                        await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                
-                
-                        if inPuTMsG.strip().startswith('/ghost'):
-                            # Process /ghost command in any chat type
-                            parts = inPuTMsG.strip().split()
-                            if len(parts) < 2:
-                                error_msg = f"[B][C][FF0000]❌ ERROR! Usage: /ghost (team_code)\nExample: /ghost ABC123\n"
-                                await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                            else:
-                                CodE = parts[1]
-                                initial_message = f"[B][C]{get_random_color()}\nGhost joining squad with code: {CodE}...\n"
-                                await safe_send_message(response.Data.chat_type, initial_message, uid, chat_id, key, iv)
-                                
-                                try:
-                                    # Get bot's UID from global context or login data
-                                    bot_uid = LoGinDaTaUncRypTinG.AccountUID if hasattr(LoGinDaTaUncRypTinG, 'AccountUID') else TarGeT
-                                    
-                                    ghost_packet = await ghost_join_packet(bot_uid, CodE, key, iv)
-                                    if ghost_packet:
-                                        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', ghost_packet)
-                                        success_message = f"[B][C][FFFF00]✅ SUCCESS! Ghost joined squad with code: {CodE}!\n"
-                                        await safe_send_message(response.Data.chat_type, success_message, uid, chat_id, key, iv)
-                                    else:
-                                        error_msg = f"[B][C][FF0000]❌ ERROR! Failed to create ghost join packet.\n"
-                                        await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
-                                        
-                                except Exception as e:
-                                    error_msg = f"[B][C][FF0000]❌ ERROR! Ghost join failed: {str(e)}\n"
+                                    print(f"Regular join failed: {e}")
+                                    error_msg = f"[B][C][FF0000]❌ ERROR! Failed to join squad: {str(e)}\n"
                                     await safe_send_message(response.Data.chat_type, error_msg, uid, chat_id, key, iv)
 
                         # NEW LAG COMMAND
