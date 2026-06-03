@@ -5932,6 +5932,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             # Not the correct squad data packet, ignore it
                             continue
                             
+                        print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
                         JoinCHaT = await AutH_Chat(3 , OwNer_UiD , CHaT_CoDe, key,iv)
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
