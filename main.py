@@ -3346,14 +3346,14 @@ async def SEndMsG(H, message, Uid, chat_id, key, iv, region):
     TypE = await cHTypE(H)
     
     if TypE == 'Squid': 
-        msg_packet = await xSEndMsgsQ(message, chat_id, key, iv)
+        msg_packet = await xSEndMsgsQ(message, chat_id, key, iv, region)
     elif TypE == 'CLan': 
         msg_packet = await xSEndMsg(message, 1, chat_id, chat_id, key, iv)
     elif TypE == 'PrivaTe': 
         msg_packet = await xSEndMsg(message, 2, Uid, Uid, key, iv)
     else:
         # Fallback to squad chat
-        msg_packet = await xSEndMsgsQ(message, chat_id, key, iv)
+        msg_packet = await xSEndMsgsQ(message, chat_id, key, iv, region)
         
     return msg_packet
     
@@ -5663,10 +5663,23 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         packet = await DeCode_PackEt(data_hex[10:])
                         packet_json = json.loads(packet)
     
-                        uid = packet_json['5']['data']['1']['data']
-                        invite_uid = packet_json['5']['data']['2']['data']['1']['data']
-                        squad_owner = packet_json['5']['data']['1']['data']  # Person inviting
-                        code = packet_json['5']['data']['8']['data']
+                        if packet_json.get('1') != 5:
+                            continue
+                            
+                        data_block = packet_json.get('5', {}).get('data', {})
+                        if not isinstance(data_block, dict):
+                            continue
+                            
+                        uid = data_block.get('1', {}).get('data')
+                        invite_uid = None
+                        if '2' in data_block and isinstance(data_block['2'].get('data'), dict):
+                            invite_uid = data_block['2']['data'].get('1', {}).get('data')
+                            
+                        squad_owner = uid  # Person inviting
+                        code = data_block.get('8', {}).get('data')
+                        
+                        if not uid or not invite_uid:
+                            continue
   
 
                         emote_id = 909049012
@@ -5710,7 +5723,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 914000002: 914000002
                             }
 
-                            rare_animation_id = 914050001,          # 👈 rare animation id here
+                            rare_animation_id = 914050001          # 👈 rare animation id here
                             rare_bundle_id = 914050001      # 👈 rare bundle id here
                             rare_chance_percent = 10        # 10% chance
 
@@ -5741,9 +5754,10 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 # ================= SEND ANIMATION =================
 
                                 animation_pkt = await send_bundle_animation(
-                                    animation_id=animation_id,
+                                    bundle_id=animation_id,
                                     key=key,
-                                    iv=iv
+                                    iv=iv,
+                                    region=region
                                 )
 
                                 if animation_pkt:
@@ -5776,9 +5790,10 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 emote_id = 909000063  # 👈 change if you want
 
                                 emote_pkt = await send_bundle_animation(
-                                    animation_id=emote_id,
+                                    bundle_id=emote_id,
                                     key=key,
-                                    iv=iv
+                                    iv=iv,
+                                    region=region
                                 )
 
                                 if emote_pkt:
@@ -8450,7 +8465,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
 
                             try:
                                 # your new function call
-                                packet = await send_bundle_animation(animation_id, key, iv)
+                                packet = await send_bundle_animation(animation_id, key, iv, region)
 
                                 if packet and online_writer:
                                     await SEndPacKeT(whisper_writer, online_writer, "OnLine", packet)
@@ -8541,7 +8556,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             )
 
                             try:
-                                animation_pkt = await send_bundle_animation(bundle_id, key, iv)
+                                animation_pkt = await send_bundle_animation(bundle_id, key, iv, region)
 
                                 if animation_pkt and online_writer:
                                     await SEndPacKeT(whisper_writer, online_writer, "OnLine", animation_pkt)

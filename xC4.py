@@ -401,10 +401,14 @@ async def send_bundle_equip(bundle_id, key, iv, region):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, key, iv)
 
 async def GeTSQDaTa(D):
-    uid = D['5']['data']['1']['data']
-    chat_code = D["5"]["data"]["17"]["data"]
-    squad_code = D["5"]["data"]["31"]["data"]
-    return uid, chat_code , squad_code
+    try:
+        data_block = D.get('5', {}).get('data', {})
+        uid = data_block.get('1', {}).get('data')
+        chat_code = data_block.get('17', {}).get('data') or data_block.get('18', {}).get('data') or ""
+        squad_code = data_block.get('31', {}).get('data') or ""
+        return uid, chat_code, squad_code
+    except Exception:
+        return None, None, None
 
 async def AuthClan(CLan_Uid, AuTh, K, V):
     fields = {1: 3, 2: {1: int(CLan_Uid), 2: 1, 4: str(AuTh)}}
