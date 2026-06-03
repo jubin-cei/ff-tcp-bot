@@ -5458,7 +5458,7 @@ async def hijack_squad_emote(data_hex, key, iv, bot_uid, region, in_squad):
             print(f"\033[92m[SUCCESS]\033[0m Squad Hijack emote streamed by bot {bot_uid}!")
             
             # Optional: Also send the original emote to maintain appearance
-            await asyncio.sleep(0.3)
+            
             original_packet = await Emote_k(int(sender_uid), int(emote_id), key, iv, region)
             online_writer.write(original_packet)
             await online_writer.drain()
@@ -5560,9 +5560,8 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     
                 data_hex = data2.hex()
                 
-                # Log non-ping packets briefly to catch squad chat!
-                if not data_hex.startswith("0a00") and not data_hex.startswith("0b00") and not data_hex.startswith("0f00") and not data_hex.startswith("0200") and not data_hex.startswith("0300") and not data_hex.startswith("0500"):
-                    print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
+                # Log ALL packets to find squad chat! (Truncated to 150 chars)
+                print(f"\033[90m[DEBUG ONL]\033[0m RECV: {data_hex[:150]}")
       
                 # Your existing code...
   
@@ -5935,15 +5934,25 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         print(f"\033[90m[DEBUG SQUAD]\033[0m packet_json: {json.dumps(packet_json)}")
                         print(f"\033[94m[INFO]\033[0m Received squad data for joining team, attempting chat auth for {OwNer_UiD} with Chat Code: {CHaT_CoDe} and Squad Code: {SQuAD_CoDe}...")
                         Squad_ID = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("4", {}).get("data", OwNer_UiD)
+                        Inviter_Name = packet_json.get("5", {}).get("data", {}).get("2", {}).get("data", {}).get("2", {}).get("data", "God Blaze")
+                        
                         JoinCHaT = await AutH_Chat(0, Squad_ID, CHaT_CoDe, key, iv)
                         await SEndPacKeT(whisper_writer , online_writer , 'ChaT' , JoinCHaT)
                         
-                        def get_random_color(): return "_" 
-                        welcome_msg = """Welcome to God Blaze's Bot"""
-                        P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
                         
-                        await asyncio.sleep(0.3)
+                        
+                        await asyncio.sleep(0.3)`n                        msg1 = f"Welcome {Inviter_Name}!"
+                        P1 = await SEndMsG(0, msg1, OwNer_UiD, OwNer_UiD, key, iv, region)
+                        
+                        
+                        await asyncio.sleep(0.5)
+                        
+                        msg2 = "Use /menu to list all features"
+                        P2 = await SEndMsG(0, msg2, OwNer_UiD, OwNer_UiD, key, iv, region)
+                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
+                        
+                        
+                        
                         
                         admin_message = """[C][B][FF0000]╔══════════════════════╗
 [FFFFFF] ✨ God Blaze TCP - Bot v2
@@ -5977,9 +5986,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                     def get_random_color(): return "_" 
                     welcome_msg = """Welcome to God Blaze's Bot"""
                     P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region)
-                    await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
                     
-                    await asyncio.sleep(0.3)
+                    
+                    
                     
                     admin_message = """[C][B][FF0000]╔══════════════════════╗
 [FFFFFF] ✨ God Blaze TCP - Bot v2
@@ -6630,15 +6639,15 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     # Fast squad creation and invite for 5 players
                                     PAc = await OpEnSq(key, iv, region)
                                     await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
-                                    await asyncio.sleep(0.3)
+                                    
                                     
                                     C = await cHSq(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
-                                    await asyncio.sleep(0.3)
+                                    
                                     
                                     V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
-                                    await asyncio.sleep(0.3)
+                                    
                                     
                                     E = await ExiT(None, key, iv)
                                     await asyncio.sleep(2)
@@ -6662,11 +6671,11 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
                             
                             C = await cHSq(6, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
                             
                             V = await SEnd_InV(6, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
                             
                             E = await ExiT(None, key, iv)
@@ -7129,7 +7138,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     # Fast squad creation and invite for 5 players
                                     PAc = await KickTarget(target_uid, key, iv)
                                     await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
-                                    await asyncio.sleep(0.3)
+                                    
                                 except Exception as e:
                                     print(e)
                                     
@@ -7147,7 +7156,7 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                                     # Fast squad creation and invite for 5 players
                                     PAc = await SwitchLoneWolfDule(target_uid, key, iv)
                                     await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
-                                    await asyncio.sleep(0.3)
+                                    
                                 except Exception as e:
                                     print(e)
                             
@@ -7165,11 +7174,11 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
                             
                             C = await cHSq(3, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
                             
                             V = await SEnd_InV(3, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
                             
                             E = await ExiT(None, key, iv)
@@ -7190,11 +7199,11 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
                             
                             C = await cHSq(4, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
                             
                             V = await SEnd_InV(4, uid, key, iv, region)
-                            await asyncio.sleep(0.3)
+                            
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
                             
                             E = await ExiT(None, key, iv)
@@ -7248,11 +7257,11 @@ async def TcPChaT(ip, port, AutHToKen, key, iv, LoGinDaTaUncRypTinG, ready_event
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', PAc)
                             
                             C = await cHSq(5, uid, key, iv, region)
-                            await asyncio.sleep(0.3)  # Reduced delay
+                              # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', C)
                             
                             V = await SEnd_InV(5, uid, key, iv, region)
-                            await asyncio.sleep(0.3)  # Reduced delay
+                              # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', V)
                             
                             E = await ExiT(None, key, iv)
