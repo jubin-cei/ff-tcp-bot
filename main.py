@@ -5995,39 +5995,24 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             p = await AutH_Chat(3, OwNer_UiD, code, key, iv)
                             await SEndPacKeT(whisper_writer, online_writer, 'ChaT', p)
                             await asyncio.sleep(0.3)
-                        senthi = False
-
-                        insquad = None
                             
-                    except Exception as e:
-                        print(f"\033[94m[INFO]\033[0m Error in joining_team chat auth: {e}")
-                        # Removed the redundant inner try/except block.
-                        pass
-                
-                if "0600" in data2.hex()[0:4] and len(data2.hex()) > 700:
-                    accept_packet = f'08{data2.hex().split("08", 1)[1]}'
-                    kk = get_available_room(accept_packet)
-                    parsed_data = json.loads(kk)
-                    #logging.info(parsed_data)
-
-                    senthi = True
-                if senthi == True:
-                    OwNer_Name = "Player"
-                    try:
-                        d5 = packet_json.get("5", {})
-                        if isinstance(d5, dict):
-                            d5_data = d5.get("data", {})
-                            if isinstance(d5_data, dict):
-                                d2 = d5_data.get("2", {})
-                                if isinstance(d2, dict):
-                                    d2_data = d2.get("data", {})
-                                    if isinstance(d2_data, dict):
-                                        OwNer_Name = d2_data.get("2", {}).get("data", "Player")
-                    except Exception:
-                        pass
-                        
-                    welcome_msg = f"[B][C][FFD700]✨ Welcome {OwNer_Name}! ✨\n[FFFFFF]God Blaze's Bot is now active in your squad!"
-                    admin_message = """[C][B][FF0000]╔══════════════════════╗
+                        # Send Welcome and Admin messages
+                        OwNer_Name = "Player"
+                        try:
+                            d5 = packet_json.get("5", {})
+                            if isinstance(d5, dict):
+                                d5_data = d5.get("data", {})
+                                if isinstance(d5_data, dict):
+                                    d2 = d5_data.get("2", {})
+                                    if isinstance(d2, dict):
+                                        d2_data = d2.get("data", {})
+                                        if isinstance(d2_data, dict):
+                                            OwNer_Name = d2_data.get("2", {}).get("data", "Player")
+                        except Exception:
+                            pass
+                            
+                        welcome_msg = f"[B][C][FFD700]✨ Welcome {OwNer_Name}! ✨\n[FFFFFF]God Blaze's Bot is now active in your squad!"
+                        admin_message = """[C][B][FF0000]╔══════════════════════╗
 [FFFFFF] ✨ God Blaze TCP - Bot v2
 [FFFFFF]   NEED HELP ? CONTACT ME ❤️   
 [FF0000]╠══════════════════════╣
@@ -6036,27 +6021,29 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 [FFFFFF] 💡 Use /help to list all features
 [FFD700]╚══════════════════════╝"""
 
-                    target_chat_code = codes_to_join[0] if codes_to_join else CHaT_CoDe
-                    
-                    # Add a small delay to ensure chat server has fully processed our join
-                    await asyncio.sleep(1.0)
-                    
-                    print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name}...")
-                    P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, target_chat_code, key, iv, region)
-                    if whisper_writer:
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
+                        target_chat_code = codes_to_join[0] if codes_to_join else CHaT_CoDe
                         
-                    await asyncio.sleep(0.5)
-                    
-                    print(f"\033[94m[INFO]\033[0m Sending Admin Menu...")
-                    P2 = await SEndMsG(0, admin_message, OwNer_UiD, target_chat_code, key, iv, region)
-                    if whisper_writer:
-                        await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
+                        # Add a small delay to ensure chat server has fully processed our join
+                        await asyncio.sleep(1.0)
+                        
+                        print(f"\033[94m[INFO]\033[0m Sending Welcome Message to {OwNer_Name}...")
+                        P1 = await SEndMsG(0, welcome_msg, OwNer_UiD, target_chat_code, key, iv, region)
+                        if whisper_writer:
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P1)
+                            
+                        await asyncio.sleep(0.5)
+                        
+                        print(f"\033[94m[INFO]\033[0m Sending Admin Menu...")
+                        P2 = await SEndMsG(0, admin_message, OwNer_UiD, target_chat_code, key, iv, region)
+                        if whisper_writer:
+                            await SEndPacKeT(whisper_writer, online_writer, 'ChaT', P2)
 
-                    joining_team = False
-
-
-
+                        insquad = None
+                            
+                    except Exception as e:
+                        print(f"\033[94m[INFO]\033[0m Error in joining_team chat auth: {e}")
+                        pass
+                
                 # =================== STATUS HANDLER ===================
                 if data_hex.startswith('0f00') and len(data_hex) > 100:
                     print(f"\033[94m[INFO]\033[0m Received status response packet")
