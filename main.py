@@ -1332,7 +1332,6 @@ async def StarTinG():
 
 import pickle
 import os
-os.system("color")  # Enable ANSI colors on Windows
 
 import builtins
 import datetime
