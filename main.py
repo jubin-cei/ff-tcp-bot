@@ -8907,11 +8907,11 @@ async def TcPChaT(
                             # Process /admin command in any chat type
                             print(f"\033[94m[INFO]\033[0m /admin command detected from UID: {uid}")
                             admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ✨ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
+[FFFFFF] ❀️ God Blaze TCP - Bot v2
+[FFFFFF]   NEED HELP ? CONTACT ME ❀️   
 [FF0000]╠══════════════════════╣
-[FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze
+[FFD700] ❖ OWNER UID : 1136824736
+[FFD700] ❖ Developer: God Blaze
 [FFD700]╚══════════════════════╝"""
                             admin_cmds = """
             [B][C][FF0000] ❀️ ADMIN CMDS
@@ -11692,11 +11692,11 @@ async def TcPChaT(
                             )
 
                             admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ✨ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❤️   
+[FFFFFF] ❀️ God Blaze TCP - Bot v2
+[FFFFFF]   NEED HELP ? CONTACT ME ❀️   
 [FF0000]╠══════════════════════╣
-[FFD700] ⚡ OWNER UID : 1136824736
-[FFD700] ✨ Developer: God Blaze
+[FFD700] ❖ OWNER UID : 1136824736
+[FFD700] ❖ Developer: God Blaze
 [FFFFFF] 💡 Use /help to list all features
 [FFD700]╚══════════════════════╝"""
 
