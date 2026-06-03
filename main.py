@@ -5663,7 +5663,7 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         packet = await DeCode_PackEt(data_hex[10:])
                         packet_json = json.loads(packet)
     
-                        if packet_json.get('1') != 5:
+                        if '5' not in packet_json:
                             continue
                             
                         data_block = packet_json.get('5', {}).get('data', {})
