@@ -8903,16 +8903,26 @@ async def TcPChaT(
                                 iv,
                             )
 
-                        if inPuTMsG.strip().lower() == "/admin" or inPuTMsG.strip().lower().startswith("/admin"):
+                        if (
+                            inPuTMsG.strip().lower() == "/admin"
+                            or inPuTMsG.strip().lower().startswith("/admin")
+                        ):
                             # Process /admin command in any chat type
-                            print(f"\033[94m[INFO]\033[0m /admin command detected from UID: {uid}")
-                            admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ❀️ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❀️   
-[FF0000]╠══════════════════════╣
-[FFD700] ❖ OWNER UID : 1136824736
-[FFD700] ❖ Developer: God Blaze
-[FFD700]╚══════════════════════╝"""
+                            print(
+                                f"\033[94m[INFO]\033[0m /admin command detected from UID: {uid}"
+                            )
+                            admin_message = """
+            [B][C][FF0000] ❀️ GOD BLAZE V2
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
+[00FFFF]❖ [FFFFFF]CREATOR
+❀️ [FFD700]God Blaze
+
+[00FFFF]❖ [FFFFFF]DEVELOPER ID
+❀️ [FFD700]1136824736
+
+[00FFFF]❖ [FFFFFF]STATUS
+❀️ [FFD700]SYSTEM ONLINE
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
                             admin_cmds = """
             [B][C][FF0000] ❀️ ADMIN CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
@@ -8950,7 +8960,9 @@ async def TcPChaT(
                                     iv,
                                 )
                             except Exception as e:
-                                print(f"\033[91m[ERROR]\033[0m Failed to send /admin message: {e}")
+                                print(
+                                    f"\033[91m[ERROR]\033[0m Failed to send /admin message: {e}"
+                                )
 
                         # Update the command handler
                         if inPuTMsG.strip().startswith("/reject"):
@@ -11691,14 +11703,18 @@ async def TcPChaT(
                                 f"\033[94m[INFO]\033[0m Help command detected from UID: {uid} in chat type: {XX}"
                             )
 
-                            admin_message = """[C][B][FF0000]╔══════════════════════╗
-[FFFFFF] ❀️ God Blaze TCP - Bot v2
-[FFFFFF]   NEED HELP ? CONTACT ME ❀️   
-[FF0000]╠══════════════════════╣
-[FFD700] ❖ OWNER UID : 1136824736
-[FFD700] ❖ Developer: God Blaze
-[FFFFFF] 💡 Use /help to list all features
-[FFD700]╚══════════════════════╝"""
+                            admin_message = """
+            [B][C][FF0000] ❀️ GOD BLAZE V2
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
+[00FFFF]❖ [FFFFFF]CREATOR
+❀️ [FFD700]God Blaze
+
+[00FFFF]❖ [FFFFFF]DEVELOPER ID
+❀️ [FFD700]1136824736
+
+[00FFFF]❖ [FFFFFF]STATUS
+❀️ [FFD700]SYSTEM ONLINE
+[FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(
                                 response.Data.chat_type,
@@ -11885,9 +11901,14 @@ async def TcPChaT(
 [00FFFF]❖ [FFFFFF]/wllist
 ❀️ [FFD700]VIEW WHITELIST
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
-                            
+
                             await safe_send_message(
-                                response.Data.chat_type, admin_cmds, uid, chat_id, key, iv
+                                response.Data.chat_type,
+                                admin_cmds,
+                                uid,
+                                chat_id,
+                                key,
+                                iv,
                             )
                             await asyncio.sleep(0.2)
 
