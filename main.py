@@ -367,7 +367,7 @@ async def emote_to_user_once(team_code, emote_number, target_uid, key, iv, regio
 
         await asyncio.sleep(0.1)
 
-        leave_packet = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
 
         print(f"\033[92m[SUCCESS]\033[0m Emote {emote_number} sent to UID {target_uid}")
@@ -1259,7 +1259,7 @@ Try again in 10 seconds.
 
         # Cleanup: Leave squad after sending request
         await asyncio.sleep(3)
-        leave_packet = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
         print("\033[94m[INFO]\033[0m Bot cleaned up (left squad)")
 
@@ -1988,9 +1988,6 @@ async def leave_squad(key, iv, region):
     """Leave squad - converted from your old TCP leave_s()"""
     fields = {
         1: 7,
-        2: {
-            1: int(LoGinDaTaUncRypTinG.AccountUID)  # Dynamically fetch bot's UID
-        },
     }
 
     packet = (await CrEaTe_ProTo(fields)).hex()
@@ -3254,7 +3251,7 @@ async def lag_team_loop(team_code, key, iv, region):
             await asyncio.sleep(0.01)  # 10 milliseconds
 
             # Leave the team
-            leave_packet = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+            leave_packet = await ExiT(None, key, iv, region)
             await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
 
             count += 1
@@ -3692,7 +3689,7 @@ async def ultra_quick_emote_attack(team_code, emote_id, target_uid, key, iv, reg
         await asyncio.sleep(0.5)
 
         # Step 4: Leave the team
-        leave_packet = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
         print(f"\033[94m[INFO]\033[0m Left team: {team_code}")
 
@@ -7844,7 +7841,7 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
-                                    E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                                    E = await ExiT(None, key, iv, region)
                                     await asyncio.sleep(2)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", E
@@ -7898,7 +7895,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8697,7 +8694,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8738,7 +8735,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8857,7 +8854,7 @@ async def TcPChaT(
                             # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)  # Reduced from 3 seconds
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -9835,14 +9832,14 @@ async def TcPChaT(
                                 #  - name/number key in GENERAL_EMOTES_MAP (from emotes.json)
                                 #  - raw numeric emote id
                                 emote_id = None
-                                if (
-                                    emote_token in amr_bal
-                                    and str(amr_bal[emote_token]) in evo_emotes
-                                ):
-                                    emote_id = evo_emotes[str(amr_bal[emote_token])]
+                                if emote_token in amr_bal:
+                                    mapped_index = str(amr_bal[emote_token])
+                                    emote_id = GENERAL_EMOTES_MAP.get(mapped_index)
+                                    if not emote_id:
+                                        emote_id = evo_emotes.get(mapped_index)
                                 elif emote_token in GENERAL_EMOTES_MAP:
                                     emote_id = GENERAL_EMOTES_MAP[emote_token]
-                                elif emote_token.isdigit():
+                                elif emote_token.isdigit() and len(emote_token) > 5:
                                     emote_id = int(emote_token)
 
                                 if not emote_id or not target_uids:
