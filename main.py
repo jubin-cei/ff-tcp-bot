@@ -7975,17 +7975,19 @@ async def TcPChaT(
                                     # Let the squad be created before inviting (see /6)
                                     await asyncio.sleep(3)
 
+                                    # Set capacity while EMPTY, before invite (see /6)
+                                    C = await cHSq(5, int(target_uid), key, iv, region)
+                                    await SEndPacKeT(
+                                        whisper_writer, online_writer, "OnLine", C
+                                    )
+                                    await asyncio.sleep(1)
+
                                     V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
                                     await asyncio.sleep(8)
-                                    
-                                    C = await cHSq(5, int(target_uid), key, iv, region)
-                                    await SEndPacKeT(
-                                        whisper_writer, online_writer, "OnLine", C
-                                    )
 
                                     E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                                     await SEndPacKeT(
@@ -8052,20 +8054,23 @@ async def TcPChaT(
                             print("\033[95m[SQTRACE]\033[0m /6 sent OpEnSq (create)")
 
                             # Let the squad be fully created server-side BEFORE inviting.
-                            # Without this, SEnd_InV races ahead of squad creation and the
-                            # invite is dropped (the squad doesn't exist yet) — this is why
-                            # the 2nd+ command's invite "never comes".
                             await asyncio.sleep(3)
+
+                            # Set capacity/squad-type while the squad is EMPTY. Doing this
+                            # AFTER the user joins mutates the squad they're sitting in and
+                            # tears down their voice channel ("unable to join voice channel")
+                            # + leaves a stale 2/4 ghost. Set it first, then invite into a
+                            # stable squad.
+                            C = await cHSq(6, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (capacity, pre-invite)")
+                            await asyncio.sleep(1)
 
                             V = await SEnd_InV(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
                             print(f"\033[95m[SQTRACE]\033[0m /6 sent SEnd_InV -> {uid}")
 
                             await asyncio.sleep(8)
-
-                            C = await cHSq(6, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (capacity)")
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -8882,13 +8887,15 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
+                            # Set capacity while EMPTY, before invite (see /6)
+                            C = await cHSq(3, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            await asyncio.sleep(1)
+
                             V = await SEnd_InV(3, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-
-                            C = await cHSq(3, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -8936,13 +8943,15 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
+                            # Set capacity while EMPTY, before invite (see /6)
+                            C = await cHSq(4, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            await asyncio.sleep(1)
+
                             V = await SEnd_InV(4, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-
-                            C = await cHSq(4, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -9068,13 +9077,15 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
+                            # Set capacity while EMPTY, before invite (see /6)
+                            C = await cHSq(5, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            await asyncio.sleep(1)
+
                             V = await SEnd_InV(5, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-
-                            C = await cHSq(5, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
