@@ -7796,7 +7796,7 @@ async def TcPChaT(
                             )
                             
                             await asyncio.sleep(2)
-                            raise ConnectionResetError("Forced reset to wipe squad state")
+                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         # Add these lines to your existing command dispatcher:
 
@@ -8597,7 +8597,7 @@ async def TcPChaT(
                             )
                             
                             await asyncio.sleep(2)
-                            raise ConnectionResetError("Forced reset to wipe squad state")
+                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         if inPuTMsG.startswith(("/4")):
                             # Process /3 command - Create 3 player group
@@ -8640,7 +8640,7 @@ async def TcPChaT(
                             )
                             
                             await asyncio.sleep(2)
-                            raise ConnectionResetError("Forced reset to wipe squad state")
+                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
@@ -8761,7 +8761,7 @@ async def TcPChaT(
                             )
                             
                             await asyncio.sleep(2)
-                            raise ConnectionResetError("Forced reset to wipe squad state")
+                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         if (
                             inPuTMsG.strip().lower() == "/admin"
