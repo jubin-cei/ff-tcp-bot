@@ -109,6 +109,9 @@ joining_team = False
 online_writer = None
 subscribed_rooms = []
 whisper_writer = None
+# [SQDUMP] diagnostic: keep deep-dumping squad packets until this wall-clock time
+# (extended while a /N command runs, so we capture the ExiT response + post-/N roster)
+_sqdump_state = {"until": 0.0}
 last_bot_status_check = 0
 senthi = False
 bot_status_cache_time = 30
@@ -6107,12 +6110,38 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             f"len={len(data_hex)} insquad={insquad!r} "
                             f"joining_team={joining_team!r} rooms={len(subscribed_rooms)}"
                         )
+                        # Deep dump of squad-service RESPONSE packets (small status/error
+                        # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
+                        # server verdict instead of guessing. Dump while a /N runs, or any
+                        # small packet (the create/invite ack/error responses).
+                        # Deep dump of squad-service RESPONSE packets (small status/error
+                        # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
+                        # server verdict instead of guessing. Dump while a /N runs (and for
+                        # 12s after, to catch the ExiT response + post-/N squad roster), or
+                        # any small packet (the create/invite ack/error responses).
+                        if joining_team:
+                            _sqdump_state["until"] = time.time() + 12
+                        if (
+                            joining_team
+                            or len(data_hex) <= 400
+                            or time.time() < _sqdump_state["until"]
+                        ):
+                            _dump = str(_trace_json)
+                            if len(_dump) > 1200:
+                                _dump = _dump[:1200] + "...<truncated>"
+                            print(
+                                f"\033[95m[SQDUMP]\033[0m len={len(data_hex)} "
+                                f"json={_dump}"
+                            )
+                            if len(data_hex) <= 400:
+                                print(f"\033[95m[SQDUMP]\033[0m hex={data_hex}")
                     except Exception as _trace_e:
                         print(
                             f"\033[95m[SQTRACE]\033[0m recv 0500 (undecodable) "
                             f"len={len(data_hex)} insquad={insquad!r} "
                             f"joining_team={joining_team!r} err={_trace_e}"
                         )
+                        print(f"\033[95m[SQDUMP]\033[0m raw hex={data_hex}")
                 # === end [SQTRACE] ===
 
                 # Check ALL packets on TcPOnLine for the chat message!
