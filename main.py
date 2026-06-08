@@ -11934,6 +11934,25 @@ async def MaiiiinE():
         import traceback
 
         traceback.print_exc()
+    finally:
+        # Prevent background task leaks if one task crashes/cancels
+        if not task1.done():
+            task1.cancel()
+        if not task2.done():
+            task2.cancel()
+            
+        # Clean up sockets so the server registers the disconnect
+        try:
+            global online_writer, whisper_writer
+            if online_writer is not None:
+                online_writer.close()
+                online_writer = None
+            if whisper_writer is not None:
+                whisper_writer.close()
+                whisper_writer = None
+        except Exception:
+            pass
+            
     return None
 
 
