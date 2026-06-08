@@ -7829,19 +7829,18 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", PAc
                                     )
 
-                                    C = await cHSq(5, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-                                    await SEndPacKeT(
-                                        whisper_writer, online_writer, "OnLine", C
-                                    )
-
-                                    V = await SEnd_InV(
-                                        5, int(target_uid), key, iv, region
-                                    )
+                                    V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
                                     await asyncio.sleep(8)
+                                    
+                                    C = await cHSq(5, int(target_uid), key, iv, region)
+                                    await SEndPacKeT(
+                                        whisper_writer, online_writer, "OnLine", C
+                                    )
+
                                     E = await ExiT(None, key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", E
@@ -7887,15 +7886,14 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(6, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-
                             V = await SEnd_InV(6, uid, key, iv, region)
-
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
+
+                            C = await cHSq(6, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            
                             E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8680,21 +8678,20 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite for 6 players
+                            # Fast squad creation and invite
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(3, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-
                             V = await SEnd_InV(3, uid, key, iv, region)
-
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
+
+                            C = await cHSq(3, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+
                             E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8721,21 +8718,20 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite for 6 players
+                            # Fast squad creation and invite
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(4, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-
                             V = await SEnd_InV(4, uid, key, iv, region)
-
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
+
+                            C = await cHSq(4, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+
                             E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8846,15 +8842,14 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(5, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-                            # Reduced delay
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-
                             V = await SEnd_InV(5, uid, key, iv, region)
-                            # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
+
+                            C = await cHSq(5, uid, key, iv, region)
+                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+
                             E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
