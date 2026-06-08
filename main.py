@@ -7842,7 +7842,7 @@ async def TcPChaT(
                                     )
 
                                     await asyncio.sleep(8)
-                                    E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                                    E = await ExiT(None, key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", E
                                     )
@@ -7896,7 +7896,7 @@ async def TcPChaT(
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8695,7 +8695,7 @@ async def TcPChaT(
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8736,7 +8736,7 @@ async def TcPChaT(
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8855,7 +8855,7 @@ async def TcPChaT(
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
                             await asyncio.sleep(8)
-                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
+                            E = await ExiT(None, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
