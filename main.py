@@ -7841,8 +7841,8 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
-                                    E = await ExiT(None, key, iv, region)
-                                    await asyncio.sleep(2)
+                                    await asyncio.sleep(8)
+                                    E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", E
                                     )
@@ -7895,8 +7895,8 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv, region)
-                            await asyncio.sleep(3.5)
+                            await asyncio.sleep(8)
+                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8694,8 +8694,8 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv, region)
-                            await asyncio.sleep(3.5)
+                            await asyncio.sleep(8)
+                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8735,8 +8735,8 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv, region)
-                            await asyncio.sleep(3.5)
+                            await asyncio.sleep(8)
+                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
@@ -8854,8 +8854,8 @@ async def TcPChaT(
                             # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv, region)
-                            await asyncio.sleep(3.5)  # Reduced from 3 seconds
+                            await asyncio.sleep(8)
+                            E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
                             # SUCCESS MESSAGE
