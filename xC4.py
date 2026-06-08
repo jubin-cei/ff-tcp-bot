@@ -363,9 +363,15 @@ async def AutH_GlobAl(K, V):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "1215", K, V)
 
 
-async def LagSquad(K, V):
+async def LagSquad(K, V, region="IND"):
     fields = {1: 15, 2: {1: 1124759936, 2: 1}}
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
 async def GeT_Status(PLayer_Uid, K, V):
@@ -395,7 +401,7 @@ async def SPam_Room(Uid, Rm, Nm, K, V):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0e15", K, V)
 
 
-async def GenJoinSquadsPacket(code, K, V):
+async def GenJoinSquadsPacket(code, K, V, region="IND"):
     fields = {}
     fields[1] = 4
     fields[2] = {}
@@ -409,10 +415,16 @@ async def GenJoinSquadsPacket(code, K, V):
     fields[2][9][8] = "1.111.1"
     fields[2][9][9] = 5
     fields[2][9][10] = 1
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
-async def GenJoinGlobaL(owner, code, K, V):
+async def GenJoinGlobaL(owner, code, K, V, region="IND"):
     fields = {
         1: 4,
         2: {
@@ -424,7 +436,13 @@ async def GenJoinGlobaL(owner, code, K, V):
             16: "OR",
         },
     }
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
 async def FS(key, iv, region="ind"):
@@ -614,7 +632,7 @@ async def Msg_Sq(msg, owner, bot, K, V):
     return await GeneRaTePk(proto_bytes.hex(), "1215", K, V)
 
 
-async def ghost_pakcet(player_id, secret_code, K, V):
+async def ghost_pakcet(player_id, secret_code, K, V, region="IND"):
     fields = {
         1: 61,
         2: {
@@ -635,7 +653,13 @@ async def ghost_pakcet(player_id, secret_code, K, V):
             3: secret_code,
         },
     }
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
 async def GeneRaTePk(Pk, N, K, V):
@@ -702,17 +726,23 @@ async def SEnd_InV(Nu, Uid, K, V, region):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
-async def ExiT(idT, K, V):
+async def ExiT(idT, K, V, region="IND"):
     fields = {
         1: 7,
         2: {
             1: idT,
         },
     }
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
-async def ArohiRefuse(owner, uid, K, V):
+async def ArohiRefuse(owner, uid, K, V, region="IND"):
     fields = {
         1: 5,
         2: {
@@ -722,7 +752,13 @@ async def ArohiRefuse(owner, uid, K, V):
             4: "[FF0000][B][C] ERROR , WELCOME TO [FFFFFF]God Blaze [00FF00] BOT ! \n[FFFF00]NEW VERSION NEW FUNCTION !\n[FF0000]God Blaze\n\n",
         },
     }
-    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), "0515", K, V)
+    if region.lower() == "ind":
+        packet = "0514"
+    elif region.lower() == "bd":
+        packet = "0519"
+    else:
+        packet = "0515"
+    return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet, K, V)
 
 
 async def bundle_packet_async(bundle_id, K, V, region):

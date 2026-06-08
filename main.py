@@ -357,7 +357,7 @@ async def emote_to_user_once(team_code, emote_number, target_uid, key, iv, regio
         return
 
     try:
-        join_packet = await GenJoinSquadsPacket(team_code, key, iv)
+        join_packet = await GenJoinSquadsPacket(team_code, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", join_packet)
 
         await asyncio.sleep(0.1)
@@ -367,7 +367,7 @@ async def emote_to_user_once(team_code, emote_number, target_uid, key, iv, regio
 
         await asyncio.sleep(0.1)
 
-        leave_packet = await ExiT(None, key, iv)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
 
         print(f"\033[92m[SUCCESS]\033[0m Emote {emote_number} sent to UID {target_uid}")
@@ -1259,7 +1259,7 @@ Try again in 10 seconds.
 
         # Cleanup: Leave squad after sending request
         await asyncio.sleep(3)
-        leave_packet = await ExiT(None, key, iv)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
         print("\033[94m[INFO]\033[0m Bot cleaned up (left squad)")
 
@@ -3247,14 +3247,14 @@ async def lag_team_loop(team_code, key, iv, region):
     while lag_running:
         try:
             # Join the team
-            join_packet = await GenJoinSquadsPacket(team_code, key, iv)
+            join_packet = await GenJoinSquadsPacket(team_code, key, iv, region)
             await SEndPacKeT(whisper_writer, online_writer, "OnLine", join_packet)
 
             # Very short delay before leaving
             await asyncio.sleep(0.01)  # 10 milliseconds
 
             # Leave the team
-            leave_packet = await ExiT(None, key, iv)
+            leave_packet = await ExiT(None, key, iv, region)
             await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
 
             count += 1
@@ -3673,7 +3673,7 @@ async def ultra_quick_emote_attack(team_code, emote_id, target_uid, key, iv, reg
     """Join team, authenticate chat, perform emote, and leave automatically"""
     try:
         # Step 1: Join the team
-        join_packet = await GenJoinSquadsPacket(team_code, key, iv)
+        join_packet = await GenJoinSquadsPacket(team_code, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", join_packet)
         print(f"\033[94m[INFO]\033[0m Joined team: {team_code}")
 
@@ -3692,7 +3692,7 @@ async def ultra_quick_emote_attack(team_code, emote_id, target_uid, key, iv, reg
         await asyncio.sleep(0.5)
 
         # Step 4: Leave the team
-        leave_packet = await ExiT(None, key, iv)
+        leave_packet = await ExiT(None, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
         print(f"\033[94m[INFO]\033[0m Left team: {team_code}")
 
@@ -7844,7 +7844,7 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
-                                    E = await ExiT(None, key, iv)
+                                    E = await ExiT(None, key, iv, region)
                                     await asyncio.sleep(2)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", E
@@ -7898,7 +7898,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8669,7 +8669,7 @@ async def TcPChaT(
                             print(
                                 "\033[94m[INFO]\033[0m Processing FINAL title command (friend method)"
                             )
-                            await LagSquad(key, iv)
+                            await LagSquad(key, iv, region)
 
                         if inPuTMsG.startswith(("/3")):
                             # Process /3 command - Create 3 player group
@@ -8697,7 +8697,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8738,7 +8738,7 @@ async def TcPChaT(
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -8857,7 +8857,7 @@ async def TcPChaT(
                             # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            E = await ExiT(None, key, iv)
+                            E = await ExiT(None, key, iv, region)
                             await asyncio.sleep(3.5)  # Reduced from 3 seconds
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
@@ -9154,7 +9154,8 @@ async def TcPChaT(
                                     emote_name_display = f"#{emote_key}"
                                 else:
                                     # Name-based emote
-                                    emote_id = amr_bal.get(emote_key)
+                                    mapped_index = str(amr_bal.get(emote_key))
+                                    emote_id = GENERAL_EMOTES_MAP.get(mapped_index)
                                     emote_name_display = emote_key
 
                                 if not emote_id:
@@ -9293,7 +9294,7 @@ async def TcPChaT(
 
                                 try:
                                     # Try using the regular join method first
-                                    EM = await GenJoinSquadsPacket(CodE, key, iv)
+                                    EM = await GenJoinSquadsPacket(CodE, key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", EM
                                     )
@@ -9416,7 +9417,7 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            leave = await ExiT(uid, key, iv)
+                            leave = await ExiT(uid, key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", leave
                             )
