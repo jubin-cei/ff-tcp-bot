@@ -193,20 +193,15 @@ async def _auto_leave(token, delay, bot_uid, key, iv, region):
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
         subscribed_rooms.clear()
         _hostless_state["since"] = None
-        # Reset the CHAT socket the same proven-safe way the /N soft-reset does:
-        # closing whisper_writer makes TcPChaT's read loop hit EOF and reconnect
-        # with the same AuthToken (no re-login). This rebuilds the squad-chat
-        # session so the NEXT join's welcome + command handling work cleanly,
-        # instead of being anchored to the squad the bot just left.
-        try:
-            if whisper_writer is not None:
-                whisper_writer.close()
-        except Exception:
-            pass
+        # NOTE: deliberately do NOT close/reset the chat socket here. Proven via
+        # [CHATSOCK] tracing: a reconnected chat socket re-sends AuthToken but the
+        # reused token no longer grants squad-chat room subscription, so the next
+        # join's welcome + commands silently break. Keep the original chat socket
+        # alive for the whole session.
         print(
             f"\033[92m[AUTOLEAVE]\033[0m Sent ExiT — squad was hostless for "
-            f"{delay:.0f}s. Bot is now squad-less; chat rooms cleared and chat "
-            f"socket reset."
+            f"{delay:.0f}s. Bot is now squad-less; chat rooms cleared "
+            f"(chat socket kept alive)."
         )
     except Exception as _e:
         print(f"\033[91m[AUTOLEAVE]\033[0m Error during auto-leave: {_e}")
@@ -8015,10 +8010,9 @@ async def TcPChaT(
                                     insquad = None
                                     subscribed_rooms.clear()
                                     print(
-                                        "\033[95m[SQTRACE]\033[0m /5 soft-reset chat socket "
-                                        "(clear rooms + reconnect chat only, no re-login)"
+                                        "\033[95m[SQTRACE]\033[0m /5 cleared rooms "
+                                        "(chat socket kept alive)"
                                     )
-                                    break
 
                                 except Exception as e:
                                     error_msg = f"[B][C][FF0000]❌ ERROR sending invite: {str(e)}\n"
@@ -8105,10 +8099,9 @@ async def TcPChaT(
                             insquad = None
                             subscribed_rooms.clear()
                             print(
-                                "\033[95m[SQTRACE]\033[0m /6 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /6 cleared rooms "
+                                "(chat socket kept alive)"
                             )
-                            break
 
                         # Add these lines to your existing command dispatcher:
 
@@ -8918,10 +8911,9 @@ async def TcPChaT(
                             insquad = None
                             subscribed_rooms.clear()
                             print(
-                                "\033[95m[SQTRACE]\033[0m /3 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /3 cleared rooms "
+                                "(chat socket kept alive)"
                             )
-                            break
 
                         if inPuTMsG.startswith(("/4")):
                             # Process /3 command - Create 3 player group
@@ -8973,10 +8965,9 @@ async def TcPChaT(
                             insquad = None
                             subscribed_rooms.clear()
                             print(
-                                "\033[95m[SQTRACE]\033[0m /4 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /4 cleared rooms "
+                                "(chat socket kept alive)"
                             )
-                            break
 
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
@@ -9106,10 +9097,9 @@ async def TcPChaT(
                             insquad = None
                             subscribed_rooms.clear()
                             print(
-                                "\033[95m[SQTRACE]\033[0m /5 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /5 cleared rooms "
+                                "(chat socket kept alive)"
                             )
-                            break
 
                         if (
                             inPuTMsG.strip().lower() == "/admin"
