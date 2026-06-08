@@ -112,6 +112,68 @@ whisper_writer = None
 # [SQDUMP] diagnostic: keep deep-dumping squad packets until this wall-clock time
 # (extended while a /N command runs, so we capture the ExiT response + post-/N roster)
 _sqdump_state = {"until": 0.0}
+
+# Region codes that appear as field 5.2 next to the owner UID — must NOT be counted
+# as member names when parsing the squad roster.
+SQUAD_REGION_CODES = {
+    "IND", "BD", "BR", "SG", "ID", "US", "EU", "ME", "VN", "TH", "TW",
+    "PK", "NA", "CIS", "BDT", "MENA", "SAC", "NA", "IDC1",
+}
+
+
+def parse_squad_state(pkt_json, bot_uid):
+    """Read-only roster parser for a 0500 squad packet.
+
+    Returns (owner_uid, real_players:set, hostless:bool) or None.
+      owner_uid    = squad leader (field 5.1, or 5.3.1 for f4=8 leadership packets)
+      real_players = member UIDs that are real accounts (>1e6), EXCLUDING the bot
+      hostless     = bot is in the squad but no real (non-bot) player remains
+    """
+    try:
+        f5 = pkt_json.get("5", {})
+        f5 = f5.get("data") if isinstance(f5, dict) else None
+        if not isinstance(f5, dict):
+            return None
+        squad = f5
+        # f4=8 wraps the real squad body in 5.3
+        inner = f5.get("3", {})
+        inner = inner.get("data") if isinstance(inner, dict) else None
+        if isinstance(inner, dict) and "1" in inner and ("6" in inner or "16" in inner):
+            squad = inner
+        owner_node = squad.get("1", {})
+        owner = owner_node.get("data") if isinstance(owner_node, dict) else None
+
+        players = set()
+
+        def _scan(node):
+            if isinstance(node, dict):
+                d = node.get("data") if "wire_type" in node else node
+                if isinstance(d, dict):
+                    u = d.get("1", {})
+                    n = d.get("2", {})
+                    uu = u.get("data") if isinstance(u, dict) else None
+                    nn = n.get("data") if isinstance(n, dict) else None
+                    if (
+                        isinstance(uu, int)
+                        and uu > 1000000
+                        and isinstance(nn, str)
+                        and nn not in SQUAD_REGION_CODES
+                    ):
+                        players.add(uu)
+                    for v in d.values():
+                        _scan(v)
+
+        _scan(squad)
+        if isinstance(owner, int) and owner > 1000000:
+            players.add(owner)
+        real_players = {u for u in players if u != bot_uid}
+        bot_in = (owner == bot_uid) or (bot_uid in players)
+        hostless = bot_in and len(real_players) == 0
+        return owner, real_players, hostless
+    except Exception:
+        return None
+
+
 last_bot_status_check = 0
 senthi = False
 bot_status_cache_time = 30
@@ -6110,6 +6172,17 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             f"len={len(data_hex)} insquad={insquad!r} "
                             f"joining_team={joining_team!r} rooms={len(subscribed_rooms)}"
                         )
+                        # [HOSTSTATE] read-only roster parse — verify against reality
+                        # before we wire up auto-leave-when-hostless.
+                        _hs = parse_squad_state(_trace_json, bot_uid)
+                        if _hs is not None:
+                            _owner, _players, _hostless = _hs
+                            print(
+                                f"\033[96m[HOSTSTATE]\033[0m owner={_owner} "
+                                f"real_players={sorted(_players)} "
+                                f"hostless={_hostless} (f4="
+                                f"{_trace_json.get('4', {}).get('data') if isinstance(_trace_json.get('4'), dict) else None})"
+                            )
                         # Deep dump of squad-service RESPONSE packets (small status/error
                         # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
                         # server verdict instead of guessing. Dump while a /N runs, or any
