@@ -8016,10 +8016,8 @@ async def TcPChaT(
                                         f"{'JOINED' if _joined else 'TIMEOUT'}"
                                     )
                                     if _joined:
-                                        C = await cHSq(5, int(target_uid), key, iv, region)
-                                        await SEndPacKeT(
-                                            whisper_writer, online_writer, "OnLine", C
-                                        )
+                                        # No cHSq — it breaks voice and doesn't transfer
+                                        # host. Just settle, then ExiT (see /6).
                                         await asyncio.sleep(2)
 
                                     E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
@@ -8106,11 +8104,12 @@ async def TcPChaT(
                             )
 
                             if _joined:
-                                # User is present → transfer host to them, then settle so
-                                # voice migrates before the bot leaves.
-                                C = await cHSq(6, uid, key, iv, region)
-                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                                print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (host-transfer to joined user)")
+                                # User is in. Do NOT send cHSq: it mutates the squad the
+                                # user is sitting in and tears down their voice channel
+                                # ("unable to join voice channel"), and it does NOT transfer
+                                # host (proven: owner stays the bot until ExiT). Just settle,
+                                # then leave — ExiT auto-transfers host to the user and the
+                                # server creates a fresh user-hosted voice channel.
                                 await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
@@ -8938,8 +8937,7 @@ async def TcPChaT(
                                 f"{'JOINED' if _joined else 'TIMEOUT'}"
                             )
                             if _joined:
-                                C = await cHSq(3, uid, key, iv, region)
-                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                # No cHSq \u2014 it breaks voice and doesn't transfer host (see /6)
                                 await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
@@ -8998,8 +8996,7 @@ async def TcPChaT(
                                 f"{'JOINED' if _joined else 'TIMEOUT'}"
                             )
                             if _joined:
-                                C = await cHSq(4, uid, key, iv, region)
-                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                # No cHSq \u2014 it breaks voice and doesn't transfer host (see /6)
                                 await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
@@ -9136,8 +9133,7 @@ async def TcPChaT(
                                 f"{'JOINED' if _joined else 'TIMEOUT'}"
                             )
                             if _joined:
-                                C = await cHSq(5, uid, key, iv, region)
-                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                # No cHSq \u2014 it breaks voice and doesn't transfer host (see /6)
                                 await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
