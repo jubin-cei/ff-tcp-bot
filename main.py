@@ -193,9 +193,20 @@ async def _auto_leave(token, delay, bot_uid, key, iv, region):
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
         subscribed_rooms.clear()
         _hostless_state["since"] = None
+        # Reset the CHAT socket the same proven-safe way the /N soft-reset does:
+        # closing whisper_writer makes TcPChaT's read loop hit EOF and reconnect
+        # with the same AuthToken (no re-login). This rebuilds the squad-chat
+        # session so the NEXT join's welcome + command handling work cleanly,
+        # instead of being anchored to the squad the bot just left.
+        try:
+            if whisper_writer is not None:
+                whisper_writer.close()
+        except Exception:
+            pass
         print(
             f"\033[92m[AUTOLEAVE]\033[0m Sent ExiT — squad was hostless for "
-            f"{delay:.0f}s. Bot is now squad-less and chat rooms cleared."
+            f"{delay:.0f}s. Bot is now squad-less; chat rooms cleared and chat "
+            f"socket reset."
         )
     except Exception as _e:
         print(f"\033[91m[AUTOLEAVE]\033[0m Error during auto-leave: {_e}")
