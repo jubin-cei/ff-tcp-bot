@@ -7829,7 +7829,7 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", PAc
                                     )
 
-                                    C = await cHSq(5, int(target_uid), key, iv, region)
+                                    C = await cHSq(5, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", C
                                     )
@@ -7887,7 +7887,7 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(6, uid, key, iv, region)
+                            C = await cHSq(6, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
@@ -8686,7 +8686,7 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(3, uid, key, iv, region)
+                            C = await cHSq(3, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
@@ -8727,7 +8727,7 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(4, uid, key, iv, region)
+                            C = await cHSq(4, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
 
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
@@ -8846,7 +8846,7 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            C = await cHSq(5, uid, key, iv, region)
+                            C = await cHSq(5, int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             # Reduced delay
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
 
