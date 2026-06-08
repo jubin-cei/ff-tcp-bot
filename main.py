@@ -7788,9 +7788,14 @@ async def TcPChaT(
                                     joining_team = False
                                     insquad = None
                                     subscribed_rooms.clear()
+                                    try:
+                                        if online_writer is not None:
+                                            online_writer.close()
+                                    except Exception:
+                                        pass
                                     print(
-                                        "\033[95m[SQTRACE]\033[0m /5 soft-reset chat socket "
-                                        "(clear rooms + reconnect chat only, no re-login)"
+                                        "\033[95m[SQTRACE]\033[0m /5 soft-reset BOTH sockets "
+                                        "(clear rooms + reconnect chat+online, no re-login)"
                                     )
                                     break
 
@@ -7872,9 +7877,19 @@ async def TcPChaT(
                             joining_team = False
                             insquad = None
                             subscribed_rooms.clear()
+                            # Also reset the SQUAD (online) socket: OpEnSq+ExiT churn
+                            # ghosts the squad session so the NEXT OpEnSq/invite won't
+                            # deliver. Closing online_writer makes TcPOnLine reconnect
+                            # with the same AuthToken (no re-login), guaranteeing a clean
+                            # squad session for the next command.
+                            try:
+                                if online_writer is not None:
+                                    online_writer.close()
+                            except Exception:
+                                pass
                             print(
-                                "\033[95m[SQTRACE]\033[0m /6 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /6 soft-reset BOTH sockets "
+                                "(clear rooms + reconnect chat+online, no re-login)"
                             )
                             break
 
@@ -8682,9 +8697,14 @@ async def TcPChaT(
                             joining_team = False
                             insquad = None
                             subscribed_rooms.clear()
+                            try:
+                                if online_writer is not None:
+                                    online_writer.close()
+                            except Exception:
+                                pass
                             print(
-                                "\033[95m[SQTRACE]\033[0m /3 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /3 soft-reset BOTH sockets "
+                                "(clear rooms + reconnect chat+online, no re-login)"
                             )
                             break
 
@@ -8734,9 +8754,14 @@ async def TcPChaT(
                             joining_team = False
                             insquad = None
                             subscribed_rooms.clear()
+                            try:
+                                if online_writer is not None:
+                                    online_writer.close()
+                            except Exception:
+                                pass
                             print(
-                                "\033[95m[SQTRACE]\033[0m /4 soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /4 soft-reset BOTH sockets "
+                                "(clear rooms + reconnect chat+online, no re-login)"
                             )
                             break
 
@@ -8864,9 +8889,14 @@ async def TcPChaT(
                             joining_team = False
                             insquad = None
                             subscribed_rooms.clear()
+                            try:
+                                if online_writer is not None:
+                                    online_writer.close()
+                            except Exception:
+                                pass
                             print(
-                                "\033[95m[SQTRACE]\033[0m group soft-reset chat socket "
-                                "(clear rooms + reconnect chat only, no re-login)"
+                                "\033[95m[SQTRACE]\033[0m /5 soft-reset BOTH sockets "
+                                "(clear rooms + reconnect chat+online, no re-login)"
                             )
                             break
 
