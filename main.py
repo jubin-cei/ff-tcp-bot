@@ -179,6 +179,12 @@ def parse_squad_state(pkt_json, bot_uid):
 _hostless_state = {"since": None}
 AUTO_LEAVE_DEBOUNCE = 6.0
 
+# Live squad roster published by the receiver (TcPOnLine) from every 0500 packet.
+# Used by /N handlers to WAIT for an invited user to actually join before doing
+# the cHSq host-transfer + ExiT (instead of a blind sleep). "members" is the set
+# of real (non-bot) player UIDs currently in the bot's squad.
+_squad_roster = {"members": set(), "owner": None}
+
 
 async def _auto_leave(token, delay, bot_uid, key, iv, region):
     """After `delay`s, if the squad is STILL hostless (token unchanged) and no /N
@@ -205,6 +211,26 @@ async def _auto_leave(token, delay, bot_uid, key, iv, region):
         )
     except Exception as _e:
         print(f"\033[91m[AUTOLEAVE]\033[0m Error during auto-leave: {_e}")
+
+
+async def wait_for_member_join(target_uid, timeout=15.0, poll=0.4):
+    """Wait until `target_uid` appears in the bot's squad roster (published by the
+    receiver). Returns True if the user joined within `timeout`, else False.
+
+    This replaces the blind sleep(8) in the /N handlers so the host-transfer (cHSq)
+    only fires once the user is actually in the squad — which is what makes the
+    voice channel migrate to a present player instead of leaving an orphaned
+    bot-hosted channel."""
+    try:
+        target = int(target_uid)
+    except Exception:
+        target = target_uid
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        if target in _squad_roster["members"]:
+            return True
+        await asyncio.sleep(poll)
+    return target in _squad_roster["members"]
 
 
 last_bot_status_check = 0
@@ -6210,6 +6236,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         _hs = parse_squad_state(_trace_json, bot_uid)
                         if _hs is not None:
                             _owner, _players, _hostless = _hs
+                            # Publish the live roster so /N handlers can wait-for-join.
+                            _squad_roster["members"] = set(_players)
+                            _squad_roster["owner"] = _owner
                             print(
                                 f"\033[96m[HOSTSTATE]\033[0m owner={_owner} "
                                 f"real_players={sorted(_players)} "
@@ -7975,19 +8004,23 @@ async def TcPChaT(
                                     # Let the squad be created before inviting (see /6)
                                     await asyncio.sleep(3)
 
-                                    # Set capacity while EMPTY, before invite (see /6)
-                                    C = await cHSq(5, int(target_uid), key, iv, region)
-                                    await SEndPacKeT(
-                                        whisper_writer, online_writer, "OnLine", C
-                                    )
-                                    await asyncio.sleep(1)
-
                                     V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
-                                    await asyncio.sleep(8)
+                                    # Wait for the user to join, THEN transfer host + leave
+                                    _joined = await wait_for_member_join(target_uid, timeout=15.0)
+                                    print(
+                                        f"\033[95m[SQTRACE]\033[0m /5 wait-for-join uid={target_uid} -> "
+                                        f"{'JOINED' if _joined else 'TIMEOUT'}"
+                                    )
+                                    if _joined:
+                                        C = await cHSq(5, int(target_uid), key, iv, region)
+                                        await SEndPacKeT(
+                                            whisper_writer, online_writer, "OnLine", C
+                                        )
+                                        await asyncio.sleep(2)
 
                                     E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                                     await SEndPacKeT(
@@ -8056,21 +8089,29 @@ async def TcPChaT(
                             # Let the squad be fully created server-side BEFORE inviting.
                             await asyncio.sleep(3)
 
-                            # Set capacity/squad-type while the squad is EMPTY. Doing this
-                            # AFTER the user joins mutates the squad they're sitting in and
-                            # tears down their voice channel ("unable to join voice channel")
-                            # + leaves a stale 2/4 ghost. Set it first, then invite into a
-                            # stable squad.
-                            C = await cHSq(6, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (capacity, pre-invite)")
-                            await asyncio.sleep(1)
-
                             V = await SEnd_InV(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
                             print(f"\033[95m[SQTRACE]\033[0m /6 sent SEnd_InV -> {uid}")
 
-                            await asyncio.sleep(8)
+                            # WAIT until the user actually joins (roster confirms) before
+                            # transferring host + leaving. cHSq designates the target user
+                            # (field 2.1) as host — it only works if they're PRESENT. Doing
+                            # the host-transfer to a confirmed-present player is what makes
+                            # the voice channel migrate to them instead of leaving an
+                            # orphaned bot-hosted channel ("unable to join voice channel").
+                            _joined = await wait_for_member_join(uid, timeout=15.0)
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /6 wait-for-join uid={uid} -> "
+                                f"{'JOINED' if _joined else 'TIMEOUT'}"
+                            )
+
+                            if _joined:
+                                # User is present → transfer host to them, then settle so
+                                # voice migrates before the bot leaves.
+                                C = await cHSq(6, uid, key, iv, region)
+                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (host-transfer to joined user)")
+                                await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -8887,15 +8928,19 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
-                            # Set capacity while EMPTY, before invite (see /6)
-                            C = await cHSq(3, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            await asyncio.sleep(1)
-
                             V = await SEnd_InV(3, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            await asyncio.sleep(8)
+                            # Wait for the user to join, THEN transfer host + leave (see /6)
+                            _joined = await wait_for_member_join(uid, timeout=15.0)
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /3 wait-for-join uid={uid} -> "
+                                f"{'JOINED' if _joined else 'TIMEOUT'}"
+                            )
+                            if _joined:
+                                C = await cHSq(3, uid, key, iv, region)
+                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -8943,15 +8988,19 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
-                            # Set capacity while EMPTY, before invite (see /6)
-                            C = await cHSq(4, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            await asyncio.sleep(1)
-
                             V = await SEnd_InV(4, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            await asyncio.sleep(8)
+                            # Wait for the user to join, THEN transfer host + leave (see /6)
+                            _joined = await wait_for_member_join(uid, timeout=15.0)
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /4 wait-for-join uid={uid} -> "
+                                f"{'JOINED' if _joined else 'TIMEOUT'}"
+                            )
+                            if _joined:
+                                C = await cHSq(4, uid, key, iv, region)
+                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -9077,15 +9126,19 @@ async def TcPChaT(
                             # Let the squad be created before inviting (see /6)
                             await asyncio.sleep(3)
 
-                            # Set capacity while EMPTY, before invite (see /6)
-                            C = await cHSq(5, uid, key, iv, region)
-                            await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            await asyncio.sleep(1)
-
                             V = await SEnd_InV(5, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            await asyncio.sleep(8)
+                            # Wait for the user to join, THEN transfer host + leave (see /6)
+                            _joined = await wait_for_member_join(uid, timeout=15.0)
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /5 wait-for-join uid={uid} -> "
+                                f"{'JOINED' if _joined else 'TIMEOUT'}"
+                            )
+                            if _joined:
+                                C = await cHSq(5, uid, key, iv, region)
+                                await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                                await asyncio.sleep(2)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
