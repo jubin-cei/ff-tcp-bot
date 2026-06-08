@@ -6487,6 +6487,10 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             print(
                                 f"\033[94m[INFO]\033[0m Bot joined squad of {squad_owner}"
                             )
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m ACCEPT set insquad=True "
+                                f"(awaiting case5 squad-data to reset)"
+                            )
 
                         else:
                             try:
@@ -6633,6 +6637,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 
                 # case 5
                 if insquad == True:
+                    print(
+                        f"\033[95m[SQTRACE]\033[0m case5 ENTER insquad=True len={len(data_hex)}"
+                    )
                     try:
                         # Assuming DeCode_PackEt, json.loads, GeTSQDaTa, AutH_Chat, SEndPacKeT are available
                         packet = await DeCode_PackEt(data_hex[10:])
@@ -6641,6 +6648,10 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         OwNer_UiD, CHaT_CoDe, SQuAD_CoDe = await GeTSQDaTa(packet_json)
                         if OwNer_UiD is None:
                             # Not the correct squad data packet, ignore it
+                            print(
+                                "\033[95m[SQTRACE]\033[0m case5 BAIL GeTSQDaTa->None "
+                                "(insquad STAYS True; reset at end skipped)"
+                            )
                             continue
 
                         print(
@@ -6730,10 +6741,17 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         asyncio.create_task(send_welcome())
 
                         insquad = None
+                        print(
+                            "\033[95m[SQTRACE]\033[0m case5 DONE reset insquad=None "
+                            "(welcome scheduled)"
+                        )
 
                     except Exception as e:
                         print(
                             f"\033[94m[INFO]\033[0m Error in joining_team chat auth: {e}"
+                        )
+                        print(
+                            f"\033[95m[SQTRACE]\033[0m case5 EXCEPTION (insquad STAYS True): {e}"
                         )
                         pass
 
