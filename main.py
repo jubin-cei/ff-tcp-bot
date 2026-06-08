@@ -6864,7 +6864,13 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 ]
 
                                 # Assuming get_player_status is available
-                                player_status = get_player_status(proto_part)
+                                try:
+                                    player_status = get_player_status(proto_part)
+                                except Exception as e2:
+                                    print(
+                                        f" \033[91m[ERROR]\033[0m Failed to decode chat message: {e} | {e2}"
+                                    )
+                                    continue
                                 print(
                                     f"\033[92m[SUCCESS]\033[0m Parsed status for {player_id}: {player_status}"
                                 )
@@ -7103,10 +7109,20 @@ async def TcPChaT(
                             MsG = proto.data.msg.lower()
                             XX = proto.data.chat_type
                         except Exception as e2:
-                            print(
-                                f"[91m[ERROR][0m Failed to decode chat message: {e} | {e2}"
-                            )
-                            continue
+                            try:
+                                data_dict = chatdata.get("Data", chatdata.get("data", chatdata))
+                                uid = data_dict.get("uid", data_dict.get("UID", 0))
+                                chat_id = data_dict.get("chat_id", data_dict.get("Chat_ID", 0))
+                                inPuTMsG = data_dict.get("msg", "").lower()
+                                MsG = data_dict.get("msg", "").lower()
+                                XX = data_dict.get("chat_type", 0)
+                                if not MsG:
+                                    continue
+                            except Exception as e3:
+                                print(
+                                    f"\033[91m[ERROR]\033[0m Failed to decode chat message: {e} | {e2} | json={chatdata}"
+                                )
+                                continue
                     try:
                         # --- AUTO FOR EVERYONE ---
                         msg2 = inPuTMsG.strip().lower()
