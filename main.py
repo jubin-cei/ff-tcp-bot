@@ -7708,7 +7708,7 @@ async def TcPChaT(
                                 )
 
                                 try:
-                                    # Fast squad creation and invite for 5 players
+                                    joining_team = True
                                     PAc = await OpEnSq(key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", PAc
@@ -7731,8 +7731,10 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", E
                                     )
 
-                                    # SUCCESS MESSAGE
-                                    success_message = f"[B][C][FFFF00]✅ SUCCESS: 5-Player Group invitation sent successfully to {target_uid}!\n"
+                                    joining_team = False
+                                    insquad = None
+
+                                    success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 5-Player Group invitation sent successfully to {target_uid}!\n"
                                     await safe_send_message(
                                         response.Data.chat_type,
                                         success_message,
@@ -7767,7 +7769,7 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite for 4 players
+                            joining_team = True
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -7780,12 +7782,14 @@ async def TcPChaT(
 
                             C = await cHSq(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                            
+
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
-                            # SUCCESS MESSAGE
-                            success_message = f"[B][C][FFFF00]✅ SUCCESS: 6-Player Group invitation sent successfully to {uid}!\n"
+                            joining_team = False
+                            insquad = None
+
+                            success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 6-Player Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
                                 response.Data.chat_type,
                                 success_message,
@@ -7794,9 +7798,6 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
-                            
-                            await asyncio.sleep(2)
-                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         # Add these lines to your existing command dispatcher:
 
@@ -8568,7 +8569,7 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite
+                            joining_team = True
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8585,8 +8586,10 @@ async def TcPChaT(
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
-                            # SUCCESS MESSAGE
-                            success_message = f"[B][C][FFFF00]✅ SUCCESS: 3-Player Group invitation sent successfully to {uid}!\n"
+                            joining_team = False
+                            insquad = None
+
+                            success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 3-Player Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
                                 response.Data.chat_type,
                                 success_message,
@@ -8595,9 +8598,6 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
-                            
-                            await asyncio.sleep(2)
-                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         if inPuTMsG.startswith(("/4")):
                             # Process /3 command - Create 3 player group
@@ -8611,7 +8611,7 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite
+                            joining_team = True
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8628,8 +8628,10 @@ async def TcPChaT(
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
-                            # SUCCESS MESSAGE
-                            success_message = f"[B][C][FFFF00]✅ SUCCESS: 4-Player Group invitation sent successfully to {uid}!\n"
+                            joining_team = False
+                            insquad = None
+
+                            success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 4-Player Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
                                 response.Data.chat_type,
                                 success_message,
@@ -8638,9 +8640,6 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
-                            
-                            await asyncio.sleep(2)
-                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
@@ -8732,7 +8731,7 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # Fast squad creation and invite
+                            joining_team = True
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8749,8 +8748,10 @@ async def TcPChaT(
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
 
-                            # SUCCESS MESSAGE
-                            success_message = f"[B][C][FFFF00]✅ SUCCESS: Group invitation sent successfully to {uid}!\n"
+                            joining_team = False
+                            insquad = None
+
+                            success_message = f"[B][C][FFFF00]\u2705 SUCCESS: Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
                                 response.Data.chat_type,
                                 success_message,
@@ -8759,9 +8760,6 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
-                            
-                            await asyncio.sleep(2)
-                            raise asyncio.CancelledError("Forced reset to wipe squad state")
 
                         if (
                             inPuTMsG.strip().lower() == "/admin"
