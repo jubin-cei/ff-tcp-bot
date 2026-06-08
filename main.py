@@ -6096,6 +6096,25 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 
                 data_hex = data2.hex()
 
+                # === [SQTRACE] squad-state diagnostic (read-only, no behavior change) ===
+                if data_hex.startswith("0500"):
+                    try:
+                        _trace_pkt = await DeCode_PackEt(data_hex[10:])
+                        _trace_json = json.loads(_trace_pkt)
+                        _trace_type = _trace_json.get("1")
+                        print(
+                            f"\033[95m[SQTRACE]\033[0m recv 0500 type={_trace_type} "
+                            f"len={len(data_hex)} insquad={insquad!r} "
+                            f"joining_team={joining_team!r} rooms={len(subscribed_rooms)}"
+                        )
+                    except Exception as _trace_e:
+                        print(
+                            f"\033[95m[SQTRACE]\033[0m recv 0500 (undecodable) "
+                            f"len={len(data_hex)} insquad={insquad!r} "
+                            f"joining_team={joining_team!r} err={_trace_e}"
+                        )
+                # === end [SQTRACE] ===
+
                 # Check ALL packets on TcPOnLine for the chat message!
                 try:
                     if data_hex[6:10] != "0000":  # Basic check for valid protobuf
@@ -7759,6 +7778,11 @@ async def TcPChaT(
 
                         if inPuTMsG.startswith(("/6")):
                             # Process /6 command - Create 4 player group
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /6 ENTER from uid={uid} "
+                                f"global.insquad={globals().get('insquad')!r} "
+                                f"global.joining_team={globals().get('joining_team')!r}"
+                            )
                             initial_message = f"[B][C]{get_random_color()}\n\nCreating 6-Player Group...\n\n"
                             await safe_send_message(
                                 response.Data.chat_type,
@@ -7774,20 +7798,30 @@ async def TcPChaT(
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
+                            print("\033[95m[SQTRACE]\033[0m /6 sent OpEnSq (create)")
 
                             V = await SEnd_InV(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
+                            print(f"\033[95m[SQTRACE]\033[0m /6 sent SEnd_InV -> {uid}")
 
                             await asyncio.sleep(8)
 
                             C = await cHSq(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
+                            print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (capacity)")
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
+                            print("\033[95m[SQTRACE]\033[0m /6 sent ExiT (leave)")
 
                             joining_team = False
                             insquad = None
+                            print(
+                                f"\033[95m[SQTRACE]\033[0m /6 EXIT after local resets "
+                                f"global.insquad={globals().get('insquad')!r} "
+                                f"global.joining_team={globals().get('joining_team')!r} "
+                                f"(local insquad={insquad!r} joining_team={joining_team!r})"
+                            )
 
                             success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 6-Player Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
