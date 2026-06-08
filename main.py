@@ -1149,123 +1149,7 @@ def Encrypt(number):
     return bytes(encoded_bytes).hex()
 
 
-async def send_working_join_request(target_uid, key, iv, region, LoGinDaTaUncRypTinG):
-    """Send join request that actually works"""
 
-    try:
-        # Step 1: Reset bot to solo mode
-        print("\033[94m[INFO]\033[0m Resetting bot to solo mode...")
-        await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
-        await asyncio.sleep(1)
-
-        # Step 2: Create bot's own squad (so it has context)
-        print("\033[94m[INFO]\033[0m Creating bot squad...")
-        squad_packet = await OpEnSq(key, iv, region)
-        await SEndPacKeT(whisper_writer, online_writer, "OnLine", squad_packet)
-        await asyncio.sleep(1)
-
-        # Step 3: Send join request
-        print(f"\033[96m[ACTION]\033[0m Sending join request to {target_uid}...")
-        join_packet = await create_working_join_request(
-            target_uid, key, iv, region, LoGinDaTaUncRypTinG
-        )
-
-        if join_packet:
-            await SEndPacKeT(whisper_writer, online_writer, "OnLine", join_packet)
-            print(
-                f"\033[92m[SUCCESS]\033[0m Bot join request sent! Player can now accept."
-            )
-            return True
-        else:
-            print(f"\033[91m[ERROR]\033[0m Failed to create join packet")
-            return False
-
-    except Exception as e:
-        print(f"\033[91m[ERROR]\033[0m Error in working join request: {e}")
-        return False
-
-
-async def handle_join_req_command(
-    inPuTMsG, uid, chat_id, key, iv, region, chat_type, LoGinDaTaUncRypTinG
-):
-    """Handle /join_req command - bot sends join request to player"""
-
-    parts = inPuTMsG.strip().split()
-
-    if len(parts) < 2:
-        error_msg = f"""[B][C][FF0000]❌ ERROR: /join_req (player_uid)
-Example: /join_req 123456789
-
-What happens:
-1. Bot goes solo mode
-2. Bot creates its own squad  
-3. Bot sends join request to player
-4. Player sees: "BotName wants to join your team"
-5. Player clicks Accept → Bot joins player's team
-"""
-        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
-        return
-
-    target_uid = parts[1]
-
-    if not target_uid.isdigit():
-        error_msg = f"[B][C][FF0000]❌ ERROR: Invalid UID! Must contain numbers only.\n"
-        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
-        return
-
-    # Send initial message
-    initial_msg = f"""[B][C][FFFF00]🤖 BOT JOIN REQUEST INITIATED
-
-👤 Target Player: {target_uid}
-⚙️ Steps:
-1. Bot resetting to solo mode...
-2. Bot creating squad...
-3. Sending join request...
-
-⏳ Please wait...
-"""
-    await safe_send_message(chat_type, initial_msg, uid, chat_id, key, iv)
-
-    try:
-        success = await send_working_join_request(
-            target_uid, key, iv, region, LoGinDaTaUncRypTinG
-        )
-
-        if success:
-            success_msg = f"""[B][C][FFFF00]✅ SUCCESS: Bot join request sent!
-
-🎯 Target: {target_uid}
-🤖 Bot Name: God Blaze
-✅ Status: Ready to join
-
-📱 Player will see:
-"God Blaze wants to join your team"
-
-✅ When player clicks ACCEPT:
-Bot will automatically join player's team!
-"""
-        else:
-            success_msg = f"""[B][C][FF0000]❌ FAILED!
-
-Possible reasons:
-1. Bot not connected properly
-2. Bot already in a squad
-3. Server issue
-
-Try again in 10 seconds.
-"""
-
-        await safe_send_message(chat_type, success_msg, uid, chat_id, key, iv)
-
-        # Cleanup: Leave squad after sending request
-        await asyncio.sleep(3)
-        leave_packet = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
-        await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
-        print("\033[94m[INFO]\033[0m Bot cleaned up (left squad)")
-
-    except Exception as e:
-        error_msg = f"[B][C][FF0000]❌ ERROR: {str(e)[:50]}\n"
-        await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
 
 
 async def create_simple_start_packet(key, iv):
@@ -7824,7 +7708,6 @@ async def TcPChaT(
                                 )
 
                                 try:
-                                    await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                                     # Fast squad creation and invite for 5 players
                                     PAc = await OpEnSq(key, iv, region)
                                     await SEndPacKeT(
@@ -7870,6 +7753,8 @@ async def TcPChaT(
                                         iv,
                                     )
 
+
+
                         if inPuTMsG.startswith(("/6")):
                             # Process /6 command - Create 4 player group
                             initial_message = f"[B][C]{get_random_color()}\n\nCreating 6-Player Group...\n\n"
@@ -7883,7 +7768,6 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite for 4 players
-                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8682,7 +8566,6 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8723,7 +8606,6 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8842,7 +8724,6 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -9774,20 +9655,7 @@ async def TcPChaT(
                                 response.Data.chat_type,
                             )
 
-                        # Add these to your command handlers in TcPChaT function:
-                        # Add this to your command handlers in TcPChaT function:
-                        if inPuTMsG.strip().startswith("/join_req "):
-                            print("\033[94m[INFO]\033[0m Processing /join_req command")
-                            await handle_join_req_command(
-                                inPuTMsG,
-                                uid,
-                                chat_id,
-                                key,
-                                iv,
-                                region,
-                                response.Data.chat_type,
-                                LoGinDaTaUncRypTinG,
-                            )
+
 
                         if inPuTMsG.strip().startswith("/e "):
                             print(
