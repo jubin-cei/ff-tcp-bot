@@ -6978,7 +6978,10 @@ async def TcPChaT(
         evo_cycle_sm_running, \
         evo_cycle_sm_task, \
         reject_spam_running, \
-        reject_spam_task
+        reject_spam_task, \
+        insquad, \
+        joining_team, \
+        subscribed_rooms
     # At the VERY TOP of your file, with other globals:
     status_response_cache = {}
     cache_lock = asyncio.Lock()  # For thread safety
@@ -7781,6 +7784,16 @@ async def TcPChaT(
                                         iv,
                                     )
 
+                                    # No-downtime squad-chat session reset (see /6)
+                                    joining_team = False
+                                    insquad = None
+                                    subscribed_rooms.clear()
+                                    print(
+                                        "\033[95m[SQTRACE]\033[0m /5 soft-reset chat socket "
+                                        "(clear rooms + reconnect chat only, no re-login)"
+                                    )
+                                    break
+
                                 except Exception as e:
                                     error_msg = f"[B][C][FF0000]❌ ERROR sending invite: {str(e)}\n"
                                     await safe_send_message(
@@ -7850,6 +7863,20 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
+
+                            # === No-downtime squad-chat session reset ===
+                            # OpEnSq+ExiT churn leaves the CHAT service anchored to the
+                            # dissolved squad room. Drop stale room codes and soft-reconnect
+                            # ONLY the chat socket (same AuthToken, no re-login) so the bot
+                            # re-anchors cleanly on the next join. No squad/online downtime.
+                            joining_team = False
+                            insquad = None
+                            subscribed_rooms.clear()
+                            print(
+                                "\033[95m[SQTRACE]\033[0m /6 soft-reset chat socket "
+                                "(clear rooms + reconnect chat only, no re-login)"
+                            )
+                            break
 
                         # Add these lines to your existing command dispatcher:
 
@@ -8651,6 +8678,16 @@ async def TcPChaT(
                                 iv,
                             )
 
+                            # No-downtime squad-chat session reset (see /6)
+                            joining_team = False
+                            insquad = None
+                            subscribed_rooms.clear()
+                            print(
+                                "\033[95m[SQTRACE]\033[0m /3 soft-reset chat socket "
+                                "(clear rooms + reconnect chat only, no re-login)"
+                            )
+                            break
+
                         if inPuTMsG.startswith(("/4")):
                             # Process /3 command - Create 3 player group
                             initial_message = f"[B][C]{get_random_color()}\n\nCreating 3-Player Group...\n\n"
@@ -8692,6 +8729,16 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
+
+                            # No-downtime squad-chat session reset (see /6)
+                            joining_team = False
+                            insquad = None
+                            subscribed_rooms.clear()
+                            print(
+                                "\033[95m[SQTRACE]\033[0m /4 soft-reset chat socket "
+                                "(clear rooms + reconnect chat only, no re-login)"
+                            )
+                            break
 
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
@@ -8812,6 +8859,16 @@ async def TcPChaT(
                                 key,
                                 iv,
                             )
+
+                            # No-downtime squad-chat session reset (see /6)
+                            joining_team = False
+                            insquad = None
+                            subscribed_rooms.clear()
+                            print(
+                                "\033[95m[SQTRACE]\033[0m group soft-reset chat socket "
+                                "(clear rooms + reconnect chat only, no re-login)"
+                            )
+                            break
 
                         if (
                             inPuTMsG.strip().lower() == "/admin"
