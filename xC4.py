@@ -729,10 +729,9 @@ async def SEnd_InV(Nu, Uid, K, V, region):
 async def ExiT(idT, K, V, region="IND"):
     fields = {
         1: 7,
-        2: {
-            1: idT,
-        },
     }
+    if idT is not None:
+        fields[2] = {1: idT}
     if region.lower() == "ind":
         packet = "0514"
     elif region.lower() == "bd":
