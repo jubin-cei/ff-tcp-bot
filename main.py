@@ -7821,6 +7821,9 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", PAc
                                     )
 
+                                    # Let the squad be created before inviting (see /6)
+                                    await asyncio.sleep(3)
+
                                     V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", V
@@ -7897,6 +7900,12 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
                             print("\033[95m[SQTRACE]\033[0m /6 sent OpEnSq (create)")
+
+                            # Let the squad be fully created server-side BEFORE inviting.
+                            # Without this, SEnd_InV races ahead of squad creation and the
+                            # invite is dropped (the squad doesn't exist yet) — this is why
+                            # the 2nd+ command's invite "never comes".
+                            await asyncio.sleep(3)
 
                             V = await SEnd_InV(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
@@ -8721,6 +8730,9 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
+                            # Let the squad be created before inviting (see /6)
+                            await asyncio.sleep(3)
+
                             V = await SEnd_InV(3, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
@@ -8772,6 +8784,9 @@ async def TcPChaT(
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
+
+                            # Let the squad be created before inviting (see /6)
+                            await asyncio.sleep(3)
 
                             V = await SEnd_InV(4, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
@@ -8902,6 +8917,9 @@ async def TcPChaT(
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
+
+                            # Let the squad be created before inviting (see /6)
+                            await asyncio.sleep(3)
 
                             V = await SEnd_InV(5, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
