@@ -174,26 +174,31 @@ def parse_squad_state(pkt_json, bot_uid):
         return None
 
 
-# Dry-run auto-leave state (Step 2 verification — NO actual ExiT yet).
-#   since: monotonic-ish token (time.time()) when hostless was first seen, else None
-#   in_hosted: have we seen a real host in the CURRENT squad session?
-_hostless_state = {"since": None, "in_hosted": False}
+# Auto-leave state — enforce "bot never stays in a squad without a player host".
+#   since: token (time.time()) when hostless was first seen, else None
+_hostless_state = {"since": None}
 AUTO_LEAVE_DEBOUNCE = 6.0
 
 
-async def _auto_leave_dryrun(token, delay):
+async def _auto_leave(token, delay, bot_uid, key, iv, region):
     """After `delay`s, if the squad is STILL hostless (token unchanged) and no /N
-    command is active, log that we WOULD leave. Dry-run only — sends nothing."""
+    command is active, leave the squad: send ExiT and clear stale chat rooms so the
+    bot returns to a clean squad-less state."""
+    global subscribed_rooms
     try:
         await asyncio.sleep(delay)
-        if _hostless_state["since"] == token and not joining_team:
-            print(
-                f"\033[91m[AUTOLEAVE-DRYRUN]\033[0m WOULD send ExiT now — squad has "
-                f"been hostless for {delay:.0f}s with no host reappearing "
-                f"(joining_team={joining_team})"
-            )
-    except Exception:
-        pass
+        if _hostless_state["since"] != token or joining_team:
+            return
+        E = await ExiT(int(bot_uid), key, iv, region)
+        await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
+        subscribed_rooms.clear()
+        _hostless_state["since"] = None
+        print(
+            f"\033[92m[AUTOLEAVE]\033[0m Sent ExiT — squad was hostless for "
+            f"{delay:.0f}s. Bot is now squad-less and chat rooms cleared."
+        )
+    except Exception as _e:
+        print(f"\033[91m[AUTOLEAVE]\033[0m Error during auto-leave: {_e}")
 
 
 last_bot_status_check = 0
@@ -6205,34 +6210,33 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 f"hostless={_hostless} (f4="
                                 f"{_trace_json.get('4', {}).get('data') if isinstance(_trace_json.get('4'), dict) else None})"
                             )
-                            # --- Dry-run auto-leave evaluation (NO ExiT sent) ---
+                            # --- Auto-leave: bot must not stay in a hostless squad ---
                             if _hostless:
-                                # Capture the full packet behind every hostless verdict
-                                # so we can confirm true vs false positives.
-                                print(
-                                    f"\033[91m[HOSTLESS-DUMP]\033[0m joining_team={joining_team} "
-                                    f"f4={_trace_json.get('4', {}).get('data') if isinstance(_trace_json.get('4'), dict) else None} "
-                                    f"json={_trace_json}"
-                                )
                                 if not joining_team:
                                     if _hostless_state["since"] is None:
                                         _tok = time.time()
                                         _hostless_state["since"] = _tok
                                         print(
-                                            "\033[91m[AUTOLEAVE-DRYRUN]\033[0m hostless "
-                                            f"detected — arming {AUTO_LEAVE_DEBOUNCE:.0f}s timer"
+                                            "\033[93m[AUTOLEAVE]\033[0m hostless detected "
+                                            f"— arming {AUTO_LEAVE_DEBOUNCE:.0f}s leave timer"
                                         )
                                         asyncio.create_task(
-                                            _auto_leave_dryrun(_tok, AUTO_LEAVE_DEBOUNCE)
+                                            _auto_leave(
+                                                _tok,
+                                                AUTO_LEAVE_DEBOUNCE,
+                                                bot_uid,
+                                                key,
+                                                iv,
+                                                region,
+                                            )
                                         )
                             else:
                                 if _hostless_state["since"] is not None:
                                     print(
-                                        "\033[92m[AUTOLEAVE-DRYRUN]\033[0m host present "
-                                        "again — disarming timer"
+                                        "\033[92m[AUTOLEAVE]\033[0m host present again "
+                                        "— disarming leave timer"
                                     )
                                 _hostless_state["since"] = None
-                                _hostless_state["in_hosted"] = True
                         # Deep dump of squad-service RESPONSE packets (small status/error
                         # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
                         # server verdict instead of guessing. Dump while a /N runs, or any
