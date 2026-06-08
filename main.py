@@ -1155,7 +1155,7 @@ async def send_working_join_request(target_uid, key, iv, region, LoGinDaTaUncRyp
     try:
         # Step 1: Reset bot to solo mode
         print("\033[94m[INFO]\033[0m Resetting bot to solo mode...")
-        await reset_bot_state(key, iv, region)
+        await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
         await asyncio.sleep(1)
 
         # Step 2: Create bot's own squad (so it has context)
@@ -1984,11 +1984,11 @@ async def join_custom_room(room_id, room_password, key, iv, region):
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet_type, key, iv)
 
 
-async def leave_squad(key, iv, region):
+async def leave_squad(bot_uid, key, iv, region):
     """Leave squad - converted from your old TCP leave_s()"""
     fields = {
         1: 7,
-        2: {1: int(LoGinDaTaUncRypTinG.AccountUID)},
+        2: {1: int(bot_uid)},
     }
 
     packet = (await CrEaTe_ProTo(fields)).hex()
@@ -2003,11 +2003,11 @@ async def leave_squad(key, iv, region):
     return await GeneRaTePk(packet, packet_type, key, iv)
 
 
-async def reset_bot_state(key, iv, region):
+async def reset_bot_state(bot_uid, key, iv, region):
     """Reset bot to solo mode before spam - Critical step from your old TCP"""
     try:
         # Leave any current squad (using your exact leave_s function)
-        leave_packet = await leave_squad(key, iv, region)
+        leave_packet = await leave_squad(bot_uid, key, iv, region)
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
         await asyncio.sleep(0.5)
 
@@ -7824,7 +7824,7 @@ async def TcPChaT(
                                 )
 
                                 try:
-                                    await reset_bot_state(key, iv, region)
+                                    await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                                     # Fast squad creation and invite for 5 players
                                     PAc = await OpEnSq(key, iv, region)
                                     await SEndPacKeT(
@@ -7883,7 +7883,7 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite for 4 players
-                            await reset_bot_state(key, iv, region)
+                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8682,7 +8682,7 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(key, iv, region)
+                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8723,7 +8723,7 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(key, iv, region)
+                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
@@ -8842,7 +8842,7 @@ async def TcPChaT(
                             )
 
                             # Fast squad creation and invite
-                            await reset_bot_state(key, iv, region)
+                            await reset_bot_state(LoGinDaTaUncRypTinG.AccountUID, key, iv, region)
                             PAc = await OpEnSq(key, iv, region)
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
