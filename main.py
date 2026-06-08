@@ -6126,15 +6126,39 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             or len(data_hex) <= 400
                             or time.time() < _sqdump_state["until"]
                         ):
-                            _dump = str(_trace_json)
-                            if len(_dump) > 1200:
-                                _dump = _dump[:1200] + "...<truncated>"
+                            # Extract explicit squad MEMBER list (uid + name pairs) by
+                            # recursively scanning the decoded packet. This removes all
+                            # ambiguity about who is actually in the squad after each step.
+                            def _collect_members(node, out):
+                                if isinstance(node, dict):
+                                    d = node.get("data") if "wire_type" in node else node
+                                    if isinstance(d, dict):
+                                        u = d.get("1", {})
+                                        n = d.get("2", {})
+                                        uu = u.get("data") if isinstance(u, dict) else None
+                                        nn = n.get("data") if isinstance(n, dict) else None
+                                        if isinstance(uu, int) and isinstance(nn, str):
+                                            out.append((uu, nn))
+                                        for v in d.values():
+                                            _collect_members(v, out)
+                            _members = []
+                            try:
+                                _collect_members(_trace_json, _members)
+                            except Exception:
+                                pass
+                            _f3 = _trace_json.get("3", {})
+                            _f4 = _trace_json.get("4", {})
                             print(
                                 f"\033[95m[SQDUMP]\033[0m len={len(data_hex)} "
-                                f"json={_dump}"
+                                f"f3={_f3.get('data') if isinstance(_f3, dict) else None} "
+                                f"f4={_f4.get('data') if isinstance(_f4, dict) else None} "
+                                f"MEMBERS={_members}"
                             )
-                            if len(data_hex) <= 400:
-                                print(f"\033[95m[SQDUMP]\033[0m hex={data_hex}")
+                            _dump = str(_trace_json)
+                            print(
+                                f"\033[95m[SQDUMP]\033[0m json={_dump}"
+                            )
+                            print(f"\033[95m[SQDUMP]\033[0m hex={data_hex}")
                     except Exception as _trace_e:
                         print(
                             f"\033[95m[SQTRACE]\033[0m recv 0500 (undecodable) "
