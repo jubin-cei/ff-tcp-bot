@@ -6938,10 +6938,19 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             P1 = await SEndMsG(
                                 0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region
                             )
+                            print(
+                                "\033[96m[CHATSOCK]\033[0m welcome send: "
+                                f"whisper_writer={'SET' if whisper_writer else 'NONE'} "
+                                f"closing={whisper_writer.is_closing() if whisper_writer else 'n/a'}"
+                            )
                             if whisper_writer:
-                                await SEndPacKeT(
-                                    whisper_writer, online_writer, "ChaT", P1
-                                )
+                                try:
+                                    await SEndPacKeT(
+                                        whisper_writer, online_writer, "ChaT", P1
+                                    )
+                                    print("\033[96m[CHATSOCK]\033[0m welcome drained OK")
+                                except Exception as _we:
+                                    print(f"\033[91m[CHATSOCK]\033[0m welcome send FAILED: {_we}")
 
                         asyncio.create_task(send_welcome())
 
@@ -7198,6 +7207,10 @@ async def TcPChaT(
             if whisper_writer is not None:
                 whisper_writer.write(bytes_payload)
                 await whisper_writer.drain()
+            print(
+                "\033[96m[CHATSOCK]\033[0m chat socket (re)connected + AuthToken sent "
+                f"(rooms tracked={len(subscribed_rooms)})"
+            )
             ready_event.set()
             if LoGinDaTaUncRypTinG.Clan_ID:
                 clan_id = LoGinDaTaUncRypTinG.Clan_ID
@@ -7210,7 +7223,12 @@ async def TcPChaT(
             while True:
                 data = await reader.read(9999)
                 if not data:
+                    print("\033[96m[CHATSOCK]\033[0m chat socket EOF (server closed) — reconnecting")
                     break
+                _chs_hex = data.hex()
+                print(
+                    f"\033[96m[CHATSOCK]\033[0m recv {len(_chs_hex)} chars, head={_chs_hex[:10]}"
+                )
                 if (
                     data.hex().startswith("120000")
                     or data.hex().startswith("121400")
