@@ -117,7 +117,9 @@ last_status_packet = None
 START_SPAM_DURATION = 18
 WAIT_AFTER_MATCH_SECONDS = 20
 START_SPAM_DELAY = 0.2
-region = "BD"
+region = "IND"
+server2 = "IND"
+key2 = "mg24"
 WHITELISTED_UIDS = {"1136824736", "537512413"}
 WHITELIST_ONLY = True
 ADMIN_UID = "1136824736"
@@ -435,9 +437,9 @@ async def handle_message(message):
 
 
 def titles():
-    """Return all titles instead of just one random"""
+    """Return a single title ID"""
     titles_list = [904990070]
-    return titles_list  # Return the full list instead of random.choice
+    return titles_list[0]  # Must be an int for JSON string formatting
 
 
 def create_credentials_template():
@@ -3084,8 +3086,9 @@ async def handle_room_message_command(
 
         if room_packet and whisper_writer:
             # Send via Whisper connection (for chat packets)
-            whisper_writer.write(room_packet)
-            await whisper_writer.drain()
+            if whisper_writer is not None:
+                whisper_writer.write(room_packet)
+                await whisper_writer.drain()
 
             success_msg = f"""[B][C][FFFF00]✅ SUCCESS: Room message broadcasted!
 
@@ -3911,11 +3914,13 @@ async def SEndMsG(H, message, Uid, chat_id, key, iv, region):
 
 async def SEndPacKeT(OnLinE, ChaT, TypE, PacKeT):
     if TypE == "ChaT" and ChaT:
-        whisper_writer.write(PacKeT)
-        await whisper_writer.drain()
+        if whisper_writer is not None:
+            whisper_writer.write(PacKeT)
+            await whisper_writer.drain()
     elif TypE == "OnLine":
-        online_writer.write(PacKeT)
-        await online_writer.drain()
+        if online_writer is not None:
+            online_writer.write(PacKeT)
+            await online_writer.drain()
     else:
         return "UnsoPorTed TypE ! >> ErrrroR (:():)"
 
@@ -4289,8 +4294,9 @@ async def check_for_sticker_and_emote(response, key, iv, online_writer):
             )
 
             if pkt:
-                online_writer.write(pkt)
-                await online_writer.drain()
+                if online_writer is not None:
+                    online_writer.write(pkt)
+                    await online_writer.drain()
 
                 print(f"\033[94m[INFO]\033[0m Random emote sent: {emote_id}")
 
@@ -4623,8 +4629,9 @@ async def handle_xjoin_command(inPuTMsG, uid, chat_id, key, iv, region, chat_typ
 
         if room_packet and online_writer:
             # Send via Online connection
-            online_writer.write(room_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(room_packet)
+                await online_writer.drain()
 
             print(f"\033[92m[SUCCESS]\033[0m Room join packet sent! Room: {room_id}")
             joinroom = join_room_chanel(room_id, key, iv)
@@ -4965,8 +4972,9 @@ async def send_title_packet_direct(target_uid, chat_id, key, iv, region="ind"):
 
         if title_packet and whisper_writer:
             # Send via Whisper connection
-            whisper_writer.write(title_packet)
-            await whisper_writer.drain()
+            if whisper_writer is not None:
+                whisper_writer.write(title_packet)
+                await whisper_writer.drain()
             print(f"\033[92m[SUCCESS]\033[0m Title sent via Whisper to {target_uid}")
             return True
 
@@ -5132,8 +5140,9 @@ async def is_bot_in_squad(bot_uid, key, iv):
         # Send status request
         status_packet = await createpacketinfo(bot_uid, key, iv)
         if status_packet and online_writer:
-            online_writer.write(status_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(status_packet)
+                await online_writer.drain()
 
             # Wait for response
             await asyncio.sleep(2)
@@ -5465,8 +5474,9 @@ async def auto_reply_with_emote(emote_info, key, iv):
         reply_packet = await Emote_k(sender_uid, emote_id, key, iv, region)
 
         if online_writer:
-            online_writer.write(reply_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(reply_packet)
+                await online_writer.drain()
 
             print(
                 f"\033[94m[INFO]\033[0m Bot replied with emote {emote_id} to {sender_uid}"
@@ -5823,8 +5833,9 @@ async def send_and_monitor_emote(target_uid, emote_id, key, iv, region, reader):
     # 2. Send it
     print("\033[94m[INFO]\033[0m Sending packet...")
     if online_writer:
-        online_writer.write(emote_packet)
-        await online_writer.drain()
+        if online_writer is not None:
+            online_writer.write(emote_packet)
+            await online_writer.drain()
         print("\033[92m[SUCCESS]\033[0m Packet sent!")
     else:
         print("\033[91m[ERROR]\033[0m No connection")
@@ -5942,8 +5953,9 @@ async def detect_and_hijack_emote(data_hex, key, iv, bot_uid, region):
 
         if hijack_packet and online_writer:
             # Send the hijacked emote
-            online_writer.write(hijack_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(hijack_packet)
+                await online_writer.drain()
 
             print(
                 f"\033[92m[SUCCESS]\033[0m Emote hijacked! Bot {bot_uid} now appears to do emote {emote_id}"
@@ -6083,8 +6095,9 @@ async def hijack_squad_emote(data_hex, key, iv, bot_uid, region, in_squad):
         hijack_packet = await create_hijacked_emote(bot_uid, emote_id, key, iv, region)
 
         if hijack_packet and online_writer:
-            online_writer.write(hijack_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(hijack_packet)
+                await online_writer.drain()
 
             print(
                 f"\033[92m[SUCCESS]\033[0m Squad Hijack emote streamed by bot {bot_uid}!"
@@ -6095,8 +6108,9 @@ async def hijack_squad_emote(data_hex, key, iv, bot_uid, region, in_squad):
             original_packet = await Emote_k(
                 int(sender_uid), int(emote_id), key, iv, region
             )
-            online_writer.write(original_packet)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(original_packet)
+                await online_writer.drain()
 
             print(
                 f"\033[92m[SUCCESS]\033[0m Also sent original emote to maintain cover"
@@ -6188,8 +6202,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 
             # --- AUTHENTICATION ---
             bytes_payload = bytes.fromhex(AutHToKen)
-            online_writer.write(bytes_payload)
-            await online_writer.drain()
+            if online_writer is not None:
+                online_writer.write(bytes_payload)
+                await online_writer.drain()
             while True:
                 data2 = await reader.read(9999)
 
@@ -6298,8 +6313,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                     region,
                                 )
                                 if fixed_emote_packet and online_writer:
-                                    online_writer.write(fixed_emote_packet)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(fixed_emote_packet)
+                                        await online_writer.drain()
                                     await asyncio.sleep(0.5)
 
                                 # STEP 2: Bot does the SAME emote that user did (to itself)
@@ -6314,8 +6330,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                     region,
                                 )
                                 if bot_self_emote and online_writer:
-                                    online_writer.write(bot_self_emote)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(bot_self_emote)
+                                        await online_writer.drain()
                                     await asyncio.sleep(0.5)
 
                                 # STEP 3: Bot also sends the emote back to sender
@@ -6330,8 +6347,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                     region,
                                 )
                                 if mirror_emote and online_writer:
-                                    online_writer.write(mirror_emote)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(mirror_emote)
+                                        await online_writer.drain()
 
                                 print(
                                     "\033[92m[SUCCESS]\033[0m Dual emote response complete!"
@@ -6508,8 +6526,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 )
 
                                 if animation_pkt:
-                                    online_writer.write(animation_pkt)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(animation_pkt)
+                                        await online_writer.drain()
                                     print("\033[92m[SUCCESS]\033[0m Animation sent")
 
                                 # ⏳ animation sync delay
@@ -6522,8 +6541,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 )
 
                                 if bundle_pkt:
-                                    online_writer.write(bundle_pkt)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(bundle_pkt)
+                                        await online_writer.drain()
                                     print("\033[92m[SUCCESS]\033[0m Bundle equipped")
 
                                 # ⏳ small delay before emote
@@ -6538,8 +6558,9 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                                 )
 
                                 if emote_pkt:
-                                    online_writer.write(emote_pkt)
-                                    await online_writer.drain()
+                                    if online_writer is not None:
+                                        online_writer.write(emote_pkt)
+                                        await online_writer.drain()
                                     print("\033[92m[SUCCESS]\033[0m Emote played")
 
                             except Exception as e:
@@ -7041,16 +7062,18 @@ async def TcPChaT(
             reader, writer = await asyncio.open_connection(ip, int(port))
             whisper_writer = writer
             bytes_payload = bytes.fromhex(AutHToKen)
-            whisper_writer.write(bytes_payload)
-            await whisper_writer.drain()
+            if whisper_writer is not None:
+                whisper_writer.write(bytes_payload)
+                await whisper_writer.drain()
             ready_event.set()
             if LoGinDaTaUncRypTinG.Clan_ID:
                 clan_id = LoGinDaTaUncRypTinG.Clan_ID
                 clan_compiled_data = LoGinDaTaUncRypTinG.Clan_Compiled_Data
                 pK = await AuthClan(clan_id, clan_compiled_data, key, iv)
                 if whisper_writer:
-                    whisper_writer.write(pK)
-                    await whisper_writer.drain()
+                    if whisper_writer is not None:
+                        whisper_writer.write(pK)
+                        await whisper_writer.drain()
             while True:
                 data = await reader.read(9999)
                 if not data:
@@ -8964,9 +8987,9 @@ async def TcPChaT(
                                 emote_list_msg += f"[FFFFFF]────────────────\n"
                                 emote_list_msg += f"[00FF00]📊 STATS:\n"
                                 emote_list_msg += (
-                                    f"[FFFFFF]• Number emotes: 1-{len(NUMBER_EMOTES)}\n"
+                                    f"[FFFFFF]• Number emotes: 1-{len(GENERAL_EMOTES_MAP)}\n"
                                 )
-                                emote_list_msg += f"[FFFFFF]• Named emotes: {len(NAME_EMOTES)} names\n"
+                                emote_list_msg += f"[FFFFFF]• Named emotes: {len(amr_bal)} names\n"
                                 emote_list_msg += f"[FFFFFF]────────────────\n"
                                 emote_list_msg += f"[00FF00]🎯 USAGE:\n"
                                 emote_list_msg += (
@@ -8993,7 +9016,7 @@ async def TcPChaT(
                                 ]
                                 line = ""
                                 for name in popular_names:
-                                    if name.lower() in NAME_EMOTES:
+                                    if name.lower() in amr_bal:
                                         line += f"[00FF00]{name}[FFFFFF], "
                                 if line:
                                     emote_list_msg += line.rstrip(", ") + "\n"
@@ -9018,7 +9041,7 @@ async def TcPChaT(
                                     emote_list_msg += f"[00FF00]📝 ALL NAMED EMOTES:\n"
 
                                     # Show all named emotes in groups
-                                    all_names = sorted(NAME_EMOTES.keys())
+                                    all_names = sorted(amr_bal.keys())
                                     for i in range(
                                         0, min(len(all_names), 30), 5
                                     ):  # Show first 30 names
@@ -9070,9 +9093,9 @@ async def TcPChaT(
                                 # Check if last part is an emote (number or name)
                                 # Note: Your numbers go up to 417, so check for 3-digit numbers too
                                 is_number = (
-                                    last_part.isdigit() and last_part in NUMBER_EMOTES
+                                    last_part.isdigit() and last_part in GENERAL_EMOTES_MAP
                                 )
-                                is_name = last_part in NAME_EMOTES
+                                is_name = last_part in amr_bal
 
                                 if is_number or is_name:
                                     # Case 1: e ak or e 1 (only emote - send to sender)
@@ -9093,7 +9116,7 @@ async def TcPChaT(
                                 else:
                                     # Last part is not a valid emote
                                     error_msg = f"[B][C][FF0000]❌ Invalid emote: '{last_part}'\n"
-                                    error_msg += f"[FFFFFF]Use numbers (1-{len(NUMBER_EMOTES)}) or names like 'ak', 'heart', 'dance', 'ring'\n"
+                                    error_msg += f"[FFFFFF]Use numbers (1-{len(GENERAL_EMOTES_MAP)}) or names like 'ak', 'heart', 'dance', 'ring'\n"
                                     error_msg += f"[FFFFFF]Use e list names to see all available names\n"
                                     await safe_send_message(
                                         response.Data.chat_type,
@@ -9111,17 +9134,17 @@ async def TcPChaT(
 
                                 if is_number:
                                     # Number-based emote
-                                    emote_id = NUMBER_EMOTES.get(emote_key)
+                                    emote_id = GENERAL_EMOTES_MAP.get(emote_key)
                                     emote_name_display = f"#{emote_key}"
                                 else:
                                     # Name-based emote
-                                    emote_id = NAME_EMOTES.get(emote_key)
+                                    emote_id = amr_bal.get(emote_key)
                                     emote_name_display = emote_key
 
                                 if not emote_id:
                                     error_msg = f"[B][C][FF0000]❌ Emote '{emote_name_display}' not found!\n"
                                     if emote_key.isdigit():
-                                        error_msg += f"[FFFFFF]Available numbers: 1-{len(NUMBER_EMOTES)}\n"
+                                        error_msg += f"[FFFFFF]Available numbers: 1-{len(GENERAL_EMOTES_MAP)}\n"
                                     else:
                                         error_msg += f"[FFFFFF]Use e list names to see all available names\n"
                                     await safe_send_message(
@@ -11871,8 +11894,9 @@ async def TcPChaT(
 
                         response = None
 
-            whisper_writer.close()
-            await whisper_writer.wait_closed()
+            if whisper_writer is not None:
+                whisper_writer.close()
+                await whisper_writer.wait_closed()
             whisper_writer = None
 
         except Exception as e:
