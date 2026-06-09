@@ -109,12 +109,9 @@ joining_team = False
 online_writer = None
 subscribed_rooms = []
 whisper_writer = None
-# [SQDUMP] diagnostic: keep deep-dumping squad packets until this wall-clock time
-# (extended while a /N command runs, so we capture the ExiT response + post-/N roster)
-_sqdump_state = {"until": 0.0}
 
-# Region codes that appear as field 5.2 next to the owner UID — must NOT be counted
-# as member names when parsing the squad roster.
+# Region codes that appear as field 5.2 next to the owner UID; excluded when parsing
+# member names from the squad roster.
 SQUAD_REGION_CODES = {
     "IND", "BD", "BR", "SG", "ID", "US", "EU", "ME", "VN", "TH", "TW",
     "PK", "NA", "CIS", "BDT", "MENA", "SAC", "NA", "IDC1",
@@ -177,7 +174,7 @@ def parse_squad_state(pkt_json, bot_uid):
 # Auto-leave state — enforce "bot never stays in a squad without a player host".
 #   since: token (time.time()) when hostless was first seen, else None
 _hostless_state = {"since": None}
-AUTO_LEAVE_DEBOUNCE = 6.0
+AUTO_LEAVE_DEBOUNCE = 2.0
 
 # Live squad roster published by the receiver (TcPOnLine) from every 0500 packet.
 # Used by /N handlers to WAIT for an invited user to actually join before doing
@@ -187,9 +184,12 @@ _squad_roster = {"members": set(), "owner": None}
 
 
 async def _auto_leave(token, delay, bot_uid, key, iv, region):
-    """After `delay`s, if the squad is STILL hostless (token unchanged) and no /N
-    command is active, leave the squad: send ExiT and clear stale chat rooms so the
-    bot returns to a clean squad-less state."""
+    """Leave the squad if it is still hostless after `delay`s.
+
+    Enforces "the bot never stays in a squad without a player host". Sends ExiT,
+    clears stale chat rooms, and schedules a chat reconnect so the bot returns to a
+    clean squad-less state. Aborts if the host returned or a /N command is active.
+    """
     global subscribed_rooms
     try:
         await asyncio.sleep(delay)
@@ -199,71 +199,51 @@ async def _auto_leave(token, delay, bot_uid, key, iv, region):
         await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
         _hostless_state["since"] = None
         subscribed_rooms.clear()
-        # Bot is now solo (user left). SCHEDULE (don't force now) a clean chat reconnect
-        # to drop the stale server-side room subscriptions that accumulate across joins/
-        # N-commands. The delay + cancel-on-invite keeps the reconnect in an idle gap so
-        # its window can never collide with a fresh invite (the old dead-state cause).
-        schedule_chat_reset(delay=6.0, reason="auto-leave: user left, bot solo")
-        print(
-            f"\033[92m[AUTOLEAVE]\033[0m Sent ExiT — squad was hostless for "
-            f"{delay:.0f}s. Bot is now squad-less; chat reconnect scheduled."
-        )
+        schedule_chat_reset(delay=CHAT_RESET_DELAY, reason="auto-leave")
+        print(f"\033[92m[INFO]\033[0m Auto-left hostless squad")
     except Exception as _e:
-        print(f"\033[91m[AUTOLEAVE]\033[0m Error during auto-leave: {_e}")
+        print(f"\033[91m[ERROR]\033[0m Auto-leave failed: {_e}")
 
 
-async def force_chat_reconnect(reason=""):
-    """Drop the chat socket so TcPChaT's read loop hits EOF and reconnects cleanly
-    with rooms tracked=0.
+CHAT_RESET_DELAY = 2.0
+_chat_reset_state = {"task": None}
 
-    PROVEN by logs: the chat socket accumulates SERVER-SIDE squad-room subscriptions
-    via AutH_Chat across every /N command and squad join. subscribed_rooms.clear()
-    only empties the local list — it does NOT unsubscribe the server. Those stale
-    room bindings poison the next squad's channel routing ("unable to join voice
-    channel"). When the server force-closes the idle chat socket, the bot reconnects
-    with rooms tracked=0 and the very next invite works WITH a clean welcome.
 
-    This reproduces that clean reconnect on demand at solo-transition points, instead
-    of waiting ~3 min for the server's idle timeout. It must ONLY be called when the
-    bot is squad-less (after /N hand-off, or auto-leave), never mid-squad, so a live
-    welcome is never interrupted."""
+async def force_chat_reconnect():
+    """Close the chat socket so TcPChaT reconnects with a fresh session.
+
+    The chat socket accumulates server-side squad-room subscriptions across every
+    /N command and squad join; clearing the local `subscribed_rooms` list does not
+    unsubscribe the server, and the stale bindings break channel routing on the next
+    invite. A clean reconnect resets the session. Must only run while squad-less.
+    """
     global whisper_writer, subscribed_rooms
     try:
         subscribed_rooms.clear()
         if whisper_writer is not None:
             whisper_writer.close()
-        print(
-            f"\033[96m[CHATRESET]\033[0m forcing clean chat reconnect ({reason}) — "
-            "drops stale server-side room subscriptions"
-        )
     except Exception as _e:
-        print(f"\033[91m[CHATRESET]\033[0m error: {_e}")
+        print(f"\033[91m[ERROR]\033[0m Chat reconnect failed: {_e}")
 
 
-_chat_reset_state = {"task": None}
+def cancel_chat_reset():
+    """Abort a pending scheduled chat reconnect.
 
-
-def cancel_chat_reset(reason=""):
-    """Abort a pending scheduled chat reconnect. Called the instant any squad activity
-    starts (incoming invite / join / /N) so the reconnect window can NEVER collide with
-    a user who needs the bot — which is what produced the 10-20s dead state before."""
+    Called when squad activity starts (incoming invite / join) so a reconnect can
+    never overlap a join in progress.
+    """
     t = _chat_reset_state.get("task")
     if t is not None and not t.done():
         t.cancel()
-        if reason:
-            print(f"\033[96m[CHATRESET]\033[0m pending reconnect cancelled ({reason})")
     _chat_reset_state["task"] = None
 
 
-async def _chat_reset_after(delay, reason):
+async def _chat_reset_after(delay):
     try:
         await asyncio.sleep(delay)
-        # Final guard: if a /N is running a join is in flight — skip rather than risk a
-        # dead-state collision. (Incoming invites also cancel this task outright.)
         if joining_team:
-            print("\033[96m[CHATRESET]\033[0m skipped (squad activity resumed)")
             return
-        await force_chat_reconnect(reason=reason)
+        await force_chat_reconnect()
     except asyncio.CancelledError:
         pass
     finally:
@@ -271,26 +251,25 @@ async def _chat_reset_after(delay, reason):
             _chat_reset_state["task"] = None
 
 
-def schedule_chat_reset(delay=6.0, reason=""):
-    """Schedule a clean chat reconnect `delay`s after the bot goes solo, replacing any
-    previously-pending one. The delay lets a quick re-invite cancel it (keeping the live
-    socket) and keeps the reconnect inside a real idle gap, away from any invite."""
+def schedule_chat_reset(delay=CHAT_RESET_DELAY, reason=""):
+    """Schedule a chat reconnect `delay`s after the bot goes solo.
+
+    Replaces any pending reset. The delay keeps the reconnect inside an idle gap and
+    lets a quick re-invite cancel it, so the reconnect never collides with a join.
+    """
     cancel_chat_reset()
     try:
-        _chat_reset_state["task"] = asyncio.create_task(_chat_reset_after(delay, reason))
-        print(f"\033[96m[CHATRESET]\033[0m reconnect scheduled in {delay:.0f}s ({reason})")
+        _chat_reset_state["task"] = asyncio.create_task(_chat_reset_after(delay))
     except Exception as _e:
-        print(f"\033[91m[CHATRESET]\033[0m schedule error: {_e}")
+        print(f"\033[91m[ERROR]\033[0m Chat reset schedule failed: {_e}")
 
 
-async def wait_for_member_join(target_uid, timeout=15.0, poll=0.4):
-    """Wait until `target_uid` appears in the bot's squad roster (published by the
-    receiver). Returns True if the user joined within `timeout`, else False.
+async def wait_for_member_join(target_uid, timeout=15.0, poll=0.25):
+    """Wait until `target_uid` appears in the bot's squad roster.
 
-    This replaces the blind sleep(8) in the /N handlers so the host-transfer (cHSq)
-    only fires once the user is actually in the squad — which is what makes the
-    voice channel migrate to a present player instead of leaving an orphaned
-    bot-hosted channel."""
+    Returns True if the user joined within `timeout`, else False. Lets the /N
+    host-transfer (cHSq) fire only once the user is actually present.
+    """
     try:
         target = int(target_uid)
     except Exception:
@@ -614,6 +593,24 @@ def get_menu_page(page, per_page=25):
         text += f"{num} ➤ {name}\n"
 
     return text
+
+
+def get_emote_list_chunks(per_chunk=30):
+    """Return the full emote list split into chunked messages.
+
+    Chat messages have a length limit, so the complete list is broken into chunks
+    that each fit in one message; the caller sends them sequentially.
+    """
+    items = sorted(EMOTE_MENU.items(), key=lambda x: int(x[0]))
+    total = len(items)
+    chunks = []
+    for i in range(0, total, per_chunk):
+        part = items[i:i + per_chunk]
+        text = f"🎭 ALL EMOTES ({total})\n\n" if i == 0 else ""
+        for num, name in part:
+            text += f"{num} ➤ {name}\n"
+        chunks.append(text)
+    return chunks
 
 
 # -------- COMMAND --------
@@ -6290,115 +6287,29 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
 
                 data_hex = data2.hex()
 
-                # === [SQTRACE] squad-state diagnostic (read-only, no behavior change) ===
+                # Squad-state tracking: publish the live roster (for /N wait-for-join)
+                # and enforce auto-leave when the squad becomes hostless.
                 if data_hex.startswith("0500"):
                     try:
-                        _trace_pkt = await DeCode_PackEt(data_hex[10:])
-                        _trace_json = json.loads(_trace_pkt)
-                        _trace_type = _trace_json.get("1")
-                        print(
-                            f"\033[95m[SQTRACE]\033[0m recv 0500 type={_trace_type} "
-                            f"len={len(data_hex)} insquad={insquad!r} "
-                            f"joining_team={joining_team!r} rooms={len(subscribed_rooms)}"
-                        )
-                        # [HOSTSTATE] read-only roster parse — verify against reality
-                        # before we wire up auto-leave-when-hostless.
-                        _hs = parse_squad_state(_trace_json, bot_uid)
-                        if _hs is not None:
-                            _owner, _players, _hostless = _hs
-                            # Publish the live roster so /N handlers can wait-for-join.
-                            _squad_roster["members"] = set(_players)
-                            _squad_roster["owner"] = _owner
-                            print(
-                                f"\033[96m[HOSTSTATE]\033[0m owner={_owner} "
-                                f"real_players={sorted(_players)} "
-                                f"hostless={_hostless} (f4="
-                                f"{_trace_json.get('4', {}).get('data') if isinstance(_trace_json.get('4'), dict) else None})"
-                            )
-                            # --- Auto-leave: bot must not stay in a hostless squad ---
-                            if _hostless:
-                                if not joining_team:
-                                    if _hostless_state["since"] is None:
-                                        _tok = time.time()
-                                        _hostless_state["since"] = _tok
-                                        print(
-                                            "\033[93m[AUTOLEAVE]\033[0m hostless detected "
-                                            f"— arming {AUTO_LEAVE_DEBOUNCE:.0f}s leave timer"
+                        squad_json = json.loads(await DeCode_PackEt(data_hex[10:]))
+                        state = parse_squad_state(squad_json, bot_uid)
+                        if state is not None:
+                            owner, players, hostless = state
+                            _squad_roster["members"] = set(players)
+                            _squad_roster["owner"] = owner
+                            if hostless and not joining_team:
+                                if _hostless_state["since"] is None:
+                                    tok = time.time()
+                                    _hostless_state["since"] = tok
+                                    asyncio.create_task(
+                                        _auto_leave(
+                                            tok, AUTO_LEAVE_DEBOUNCE, bot_uid, key, iv, region
                                         )
-                                        asyncio.create_task(
-                                            _auto_leave(
-                                                _tok,
-                                                AUTO_LEAVE_DEBOUNCE,
-                                                bot_uid,
-                                                key,
-                                                iv,
-                                                region,
-                                            )
-                                        )
-                            else:
-                                if _hostless_state["since"] is not None:
-                                    print(
-                                        "\033[92m[AUTOLEAVE]\033[0m host present again "
-                                        "— disarming leave timer"
                                     )
+                            elif not hostless:
                                 _hostless_state["since"] = None
-                        # Deep dump of squad-service RESPONSE packets (small status/error
-                        # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
-                        # server verdict instead of guessing. Dump while a /N runs, or any
-                        # small packet (the create/invite ack/error responses).
-                        # Deep dump of squad-service RESPONSE packets (small status/error
-                        # replies to OpEnSq/SEnd_InV/cHSq/ExiT) so we can read the actual
-                        # server verdict instead of guessing. Dump while a /N runs (and for
-                        # 12s after, to catch the ExiT response + post-/N squad roster), or
-                        # any small packet (the create/invite ack/error responses).
-                        if joining_team:
-                            _sqdump_state["until"] = time.time() + 12
-                        if (
-                            joining_team
-                            or len(data_hex) <= 400
-                            or time.time() < _sqdump_state["until"]
-                        ):
-                            # Extract explicit squad MEMBER list (uid + name pairs) by
-                            # recursively scanning the decoded packet. This removes all
-                            # ambiguity about who is actually in the squad after each step.
-                            def _collect_members(node, out):
-                                if isinstance(node, dict):
-                                    d = node.get("data") if "wire_type" in node else node
-                                    if isinstance(d, dict):
-                                        u = d.get("1", {})
-                                        n = d.get("2", {})
-                                        uu = u.get("data") if isinstance(u, dict) else None
-                                        nn = n.get("data") if isinstance(n, dict) else None
-                                        if isinstance(uu, int) and isinstance(nn, str):
-                                            out.append((uu, nn))
-                                        for v in d.values():
-                                            _collect_members(v, out)
-                            _members = []
-                            try:
-                                _collect_members(_trace_json, _members)
-                            except Exception:
-                                pass
-                            _f3 = _trace_json.get("3", {})
-                            _f4 = _trace_json.get("4", {})
-                            print(
-                                f"\033[95m[SQDUMP]\033[0m len={len(data_hex)} "
-                                f"f3={_f3.get('data') if isinstance(_f3, dict) else None} "
-                                f"f4={_f4.get('data') if isinstance(_f4, dict) else None} "
-                                f"MEMBERS={_members}"
-                            )
-                            _dump = str(_trace_json)
-                            print(
-                                f"\033[95m[SQDUMP]\033[0m json={_dump}"
-                            )
-                            print(f"\033[95m[SQDUMP]\033[0m hex={data_hex}")
-                    except Exception as _trace_e:
-                        print(
-                            f"\033[95m[SQTRACE]\033[0m recv 0500 (undecodable) "
-                            f"len={len(data_hex)} insquad={insquad!r} "
-                            f"joining_team={joining_team!r} err={_trace_e}"
-                        )
-                        print(f"\033[95m[SQDUMP]\033[0m raw hex={data_hex}")
-                # === end [SQTRACE] ===
+                    except Exception:
+                        pass
 
                 # Check ALL packets on TcPOnLine for the chat message!
                 try:
@@ -6617,9 +6528,8 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         if not uid or not invite_uid:
                             continue
 
-                        # An invite arrived → abort any pending chat reconnect so its
-                        # window can never collide with this join (the dead-state cause).
-                        cancel_chat_reset(reason="incoming invite")
+                        # Abort any pending chat reconnect so it cannot overlap this join.
+                        cancel_chat_reset()
 
                         emote_id = 909049012
                         bot_uid = 15494771540
@@ -6783,10 +6693,6 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             print(
                                 f"\033[94m[INFO]\033[0m Bot joined squad of {squad_owner}"
                             )
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m ACCEPT set insquad=True "
-                                f"(awaiting case5 squad-data to reset)"
-                            )
 
                         else:
                             try:
@@ -6938,23 +6844,16 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                         )
                         pass
 
-                # case 5
+                # Squad data received after joining: authenticate into the squad chat
+                # rooms and send the welcome message.
                 if insquad == True:
-                    print(
-                        f"\033[95m[SQTRACE]\033[0m case5 ENTER insquad=True len={len(data_hex)}"
-                    )
                     try:
-                        # Assuming DeCode_PackEt, json.loads, GeTSQDaTa, AutH_Chat, SEndPacKeT are available
                         packet = await DeCode_PackEt(data_hex[10:])
                         packet_json = json.loads(packet)
 
                         OwNer_UiD, CHaT_CoDe, SQuAD_CoDe = await GeTSQDaTa(packet_json)
                         if OwNer_UiD is None:
-                            # Not the correct squad data packet, ignore it
-                            print(
-                                "\033[95m[SQTRACE]\033[0m case5 BAIL GeTSQDaTa->None "
-                                "(insquad STAYS True; reset at end skipped)"
-                            )
+                            # Not the squad data packet — leave insquad set and wait.
                             continue
 
                         print(
@@ -7036,34 +6935,21 @@ async def TcPOnLine(ip, port, key, iv, AutHToKen, reconnect_delay=0.5):
                             P1 = await SEndMsG(
                                 0, welcome_msg, OwNer_UiD, OwNer_UiD, key, iv, region
                             )
-                            print(
-                                "\033[96m[CHATSOCK]\033[0m welcome send: "
-                                f"whisper_writer={'SET' if whisper_writer else 'NONE'} "
-                                f"closing={whisper_writer.is_closing() if whisper_writer else 'n/a'}"
-                            )
                             if whisper_writer:
                                 try:
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "ChaT", P1
                                     )
-                                    print("\033[96m[CHATSOCK]\033[0m welcome drained OK")
                                 except Exception as _we:
-                                    print(f"\033[91m[CHATSOCK]\033[0m welcome send FAILED: {_we}")
+                                    print(f"\033[91m[ERROR]\033[0m Welcome send failed: {_we}")
 
                         asyncio.create_task(send_welcome())
 
                         insquad = None
-                        print(
-                            "\033[95m[SQTRACE]\033[0m case5 DONE reset insquad=None "
-                            "(welcome scheduled)"
-                        )
 
                     except Exception as e:
                         print(
                             f"\033[94m[INFO]\033[0m Error in joining_team chat auth: {e}"
-                        )
-                        print(
-                            f"\033[95m[SQTRACE]\033[0m case5 EXCEPTION (insquad STAYS True): {e}"
                         )
                         pass
 
@@ -7305,28 +7191,18 @@ async def TcPChaT(
             if whisper_writer is not None:
                 whisper_writer.write(bytes_payload)
                 await whisper_writer.drain()
-            print(
-                "\033[96m[CHATSOCK]\033[0m chat socket (re)connected + AuthToken sent "
-                f"(rooms tracked={len(subscribed_rooms)})"
-            )
             ready_event.set()
             if LoGinDaTaUncRypTinG.Clan_ID:
                 clan_id = LoGinDaTaUncRypTinG.Clan_ID
                 clan_compiled_data = LoGinDaTaUncRypTinG.Clan_Compiled_Data
                 pK = await AuthClan(clan_id, clan_compiled_data, key, iv)
-                if whisper_writer:
-                    if whisper_writer is not None:
-                        whisper_writer.write(pK)
-                        await whisper_writer.drain()
+                if whisper_writer is not None:
+                    whisper_writer.write(pK)
+                    await whisper_writer.drain()
             while True:
                 data = await reader.read(9999)
                 if not data:
-                    print("\033[96m[CHATSOCK]\033[0m chat socket EOF (server closed) — reconnecting")
                     break
-                _chs_hex = data.hex()
-                print(
-                    f"\033[96m[CHATSOCK]\033[0m recv {len(_chs_hex)} chars, head={_chs_hex[:10]}"
-                )
                 if (
                     data.hex().startswith("120000")
                     or data.hex().startswith("121400")
@@ -7413,22 +7289,17 @@ async def TcPChaT(
                         except Exception as e:
                             print(e)
 
-                        if msg.startswith("/menu"):
-                            try:
-                                page = int(msg.replace("/menu", ""))
-                            except:
-                                page = 1
-
-                            menu_text = get_menu_page(page)
-
-                            await safe_send_message(
-                                response.Data.chat_type,
-                                menu_text,
-                                uid,
-                                chat_id,
-                                key,
-                                iv,
-                            )
+                        if msg.startswith("/list"):
+                            for chunk in get_emote_list_chunks():
+                                await safe_send_message(
+                                    response.Data.chat_type,
+                                    chunk,
+                                    uid,
+                                    chat_id,
+                                    key,
+                                    iv,
+                                )
+                                await asyncio.sleep(0.2)
 
                         # --- AUTO FOR EVERYONE ---
                         try:
@@ -8075,26 +7946,21 @@ async def TcPChaT(
                                         whisper_writer, online_writer, "OnLine", PAc
                                     )
 
-                                    # Let the squad be created before inviting (see /6)
-                                    await asyncio.sleep(3)
+                                    # Let the squad be created before inviting.
+                                    await asyncio.sleep(1.5)
 
                                     V = await SEnd_InV(5, int(target_uid), key, iv, region)
                                     await SEndPacKeT(
                                         whisper_writer, online_writer, "OnLine", V
                                     )
 
-                                    # Wait for the user to join, THEN transfer host + leave
-                                    _joined = await wait_for_member_join(target_uid, timeout=15.0)
-                                    print(
-                                        f"\033[95m[SQTRACE]\033[0m /5 wait-for-join uid={target_uid} -> "
-                                        f"{'JOINED' if _joined else 'TIMEOUT'}"
-                                    )
-                                    if _joined:
+                                    # Transfer host only once the user is confirmed present.
+                                    if await wait_for_member_join(target_uid, timeout=15.0):
                                         C = await cHSq(5, int(target_uid), key, iv, region)
                                         await SEndPacKeT(
                                             whisper_writer, online_writer, "OnLine", C
                                         )
-                                        await asyncio.sleep(2)
+                                        await asyncio.sleep(1.0)
 
                                     E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                                     await SEndPacKeT(
@@ -8114,21 +7980,9 @@ async def TcPChaT(
                                         iv,
                                     )
 
-                                    # No-downtime squad-chat session reset (see /6)
-                                    joining_team = False
-                                    insquad = None
+                                    # Bot is solo again; reconnect chat to drop stale rooms.
                                     subscribed_rooms.clear()
-                                    # Bot handed off + ExiT'd → solo. Schedule a clean
-                                    # chat reconnect to drop stale server-side rooms so
-                                    # the next direct invite has no channel error. A
-                                    # quick re-invite cancels it (no dead-state).
-                                    schedule_chat_reset(
-                                        delay=6.0, reason="/5 hand-off, bot solo"
-                                    )
-                                    print(
-                                        "\033[95m[SQTRACE]\033[0m /5 cleared rooms "
-                                        "(chat reconnect scheduled)"
-                                    )
+                                    schedule_chat_reset(reason="/5 hand-off")
 
                                 except Exception as e:
                                     error_msg = f"[B][C][FF0000]❌ ERROR sending invite: {str(e)}\n"
@@ -8144,12 +7998,7 @@ async def TcPChaT(
 
 
                         if inPuTMsG.startswith(("/6")):
-                            # Process /6 command - Create 4 player group
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /6 ENTER from uid={uid} "
-                                f"global.insquad={globals().get('insquad')!r} "
-                                f"global.joining_team={globals().get('joining_team')!r}"
-                            )
+                            # Create a 6-player group, invite the requester, hand off host.
                             initial_message = f"[B][C]{get_random_color()}\n\nCreating 6-Player Group...\n\n"
                             await safe_send_message(
                                 response.Data.chat_type,
@@ -8165,47 +8014,25 @@ async def TcPChaT(
                             await SEndPacKeT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
-                            print("\033[95m[SQTRACE]\033[0m /6 sent OpEnSq (create)")
 
-                            # Let the squad be fully created server-side BEFORE inviting.
-                            await asyncio.sleep(3)
+                            # Let the squad be created server-side before inviting.
+                            await asyncio.sleep(1.5)
 
                             V = await SEnd_InV(6, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
-                            print(f"\033[95m[SQTRACE]\033[0m /6 sent SEnd_InV -> {uid}")
 
-                            # WAIT until the user actually joins (roster confirms) before
-                            # transferring host + leaving. cHSq designates the target user
-                            # (field 2.1) as host — it only works if they're PRESENT. Doing
-                            # the host-transfer to a confirmed-present player is what makes
-                            # the voice channel migrate to them instead of leaving an
-                            # orphaned bot-hosted channel ("unable to join voice channel").
-                            _joined = await wait_for_member_join(uid, timeout=15.0)
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /6 wait-for-join uid={uid} -> "
-                                f"{'JOINED' if _joined else 'TIMEOUT'}"
-                            )
-
-                            if _joined:
-                                # User is present → transfer host to them, then settle so
-                                # voice migrates before the bot leaves.
+                            # Transfer host only once the user is confirmed present, so the
+                            # voice channel migrates to them instead of an orphaned bot host.
+                            if await wait_for_member_join(uid, timeout=15.0):
                                 C = await cHSq(6, uid, key, iv, region)
                                 await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                                print("\033[95m[SQTRACE]\033[0m /6 sent cHSq (host-transfer to joined user)")
-                                await asyncio.sleep(2)
+                                await asyncio.sleep(1.0)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
-                            print("\033[95m[SQTRACE]\033[0m /6 sent ExiT (leave)")
 
                             joining_team = False
                             insquad = None
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /6 EXIT after local resets "
-                                f"global.insquad={globals().get('insquad')!r} "
-                                f"global.joining_team={globals().get('joining_team')!r} "
-                                f"(local insquad={insquad!r} joining_team={joining_team!r})"
-                            )
 
                             success_message = f"[B][C][FFFF00]\u2705 SUCCESS: 6-Player Group invitation sent successfully to {uid}!\n"
                             await safe_send_message(
@@ -8217,23 +8044,10 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # === No-downtime squad-chat session reset ===
-                            # OpEnSq+ExiT churn leaves the CHAT service anchored to the
-                            # dissolved squad room. Drop stale room codes and soft-reconnect
-                            # ONLY the chat socket (same AuthToken, no re-login) so the bot
-                            # re-anchors cleanly on the next join. No squad/online downtime.
-                            joining_team = False
-                            insquad = None
+                            # Bot is solo again; reconnect chat to drop stale room state.
                             subscribed_rooms.clear()
-                            schedule_chat_reset(
-                                delay=6.0, reason="/6 hand-off, bot solo"
-                            )
-                            print(
-                                "\033[95m[SQTRACE]\033[0m /6 cleared rooms "
-                                "(chat reconnect scheduled)"
-                            )
+                            schedule_chat_reset(reason="/6 hand-off")
 
-                        # Add these lines to your existing command dispatcher:
 
                         if inPuTMsG.startswith("/spamroom ") or inPuTMsG == "/spamroom":
                             await handle_room_spam_command(
@@ -9009,22 +8823,17 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            # Let the squad be created before inviting (see /6)
-                            await asyncio.sleep(3)
+                            # Let the squad be created before inviting.
+                            await asyncio.sleep(1.5)
 
                             V = await SEnd_InV(3, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            # Wait for the user to join, THEN transfer host + leave (see /6)
-                            _joined = await wait_for_member_join(uid, timeout=15.0)
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /3 wait-for-join uid={uid} -> "
-                                f"{'JOINED' if _joined else 'TIMEOUT'}"
-                            )
-                            if _joined:
+                            # Transfer host only once the user is confirmed present.
+                            if await wait_for_member_join(uid, timeout=15.0):
                                 C = await cHSq(3, uid, key, iv, region)
                                 await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                                await asyncio.sleep(2)
+                                await asyncio.sleep(1.0)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -9042,17 +8851,9 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # No-downtime squad-chat session reset (see /6)
-                            joining_team = False
-                            insquad = None
+                            # Bot is solo again; reconnect chat to drop stale rooms.
                             subscribed_rooms.clear()
-                            schedule_chat_reset(
-                                delay=6.0, reason="/3 hand-off, bot solo"
-                            )
-                            print(
-                                "\033[95m[SQTRACE]\033[0m /3 cleared rooms "
-                                "(chat reconnect scheduled)"
-                            )
+                            schedule_chat_reset(reason="/3 hand-off")
 
                         if inPuTMsG.startswith(("/4")):
                             # Process /3 command - Create 3 player group
@@ -9072,22 +8873,17 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            # Let the squad be created before inviting (see /6)
-                            await asyncio.sleep(3)
+                            # Let the squad be created before inviting.
+                            await asyncio.sleep(1.5)
 
                             V = await SEnd_InV(4, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            # Wait for the user to join, THEN transfer host + leave (see /6)
-                            _joined = await wait_for_member_join(uid, timeout=15.0)
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /4 wait-for-join uid={uid} -> "
-                                f"{'JOINED' if _joined else 'TIMEOUT'}"
-                            )
-                            if _joined:
+                            # Transfer host only once the user is confirmed present.
+                            if await wait_for_member_join(uid, timeout=15.0):
                                 C = await cHSq(4, uid, key, iv, region)
                                 await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                                await asyncio.sleep(2)
+                                await asyncio.sleep(1.0)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -9105,17 +8901,9 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # No-downtime squad-chat session reset (see /6)
-                            joining_team = False
-                            insquad = None
+                            # Bot is solo again; reconnect chat to drop stale rooms.
                             subscribed_rooms.clear()
-                            schedule_chat_reset(
-                                delay=6.0, reason="/4 hand-off, bot solo"
-                            )
-                            print(
-                                "\033[95m[SQTRACE]\033[0m /4 cleared rooms "
-                                "(chat reconnect scheduled)"
-                            )
+                            schedule_chat_reset(reason="/4 hand-off")
 
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
@@ -9213,22 +9001,17 @@ async def TcPChaT(
                                 whisper_writer, online_writer, "OnLine", PAc
                             )
 
-                            # Let the squad be created before inviting (see /6)
-                            await asyncio.sleep(3)
+                            # Let the squad be created before inviting.
+                            await asyncio.sleep(1.5)
 
                             V = await SEnd_InV(5, uid, key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", V)
 
-                            # Wait for the user to join, THEN transfer host + leave (see /6)
-                            _joined = await wait_for_member_join(uid, timeout=15.0)
-                            print(
-                                f"\033[95m[SQTRACE]\033[0m /5 wait-for-join uid={uid} -> "
-                                f"{'JOINED' if _joined else 'TIMEOUT'}"
-                            )
-                            if _joined:
+                            # Transfer host only once the user is confirmed present.
+                            if await wait_for_member_join(uid, timeout=15.0):
                                 C = await cHSq(5, uid, key, iv, region)
                                 await SEndPacKeT(whisper_writer, online_writer, "OnLine", C)
-                                await asyncio.sleep(2)
+                                await asyncio.sleep(1.0)
 
                             E = await ExiT(int(LoGinDaTaUncRypTinG.AccountUID), key, iv, region)
                             await SEndPacKeT(whisper_writer, online_writer, "OnLine", E)
@@ -9246,17 +9029,9 @@ async def TcPChaT(
                                 iv,
                             )
 
-                            # No-downtime squad-chat session reset (see /6)
-                            joining_team = False
-                            insquad = None
+                            # Bot is solo again; reconnect chat to drop stale rooms.
                             subscribed_rooms.clear()
-                            schedule_chat_reset(
-                                delay=6.0, reason="/5 hand-off, bot solo"
-                            )
-                            print(
-                                "\033[95m[SQTRACE]\033[0m /5 cleared rooms "
-                                "(chat reconnect scheduled)"
-                            )
+                            schedule_chat_reset(reason="/5 hand-off")
 
                         if (
                             inPuTMsG.strip().lower() == "/admin"
@@ -12020,7 +11795,7 @@ async def TcPChaT(
                         # IMPROVED HELP MENU SYSTEM - AUTOMATIC MULTI-PART
                         # IMPROVED HELP MENU SYSTEM - TREE STYLE FORMAT
 
-                        if inPuTMsG.strip().lower() in ("help", "/help", "commands"):
+                        if inPuTMsG.strip().lower() in ("help", "/help", "commands", "/menu", "menu"):
                             print(
                                 f"\033[94m[INFO]\033[0m Help command detected from UID: {uid} in chat type: {XX}"
                             )
@@ -12072,6 +11847,9 @@ async def TcPChaT(
 
 [00FFFF]❖ [FFFFFF]/e random
 ❀️ [FFD700]SEND RANDOM EMOTE/STICKER
+
+[00FFFF]❖ [FFFFFF]/list
+❀️ [FFD700]LIST ALL EMOTES (NUMBER ➤ NAME)
 
 [00FFFF]❖ [FFFFFF]/sticker
 ❀️ [FFD700]SEND STICKER
@@ -12209,7 +11987,7 @@ async def TcPChaT(
 [00FFFF]❖ [FFFFFF]/xjoin
 ❀️ [FFD700]JOIN LAST CREATED ROOM
 
-[00FFFF]❖ [FFFFFF]/help
+[00FFFF]❖ [FFFFFF]/help or /menu
 ❀️ [FFD700]SHOW THIS HELP MENU
 
 [00FFFF]❖ [FFFFFF]/admin
