@@ -613,6 +613,32 @@ def get_emote_list_chunks(per_chunk=30):
     return chunks
 
 
+# Named bundles available via /n and /b [number].
+BUNDLE_NAMES = {
+    "1": "rampage",
+    "2": "cannibal",
+    "3": "devil",
+    "4": "scorpio",
+    "5": "frostfire",
+    "6": "paradox",
+    "7": "naruto",
+    "8": "aurora",
+    "9": "midnight",
+    "10": "itachi",
+    "11": "dreamspace",
+}
+
+
+def get_bundle_list_text():
+    """Return the full numbered bundle list as a single message."""
+    items = sorted(BUNDLE_NAMES.items(), key=lambda x: int(x[0]))
+    text = f"🎁 ALL BUNDLES ({len(items)})\n\n"
+    for num, name in items:
+        text += f"{num} ➤ {name}\n"
+    text += "\nUse: /n [number] or /b [number]"
+    return text
+
+
 # -------- COMMAND --------
 async def handle_message(message):
 
@@ -4727,12 +4753,12 @@ async def handle_xjoin_command(inPuTMsG, uid, chat_id, key, iv, region, chat_typ
 
 
 async def handle_room_command(inPuTMsG, uid, chat_id, key, iv, region, chat_type):
-    """Handle /room command with proper error handling"""
+    """Handle /roomatk command: find a player's room and attack it."""
 
     parts = inPuTMsG.strip().split()
 
     if len(parts) < 2:
-        error_msg = f"[B][C][FF0000]❌ ERROR: /room (uid)\nExample: /room 11686472351\n"
+        error_msg = f"[B][C][FF0000]❌ ERROR: /roomatk (uid)\nExample: /roomatk 11686472351\n"
         await safe_send_message(chat_type, error_msg, uid, chat_id, key, iv)
         return
 
@@ -5972,19 +5998,6 @@ async def start_auto_packet(key, iv, region):
         packet_type = "0515"
 
     return await GeneRaTePk((await CrEaTe_ProTo(fields)).hex(), packet_type, key, iv)
-
-
-async def handle_command(inPuTMsG):
-
-    global emote_hijack
-
-    if inPuTMsG.startswith("/mimic_on"):
-        emote_hijack = True
-        print("\033[94m[INFO]\033[0m Emote Mimic Mode: ENABLED")
-
-    if inPuTMsG.startswith("/mimic_off"):
-        emote_hijack = False
-        print("\033[94m[INFO]\033[0m Emote Mimic Mode: DISABLED")
 
 
 async def detect_and_hijack_emote(data_hex, key, iv, bot_uid, region):
@@ -7290,16 +7303,37 @@ async def TcPChaT(
                             print(e)
 
                         if msg.startswith("/list"):
-                            for chunk in get_emote_list_chunks():
+                            sub = msg.strip().lower().split()
+                            arg = sub[1] if len(sub) > 1 else ""
+                            if arg.startswith("bundle"):
                                 await safe_send_message(
                                     response.Data.chat_type,
-                                    chunk,
+                                    get_bundle_list_text(),
                                     uid,
                                     chat_id,
                                     key,
                                     iv,
                                 )
-                                await asyncio.sleep(0.2)
+                            elif arg.startswith("emote"):
+                                for chunk in get_emote_list_chunks():
+                                    await safe_send_message(
+                                        response.Data.chat_type,
+                                        chunk,
+                                        uid,
+                                        chat_id,
+                                        key,
+                                        iv,
+                                    )
+                                    await asyncio.sleep(0.2)
+                            else:
+                                await safe_send_message(
+                                    response.Data.chat_type,
+                                    "[B][C][FFFF00]📋 Use: /list emotes  •  /list bundle",
+                                    uid,
+                                    chat_id,
+                                    key,
+                                    iv,
+                                )
 
                         # --- AUTO FOR EVERYONE ---
                         try:
@@ -7345,8 +7379,6 @@ async def TcPChaT(
 • 1-second cycles for 10 seconds total
 • Emotes: 909052008 → 909052008 → 909052008
 • Creates a "freeze" effect!
-
-💡 Use /stop_freeze to stop early
 """
                                 await safe_send_message(
                                     response.Data.chat_type,
@@ -7422,8 +7454,8 @@ async def TcPChaT(
                                     )
                                 )
 
-                        # In your command handler where you call Room_Spam:
-                        if inPuTMsG.strip().startswith("/room"):
+                        # Room spam: /room [uid] [room id]
+                        if inPuTMsG.strip().startswith("/room "):
                             print(
                                 "\033[94m[INFO]\033[0m Processing advanced room spam command"
                             )
@@ -7820,7 +7852,7 @@ async def TcPChaT(
                             parts = inPuTMsG.strip().split()
 
                             if len(parts) < 3:
-                                error_msg = f"[B][C][FF0000]❌ ERROR: Invalid syntax. Usage: /quick (team_code) [emote_id] [target_uid]\n\n[FFFFFF]Examples:\n[FFFF00]/quick ABC123[FFFFFF] - Join, send Rings emote, leave\n[FFFF00]/ghostquick ABC123[FFFFFF] - Ghost join, send emote, leave\n"
+                                error_msg = f"[B][C][FF0000]❌ ERROR: Invalid syntax. Usage: /quick (team_code) [emote_id] [target_uid]\n\n[FFFFFF]Examples:\n[FFFF00]/quick ABC123[FFFFFF] - Join, send Rings emote, leave\n"
                                 await safe_send_message(
                                     response.Data.chat_type,
                                     error_msg,
@@ -8908,7 +8940,8 @@ async def TcPChaT(
                         # In your TcPChaT function, look for the command handling section
                         # It might look something like this:
 
-                        if inPuTMsG.startswith("/room "):
+                        # Auto room attack: /roomatk [uid] (finds the player's room)
+                        if inPuTMsG.strip().startswith("/roomatk"):
                             await handle_room_command(
                                 inPuTMsG,
                                 uid,
@@ -10141,7 +10174,7 @@ async def TcPChaT(
                             )
 
                         # EVO CYCLE STOP COMMAND - @sevos
-                        if inPuTMsG.strip() == "/s":
+                        if inPuTMsG.strip() in ("/s", "/sm", "/o", "/sn", "@bt"):
                             if evo_cycle_task and not evo_cycle_task.done():
                                 evo_cycle_running = False
                                 evo_cycle_task.cancel()
@@ -10230,26 +10263,6 @@ async def TcPChaT(
                             )
 
                         # EVO CYCLE STOP COMMAND - evos
-                        if inPuTMsG.strip() == "/o":
-                            if evo_cycle_task and not evo_cycle_task.done():
-                                evo_cycle_running = False
-                                evo_cycle_task.cancel()
-                                await asyncio.sleep(0.2)
-
-                                success_msg = "[B][C][FFFF00]✅ SUCCESS: Evolution emote cycle stopped!"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    success_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-
-                                print(
-                                    "\033[94m[INFO]\033[0m Evolution emote cycle stopped by command"
-                                )
-
                         # EMOTE CYCLE START COMMAND - /evo
                         if inPuTMsG.strip().startswith("new"):
                             print(
@@ -10314,33 +10327,6 @@ async def TcPChaT(
                             )
 
                         # EVO CYCLE STOP COMMAND - @sevos
-                        if inPuTMsG.strip() == "/sm":
-                            if evo_cycle_task and not evo_cycle_task.done():
-                                evo_cycle_running = False
-                                evo_cycle_task.cancel()
-                                success_msg = f"[B][C][FFFF00]✅ SUCCESS: Evolution emote cycle stopped successfully!\n"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    success_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-                                print(
-                                    "\033[94m[INFO]\033[0m Evolution emote cycle stopped by command"
-                                )
-                            else:
-                                error_msg = f"[B][C][FF0000]❌ ERROR: No active evolution emote cycle to stop!\n"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    error_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-
                         if inPuTMsG.strip().startswith("@new"):
                             print(
                                 "\033[94m[INFO]\033[0m Processing evo cycle start command in any chat type"
@@ -10404,26 +10390,6 @@ async def TcPChaT(
                             )
 
                         # EVO CYCLE STOP COMMAND - evos
-                        if inPuTMsG.strip() == "/sn":
-                            if evo_cycle_task and not evo_cycle_task.done():
-                                evo_cycle_running = False
-                                evo_cycle_task.cancel()
-                                await asyncio.sleep(0.2)
-
-                                success_msg = "[B][C][FFFF00]✅ SUCCESS: Evolution emote cycle stopped!"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    success_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-
-                                print(
-                                    "\033[94m[INFO]\033[0m Evolution emote cycle stopped by command"
-                                )
-
                         if inPuTMsG.strip().startswith("@bot"):
                             print(
                                 "\033[94m[INFO]\033[0m Processing evo cycle start command in any chat type"
@@ -10487,26 +10453,6 @@ async def TcPChaT(
                             )
 
                         # EVO CYCLE STOP COMMAND - evos
-                        if inPuTMsG.strip() == "@bt":
-                            if evo_cycle_task and not evo_cycle_task.done():
-                                evo_cycle_running = False
-                                evo_cycle_task.cancel()
-                                await asyncio.sleep(0.2)
-
-                                success_msg = "[B][C][FFFF00]✅ SUCCESS: Evolution emote cycle stopped!"
-                                await safe_send_message(
-                                    response.Data.chat_type,
-                                    success_msg,
-                                    uid,
-                                    chat_id,
-                                    key,
-                                    iv,
-                                )
-
-                                print(
-                                    "\033[94m[INFO]\033[0m Evolution emote cycle stopped by command"
-                                )
-
                         # Fast Emote Spam command - works in all chat types
                         if inPuTMsG.strip().startswith("/fast"):
                             print(
@@ -11804,31 +11750,34 @@ async def TcPChaT(
              [B][C][FF0000] ❀️ BASIC CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
 [00FFFF]❖ [FFFFFF]/start
-❀️ [FFD700]START MATCH
+❀️ [FFD700]START THE MATCH
 
 [00FFFF]❖ [FFFFFF]/train
-❀️ [FFD700]START TRAINING MATCH
+❀️ [FFD700]START A TRAINING MATCH
 
 [00FFFF]❖ [FFFFFF]/exit
-❀️ [FFD700]LEAVE SQUAD
+❀️ [FFD700]BOT LEAVES YOUR SQUAD
 
 [00FFFF]❖ [FFFFFF]/kick [uid]
-❀️ [FFD700]KICK PLAYER FROM SQUAD
+❀️ [FFD700]KICK A PLAYER
 
 [00FFFF]❖ [FFFFFF]/kkick [uid]
-❀️ [FFD700]FAST KICK PLAYER
+❀️ [FFD700]KICK A PLAYER (FAST)
 
 [00FFFF]❖ [FFFFFF]/3
-❀️ [FFD700]SEND 3-PLAYER INVITE
+❀️ [FFD700]CREATE A 3-PLAYER GROUP
+
+[00FFFF]❖ [FFFFFF]/4
+❀️ [FFD700]CREATE A 4-PLAYER GROUP
 
 [00FFFF]❖ [FFFFFF]/5
-❀️ [FFD700]SEND 5-PLAYER INVITE
+❀️ [FFD700]CREATE A 5-PLAYER GROUP
 
 [00FFFF]❖ [FFFFFF]/6
-❀️ [FFD700]SEND 6-PLAYER INVITE
+❀️ [FFD700]CREATE A 6-PLAYER GROUP
 
 [00FFFF]❖ [FFFFFF]! [team code]
-❀️ [FFD700]JOIN SQUAD
+❀️ [FFD700]JOIN A SQUAD BY CODE
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(
@@ -11840,28 +11789,37 @@ async def TcPChaT(
             [B][C][FF0000] ❀️ EMOTE CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
 [00FFFF]❖ [FFFFFF]/e [number/name]
-❀️ [FFD700]SEND EMOTE TO YOURSELF
+❀️ [FFD700]EMOTE ON YOURSELF
 
 [00FFFF]❖ [FFFFFF]/e [uid] [number]
-❀️ [FFD700]SEND EMOTE TO PLAYER
+❀️ [FFD700]EMOTE ON A PLAYER
 
 [00FFFF]❖ [FFFFFF]/e random
-❀️ [FFD700]SEND RANDOM EMOTE/STICKER
+❀️ [FFD700]RANDOM EMOTE ON YOURSELF
 
-[00FFFF]❖ [FFFFFF]/list
-❀️ [FFD700]LIST ALL EMOTES (NUMBER ➤ NAME)
+[00FFFF]❖ [FFFFFF]/c [uid…] [number]
+❀️ [FFD700]EMOTE ON MANY PLAYERS
+
+[00FFFF]❖ [FFFFFF]/quick [code] [emote] [uid]
+❀️ [FFD700]JOIN, EMOTE, THEN LEAVE
+
+[00FFFF]❖ [FFFFFF]/list emotes
+❀️ [FFD700]SHOW ALL EMOTES
+
+[00FFFF]❖ [FFFFFF]/list bundle
+❀️ [FFD700]SHOW ALL BUNDLES
 
 [00FFFF]❖ [FFFFFF]/sticker
-❀️ [FFD700]SEND STICKER
+❀️ [FFD700]RANDOM STICKER
 
 [00FFFF]❖ [FFFFFF]/animation
-❀️ [FFD700]SEND ANIMATION
+❀️ [FFD700]PLAY AN ANIMATION
 
 [00FFFF]❖ [FFFFFF]/hjk
-❀️ [FFD700]HIJACK EMOTE STREAM
+❀️ [FFD700]COPY PLAYERS' EMOTES
 
 [00FFFF]❖ [FFFFFF]/hjf
-❀️ [FFD700]HIJACK FAST EMOTE STREAM
+❀️ [FFD700]COPY PLAYERS' EMOTES (FAST)
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(
@@ -11873,34 +11831,37 @@ async def TcPChaT(
               [B][C][FF0000] ❀️ EVO CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━
 [00FF00]❖ [FFFFFF]max
-❀️ [FFD700]SEND EVO EMOTE TO SELF
-
-[00FFFF]❖ [FFFFFF]/s
-❀️ [FFD700]STOP EVO EMOTE CYCLE
+❀️ [FFD700]NON-STOP EVO EMOTE ON YOU
 
 [00FF00]❖ [FFFFFF]@max
-❀️ [FFD700]SEND EVO EMOTE (YOU + BOT)
-
-[00FFFF]❖ [FFFFFF]/o
-❀️ [FFD700]STOP EVO EMOTE (YOU + BOT)
+❀️ [FFD700]NON-STOP EVO EMOTE (YOU + BOT)
 
 [00FF00]❖ [FFFFFF]new
-❀️ [FFD700]SEND RANDOM EMOTE TO SELF
-
-[00FFFF]❖ [FFFFFF]/sm
-❀️ [FFD700]STOP EVO EMOTE CYCLE
+❀️ [FFD700]NON-STOP RANDOM EMOTE ON YOU
 
 [00FF00]❖ [FFFFFF]@new
-❀️ [FFD700]SEND RANDOM EMOTE (YOU + BOT)
+❀️ [FFD700]NON-STOP RANDOM EMOTE (YOU + BOT)
 
 [00FF00]❖ [FFFFFF]@bot
-❀️ [FFD700]SEND RANDOM EMOTE (BOT ONLY)
+❀️ [FFD700]NON-STOP RANDOM EMOTE ON BOT
 
-[00FFFF]❖ [FFFFFF]@bt
-❀️ [FFD700]STOP EVO EMOTE CYCLE
+[00FFFF]❖ [FFFFFF]/evo [uid] [number]
+❀️ [FFD700]EVO EMOTE ON A PLAYER
 
-[00FFFF]❖ [FFFFFF]/evo_c
-❀️ [FFD700]CUSTOM EVO EMOTE CYCLE
+[00FFFF]❖ [FFFFFF]/evo_fast [uid] [number]
+❀️ [FFD700]EVO EMOTE ON A PLAYER (FAST)
+
+[00FFFF]❖ [FFFFFF]/evo_c [uid] [number] [times]
+❀️ [FFD700]EVO EMOTE A SET NUMBER OF TIMES
+
+[00FFFF]❖ [FFFFFF]/s
+❀️ [FFD700]STOP NON-STOP EMOTES
+
+[00FFFF]❖ [FFFFFF]/stop evo_fast
+❀️ [FFD700]STOP FAST EVO EMOTE
+
+[00FFFF]❖ [FFFFFF]/stop evo_c
+❀️ [FFD700]STOP REPEATING EVO EMOTE
 """
                             await safe_send_message(
                                 response.Data.chat_type, evo, uid, chat_id, key, iv
@@ -11911,37 +11872,46 @@ async def TcPChaT(
            [B][C][FF0000] ❀️ SPAM CMDS
 [FF0000]━[00FF00]━[0000FF]━[FFFF00]━[FF00FF]━[00FFFF]━[FFA500]━[FF1493]━[00FF7F]━[FFD700]━[00CED1]━[9400D3]━[FF6347]━
 [00FFFF]❖ [FFFFFF]/fast [uid] [emote]
-❀️ [FFD700]FAST EMOTE SPAM
+❀️ [FFD700]SPAM AN EMOTE (FAST)
 
 [00FFFF]❖ [FFFFFF]/p [uid] [emote] [num]
-❀️ [FFD700]CUSTOM EMOTE SPAM
+❀️ [FFD700]SPAM AN EMOTE X TIMES
 
 [00FFFF]❖ [FFFFFF]/reject [uid]
-❀️ [FFD700]MATCH REJECT SPAM
+❀️ [FFD700]SPAM MATCH REJECTS
 
 [00FFFF]❖ [FFFFFF]/reject_stop
-❀️ [FFD700]STOP MATCH REJECT SPAM
+❀️ [FFD700]STOP REJECT SPAM
 
 [00FFFF]❖ [FFFFFF]/msg [text] [times]
-❀️ [FFD700]CHAT MESSAGE SPAM
+❀️ [FFD700]SPAM A CHAT MESSAGE
 
 [00FFFF]❖ [FFFFFF]/stop msg
-❀️ [FFD700]STOP CHAT MESSAGE SPAM
+❀️ [FFD700]STOP MESSAGE SPAM
 
 [00FFFF]❖ [FFFFFF]/mg [text] [repeats]
-❀️ [FFD700]WAVE CHAT MESSAGE SPAM
+❀️ [FFD700]WAVE-STYLE CHAT SPAM
 
-[00FFFF]❖ [FFFFFF]/room uid room id
-❀️ [FFD700]ATTACK SPECIFIC ROOM
+[00FFFF]❖ [FFFFFF]/room [uid] [room id]
+❀️ [FFD700]SPAM A PLAYER'S ROOM
+
+[00FFFF]❖ [FFFFFF]/roomatk [uid]
+❀️ [FFD700]FIND & ATTACK A PLAYER'S ROOM
+
+[00FFFF]❖ [FFFFFF]/spamroom [room] [uid] [msg]
+❀️ [FFD700]SPAM A ROOM (ALSO /sr)
+
+[00FFFF]❖ [FFFFFF]/s_m [uid] [msg]
+❀️ [FFD700]PRIVATE MESSAGE A PLAYER
 
 [00FFFF]❖ [FFFFFF]/lag [uid] [amount]
-❀️ [FFD700]LAG ATTACK
+❀️ [FFD700]LAG A PLAYER
 
 [00FFFF]❖ [FFFFFF]/stop lag
-❀️ [FFD700]STOP LAG ATTACK
+❀️ [FFD700]STOP LAG
 
 [00FFFF]❖ [FFFFFF]/ice
-❀️ [FFD700]ICE BUNDLE EXPLOIT
+❀️ [FFD700]FREEZE EMOTE EFFECT
 [FF0000]━[00FF00]━[0000FF]━[FFFF00]━[FF00FF]━[00FFFF]━[FFA500]━[FF1493]━[00FF7F]━[FFD700]━[00CED1]━[9400D3]━[FF6347]━"""
 
                             await safe_send_message(
@@ -11958,40 +11928,37 @@ async def TcPChaT(
              [B][C][FF0000] ❀️ UTILITY CMDS
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]
 [00FFFF]❖ [FFFFFF]/inv [uid]
-❀️ [FFD700]SEND GROUP INVITE
+❀️ [FFD700]INVITE A PLAYER TO SQUAD
 
 [00FFFF]❖ [FFFFFF]/joinroom [id] [pass]
-❀️ [FFD700]JOIN CUSTOM ROOM
+❀️ [FFD700]JOIN A CUSTOM ROOM (ALSO /xjoin)
 
 [00FFFF]❖ [FFFFFF]/info [uid]
-❀️ [FFD700]PLAYER INFORMATION
+❀️ [FFD700]VIEW PLAYER INFO
 
 [00FFFF]❖ [FFFFFF]/status [uid]
-❀️ [FFD700]CHECK PLAYER STATUS
+❀️ [FFD700]CHECK IF PLAYER IS ONLINE
 
-[00FFFF]❖ [FFFFFF]/bundle
-❀️ [FFD700]VIEW AVAILABLE BUNDLES
+[00FFFF]❖ [FFFFFF]/b [number]  •  /n [number]
+❀️ [FFD700]EQUIP A BUNDLE (SEE /list bundle)
 
-[00FFFF]❖ [FFFFFF]/b [number]
-❀️ [FFD700]EQUIP BUNDLE BOT
+[00FFFF]❖ [FFFFFF]/magic [team code]
+❀️ [FFD700]MAGIC BUNDLE EFFECT ON SQUAD
 
 [00FFFF]❖ [FFFFFF]/bio [text]
 ❀️ [FFD700]CHANGE BOT BIO
 
 [00FFFF]❖ [FFFFFF]/friend [uid]
-❀️ [FFD700]SEND FRIEND REQUEST
+❀️ [FFD700]SEND A FRIEND REQUEST
 
-[00FFFF]❖ [FFFFFF]/roommsg
-❀️ [FFD700]SPAM MESSAGE IN ROOM
+[00FFFF]❖ [FFFFFF]/roommsg [room] [msg]
+❀️ [FFD700]SPAM A MESSAGE IN A ROOM
 
-[00FFFF]❖ [FFFFFF]/xjoin
-❀️ [FFD700]JOIN LAST CREATED ROOM
-
-[00FFFF]❖ [FFFFFF]/help or /menu
-❀️ [FFD700]SHOW THIS HELP MENU
+[00FFFF]❖ [FFFFFF]/help  •  /menu
+❀️ [FFD700]SHOW THIS MENU
 
 [00FFFF]❖ [FFFFFF]/admin
-❀️ [FFD700]OWNER/CONTACT INFORMATION
+❀️ [FFD700]OWNER / CONTACT INFO
 [FF6347]━[32CD32]━[7B68EE]━[FF4500]━[1E90FF]━[ADFF2F]━[FF69B4]━[8A2BE2]━[DC143C]━[FF8C00]━[BA55D3]━[7CFC00]━[FFC0CB]"""
 
                             await safe_send_message(
